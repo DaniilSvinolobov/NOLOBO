@@ -1,587 +1,501 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Language, content } from '../content';
+import {
+  MAP_W, MAP_H, KM_PX, ISLAND_PATH, CONTOURS, GRATICULE, PTS, INSET, INSET_PTS,
+} from './studioMapGeo';
 
-interface StudioNetworkMapProps {
+/* ------------------------------------------------------------------ */
+/* Types & constants                                                   */
+/* ------------------------------------------------------------------ */
+
+type Layer = 'both' | 'island' | 'remote';
+type Group = 'base' | 'contours' | 'habitat' | 'studio' | 'artisans' | 'builders' | 'sites' | 'remote' | 'team' | 'inset';
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+const INK = '#0E0E0E';
+const PAPER = '#F5F5F2';
+const ACCENT = '#FF4D00';
+const FONT = "'JetBrains Mono', ui-monospace, monospace";
+
+/** Which map groups each text block on the left relates to. */
+const BLOCK_GROUPS: Record<string, Group[]> = {
+  '01': ['base', 'contours', 'habitat'],
+  '02': ['remote', 'team', 'builders', 'sites'],
+  '03': ['sites'],
+  '04': ['inset', 'team'],
+  '05': ['artisans', 'remote'],
+};
+const ISLAND_LAYER: Group[] = ['base', 'contours', 'habitat', 'artisans', 'builders', 'sites'];
+const REMOTE_LAYER: Group[] = ['remote', 'team', 'inset'];
+
+/* Timeline in seconds from the moment the section triggers. */
+const T = {
+  island: 0.3,
+  islandDur: 1.6,
+  contours: 1.2,
+  studio: 1.9,
+  local: 2.2,
+  localStagger: 0.15,
+  localDur: 0.7,
+  remote: 3.6,
+  remoteStagger: 0.15,
+  remoteDur: 0.9,
+  inset: 4.4,
+};
+
+const REMOTE_Y = 486;
+const INSET_BOX = { x: 506, y: 40, w: 188, h: 186 };
+
+/* ------------------------------------------------------------------ */
+/* Helpers                                                             */
+/* ------------------------------------------------------------------ */
+
+const SCRAMBLE = '01#/+<>[]_-';
+
+/** Mono label that resolves through random characters once `play` turns true. */
+const Scramble: React.FC<{ text: string; play: boolean; reduced: boolean; duration?: number }> = ({
+  text, play, reduced, duration = 400,
+}) => {
+  const [out, setOut] = useState(reduced ? text : '');
+  useEffect(() => {
+    if (reduced) { setOut(text); return; }
+    if (!play) { setOut(''); return; }
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / duration);
+      const resolved = Math.floor(p * text.length);
+      let s = text.slice(0, resolved);
+      for (let i = resolved; i < text.length; i++) {
+        s += text[i] === ' ' ? ' ' : SCRAMBLE[(Math.random() * SCRAMBLE.length) | 0];
+      }
+      setOut(s);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [text, play, reduced, duration]);
+  return <>{out}</>;
+};
+
+/** Gently curved quadratic path between two points. */
+const curve = (a: [number, number], b: [number, number], bend: number) => {
+  const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+  const dx = b[0] - a[0], dy = b[1] - a[1];
+  return `M${a[0]},${a[1]} Q${(mx - dy * bend).toFixed(1)},${(my + dx * bend).toFixed(1)} ${b[0]},${b[1]}`;
+};
+
+const studio = PTS.studio;
+const remotePath = (x: number) =>
+  // Shared trunk runs straight down through the Bay of Palma, then fans out below the island.
+  `M${studio[0]},${studio[1]} L${studio[0]},405 C${studio[0]},440 ${x},432 ${x},${REMOTE_Y - 6}`;
+const INSET_LINK = `M${INSET_PTS.mallorca[0]},${INSET_BOX.y + INSET_BOX.h} L600,${REMOTE_Y - 6}`;
+
+const textStyle = (size = 8.5, weight = 400, color = INK, alpha = 1): React.CSSProperties => ({
+  fontFamily: FONT, fontSize: size, fontWeight: weight, fill: color, fillOpacity: alpha,
+});
+
+/* ------------------------------------------------------------------ */
+/* Component                                                           */
+/* ------------------------------------------------------------------ */
+
+interface Props {
   currentLang: Language;
   hoveredBlock: string | null;
-  onSelectBlock?: (blockId: string | null) => void;
+  started: boolean;
+  reduced: boolean;
 }
 
-export const StudioNetworkMap: React.FC<StudioNetworkMapProps> = ({
-  currentLang,
-  hoveredBlock,
-  onSelectBlock,
-}) => {
-  const t = content.studio;
-  const labels = t.mapLabels;
-  const readouts = t.readouts;
+export const StudioNetworkMap: React.FC<Props> = ({ currentLang, hoveredBlock, started, reduced }) => {
+  const m = content.studio.map;
+  const tr = (k: string) => m[k][currentLang];
+  const [layer, setLayer] = useState<Layer>('both');
+  const [shown, setShown] = useState<Set<string>>(() => new Set());
+  const reveal = useCallback((id: string) => {
+    setShown((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
+  }, []);
+  const on = (id: string) => reduced || shown.has(id);
 
-  const smoothEase = [0.16, 1, 0.3, 1] as const;
+  /* Milestones not chained to a line: studio, habitats, remote rule, inset labels, readouts. */
+  const timers = useRef<number[]>([]);
+  useEffect(() => {
+    if (!started || reduced) return;
+    const at = (s: number, id: string) => timers.current.push(window.setTimeout(() => reveal(id), s * 1000));
+    at(0, 'frame');
+    at(T.studio, 'studio');
+    at(T.contours + CONTOURS.length * 0.08 + 0.6, 'habitat');
+    at(T.remote, 'remoteRule');
+    at(T.inset - 0.2, 'insetFrame');
+    at(T.inset + 0.9, 'insetLabels');
+    [0, 1, 2, 3].forEach((i) => at(T.inset + 0.4 + i * 0.15, `readout${i}`));
+    at(T.inset + 1.0, 'legend');
+    const list = timers.current;
+    return () => list.forEach(clearTimeout);
+  }, [started, reduced, reveal]);
 
-  // Localized dictionary for map annotation text
-  const i18n = {
-    en: {
-      hoverHint: 'HOVER BLOCKS TO ISOLATE NODES',
-      corridor: 'CORRIDOR',
-      remoteSync: '⇄ REMOTE SYNC [EUROPE / CLIENT]',
-      tramuntana: '▲ SERRA DE TRAMUNTANA · 1445M',
-      microclimate: '[MICROCLIMATE: 1200MM/YR]',
-      habitat: '[HABITAT: COASTAL PINE & OAK]',
-      stone: 'STONE',
-      wood: 'WOOD',
-      ceramics: 'CERAMICS',
-      drystone: 'DRY STONE',
-      analysis: 'ANALYSIS',
-      computation: 'COMPUTATION',
-      engineering: 'ENGINEERING',
-      palmaHq: 'PALMA HQ',
-    },
-    es: {
-      hoverHint: 'PASA EL CURSOR POR LOS BLOQUES PARA AISLAR NODOS',
-      corridor: 'CORREDOR',
-      remoteSync: '⇄ CONEXIÓN REMOTA [EUROPA / CLIENTE]',
-      tramuntana: '▲ SERRA DE TRAMUNTANA · 1445M',
-      microclimate: '[MICROCLIMA: 1200MM/AÑO]',
-      habitat: '[HÁBITAT: PINAR Y ENCINAR COSTEÑO]',
-      stone: 'PIEDRA',
-      wood: 'MADERA',
-      ceramics: 'CERÁMICA',
-      drystone: 'PIEDRA EN SECO',
-      analysis: 'ANÁLISIS',
-      computation: 'COMPUTACIÓN',
-      engineering: 'INGENIERÍA',
-      palmaHq: 'SEDE PALMA',
-    },
-    ca: {
-      hoverHint: 'PASSA EL CURSOR PELS BLOCS PER AÏLLAR NODES',
-      corridor: 'CORREDOR',
-      remoteSync: '⇄ CONNEXIÓ REMOTA [EUROPA / CLIENT]',
-      tramuntana: '▲ SERRA DE TRAMUNTANA · 1445M',
-      microclimate: '[MICROCLIMA: 1200MM/ANY]',
-      habitat: '[HÀBITAT: PINEDA I ALZINAR COSTER]',
-      stone: 'PEDRA',
-      wood: 'FUSTA',
-      ceramics: 'CERÀMICA',
-      drystone: 'PEDRA EN SEC',
-      analysis: 'ANÀLISI',
-      computation: 'COMPUTACIÓ',
-      engineering: 'ENGINYERIA',
-      palmaHq: 'SEU PALMA',
-    },
-    de: {
-      hoverHint: 'BLÖCKE ÜBERFAHREN, UM KNOTEN HERVORZUHEBEN',
-      corridor: 'KORRIDOR',
-      remoteSync: '⇄ REMOTE-KOORDINATION [EUROPA / KUNDE]',
-      tramuntana: '▲ SERRA DE TRAMUNTANA · 1445M',
-      microclimate: '[MIKROKLIMA: 1200MM/JAHR]',
-      habitat: '[HABITAT: KÜSTENKIEFER & EICHE]',
-      stone: 'NATURSTEIN',
-      wood: 'HOLZ',
-      ceramics: 'KERAMIK',
-      drystone: 'TROCKENSTEIN',
-      analysis: 'ANALYSE',
-      computation: 'COMPUTATION',
-      engineering: 'INGENIEURWESEN',
-      palmaHq: 'PALMA HQ',
-    },
-    ru: {
-      hoverHint: 'НАВЕДИТЕ НА БЛОК ДЛЯ ПОДСВЕТКИ УЗЛОВ',
-      corridor: 'КОРИДОР',
-      remoteSync: '⇄ УДАЛЁННАЯ СВЯЗЬ [ЕВРОПА / КЛИЕНТ]',
-      tramuntana: '▲ СЕРРА-ДЕ-ТРАМУНТАНА · 1445М',
-      microclimate: '[МИКРОКЛИМАТ: 1200 ММ/ГОД]',
-      habitat: '[СРЕДА: СОСНЫ И ДУБЫ ПОБЕРЕЖЬЯ]',
-      stone: 'КАМЕНЬ',
-      wood: 'ДЕРЕВО',
-      ceramics: 'КЕРАМИКА',
-      drystone: 'СУХОЙ КАМЕНЬ',
-      analysis: 'АНАЛИЗ',
-      computation: 'ВЫЧИСЛЕНИЯ',
-      engineering: 'ИНЖЕНЕРИЯ',
-      palmaHq: 'ШТАБ ПАЛЬМА',
-    },
-  }[currentLang];
-
-  // Accurate simplified geographic polygon of Mallorca (540x380 SVG coordinates)
-  const MALLORCA_OUTLINE =
-    'M 61,193 L 72,175 L 103,166 L 128,148 L 159,127 L 176,107 L 215,88 L 255,75 L 295,61 L 362,45 L 340,65 L 313,76 L 351,76 L 330,96 L 341,123 L 362,142 L 404,107 L 446,142 L 439,166 L 418,185 L 404,208 L 388,230 L 376,255 L 365,274 L 335,295 L 302,317 L 281,297 L 264,278 L 211,278 L 194,227 L 159,200 L 124,220 L 117,239 L 99,220 L 68,208 Z';
-
-  // Faint contour lines for the Tramuntana mountain range (NW spine)
-  const CONTOURS = [
-    { id: 'c1', d: 'M 75,185 Q 115,158 155,138 T 225,98 T 305,68 T 352,50', elevation: '400M' },
-    { id: 'c2', d: 'M 95,172 Q 135,148 175,124 T 235,92 T 290,66', elevation: '800M' },
-    { id: 'c3', d: 'M 130,152 Q 168,130 198,112 T 250,88', elevation: '1200M' },
+  /* ---------------- Network ---------------- */
+  const local: {
+    id: string; group: Group; kind: 'site' | 'artisan' | 'builder';
+    title: string; place: string; lx: number; ly: number; anchor: 'start' | 'end';
+  }[] = [
+    { id: 'deia', group: 'sites', kind: 'site', title: tr('site'), place: 'Deià', lx: -9, ly: -2, anchor: 'end' },
+    { id: 'drystone', group: 'artisans', kind: 'artisan', title: tr('drystone'), place: 'Tramuntana', lx: -8, ly: -1, anchor: 'end' },
+    { id: 'ceramics', group: 'artisans', kind: 'artisan', title: tr('ceramics'), place: 'Marratxí', lx: 8, ly: 4, anchor: 'start' },
+    { id: 'builders', group: 'builders', kind: 'builder', title: tr('builders'), place: 'Inca', lx: 8, ly: -2, anchor: 'start' },
+    { id: 'pollenca', group: 'sites', kind: 'site', title: tr('site'), place: 'Pollença', lx: 9, ly: 0, anchor: 'start' },
+    { id: 'wood', group: 'artisans', kind: 'artisan', title: tr('wood'), place: 'Pla de Mallorca', lx: 8, ly: 4, anchor: 'start' },
+    { id: 'arta', group: 'sites', kind: 'site', title: tr('site'), place: 'Artà', lx: -9, ly: -10, anchor: 'end' },
+    { id: 'felanitx', group: 'sites', kind: 'site', title: tr('site'), place: 'Felanitx', lx: 9, ly: 0, anchor: 'start' },
+    { id: 'stone', group: 'artisans', kind: 'artisan', title: tr('stone'), place: 'Santanyí', lx: 8, ly: 4, anchor: 'start' },
   ];
 
-  // Studio Center Node (Palma area)
-  const STUDIO_NODE = { id: 'studio', x: 162, y: 202, name: labels.studio[currentLang], code: i18n.palmaHq };
-
-  // Local Artisans Nodes (Stone, Wood, Ceramics, Dry Stone spread across island)
-  const ARTISAN_NODES = [
-    { id: 'art-stone', x: 345, y: 268, craftKey: 'stone' as const, location: 'Santanyí', symbol: '■' },
-    { id: 'art-wood', x: 265, y: 175, craftKey: 'wood' as const, location: 'Pla', symbol: '◎' },
-    { id: 'art-ceramics', x: 195, y: 170, craftKey: 'ceramics' as const, location: 'Marratxí', symbol: '▦' },
-    { id: 'art-drystone', x: 135, y: 145, craftKey: 'drystone' as const, location: 'Tramuntana', symbol: '▱' },
+  const remote: { id: string; group: Group; title: string; x: number }[] = [
+    { id: 'comp', group: 'remote', title: tr('comp'), x: 104 },
+    { id: 'eng', group: 'remote', title: tr('eng'), x: 268 },
+    { id: 'analysis', group: 'remote', title: tr('analysis'), x: 432 },
+    { id: 'team', group: 'team', title: tr('team'), x: 600 },
   ];
 
-  // Local Specialists Nodes (Analysis, Computational Design, Engineering)
-  const SPECIALIST_NODES = [
-    { id: 'spec-analysis', x: 235, y: 135, fieldKey: 'analysis' as const, location: 'Inca' },
-    { id: 'spec-comp', x: 138, y: 180, fieldKey: 'computation' as const, location: 'Palma Lab' },
-    { id: 'spec-eng', x: 335, y: 195, fieldKey: 'engineering' as const, location: 'Manacor' },
-  ];
+  /* ---------------- Dimming: hover isolation + layer toggle ---------------- */
+  const gs = (g: Group): React.CSSProperties => {
+    let o = 1;
+    if (layer === 'island' && REMOTE_LAYER.includes(g)) o = 0.1;
+    else if (layer === 'remote' && ISLAND_LAYER.includes(g)) o = 0.1;
+    else if (hoveredBlock && g !== 'studio' && !BLOCK_GROUPS[hoveredBlock]?.includes(g)) o = g === 'base' ? 0.45 : 0.15;
+    return { opacity: o, transition: 'opacity 300ms cubic-bezier(0.16,1,0.3,1)' };
+  };
 
-  // Project Sites Nodes (small squares)
-  const SITE_NODES = [
-    { id: 'site-01', x: 155, y: 125, name: 'Deià', ref: '01' },
-    { id: 'site-02', x: 185, y: 105, name: 'Sóller', ref: '02' },
-    { id: 'site-03', x: 330, y: 280, name: 'Santanyí', ref: '03' },
-    { id: 'site-04', x: 310, y: 80, name: 'Pollença', ref: '04' },
-  ];
+  /* ---------------- Animation presets ---------------- */
+  const draw = (delay: number, duration: number) =>
+    reduced
+      ? { initial: false as const, animate: { pathLength: 1 } }
+      : {
+          initial: { pathLength: 0 },
+          animate: { pathLength: started ? 1 : 0 },
+          transition: { pathLength: { delay, duration, ease: EASE } },
+        };
 
-  // Interactive hover highlight states based on active block
-  const isBlock01 = hoveredBlock === '01'; // 01 → Habitats and contours
-  const isBlock02 = hoveredBlock === '02'; // 02 → Studio plus dashed remote line off-map
-  const isBlock03 = hoveredBlock === '03'; // 03 → Project sites
-  const isBlock04 = hoveredBlock === '04'; // 04 → Inset (DE/ES corridor)
-  const isBlock05 = hoveredBlock === '05'; // 05 → Artisan and specialist nodes
+  const nodeIn = (id: string) => ({
+    initial: reduced ? (false as const) : { opacity: 0, scale: 0.6 },
+    animate: on(id) ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 },
+    transition: { duration: 0.5, ease: EASE },
+    style: { transformBox: 'fill-box' as const, transformOrigin: 'center' },
+  });
+
+  const fadeIn = (id: string, duration = 0.6) => ({
+    initial: reduced ? (false as const) : { opacity: 0 },
+    animate: { opacity: on(id) ? 1 : 0 },
+    transition: { duration, ease: EASE },
+  });
+
+  /** Node appears exactly when its incoming line finishes drawing. */
+  const chained = (id: string) => (def: { pathLength?: number }) => {
+    if (started && def?.pathLength === 1) reveal(id);
+  };
+
+  const dashed = [
+    ...remote.map((r, i) => ({ id: r.id, d: remotePath(r.x), delay: T.remote + i * T.remoteStagger })),
+    { id: 'insetLink', d: INSET_LINK, delay: T.inset + 0.6 },
+  ];
 
   return (
-    <div className="relative w-full border border-hairline bg-[#F5F5F2] overflow-hidden select-none font-mono">
-      {/* Top Map HUD Bar */}
-      <div className="px-4 py-2 border-b border-hairline flex items-center justify-between text-[10px] text-[#0E0E0E]/70 bg-[#F5F5F2]">
-        <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
-          <span className="font-semibold text-[#0E0E0E] uppercase tracking-wider">
-            MALLORCA NETWORK · EPSG:25831
-          </span>
+    <figure className="relative w-full border border-hairline bg-[#F5F5F2] font-mono select-none m-0">
+      {/* Header */}
+      <motion.div
+        {...fadeIn('frame')}
+        className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 border-b border-hairline text-[11px]"
+      >
+        <span className="flex items-center gap-2 text-[#0E0E0E]">
+          <span className="w-1.5 h-1.5 bg-[#FF4D00]" aria-hidden />
+          {tr('fig')}
+        </span>
+        <div role="group" aria-label={tr('layerAria')} className="flex border border-hairline">
+          {(['both', 'island', 'remote'] as Layer[]).map((l) => (
+            <button
+              key={l}
+              type="button"
+              aria-pressed={layer === l}
+              onClick={() => setLayer(l)}
+              className={`px-2.5 py-1 text-[10.5px] transition-colors duration-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#FF4D00] ${
+                layer === l ? 'bg-[#0E0E0E] text-[#F5F5F2]' : 'text-[#0E0E0E]/55 hover:text-[#0E0E0E]'
+              }`}
+            >
+              {tr(l)}
+            </button>
+          ))}
         </div>
-        <div className="flex items-center gap-3 text-[9px] text-[#0E0E0E]/50">
-          <span>LAT 39°34'N</span>
-          <span>·</span>
-          <span>LON 02°39'E</span>
-        </div>
-      </div>
+      </motion.div>
 
-      {/* Main SVG Vector Canvas */}
-      <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full p-2 sm:p-4">
-        <svg
-          viewBox="0 0 540 380"
-          className="w-full h-full overflow-visible"
-          style={{ shapeRendering: 'geometricPrecision' }}
-        >
-          <defs>
-            {/* Fine drafting grid pattern */}
-            <pattern id="studioMapGrid" width="30" height="30" patternUnits="userSpaceOnUse">
-              <path
-                d="M 30 0 L 0 0 0 30"
+      {/* Map (scrolls sideways on narrow screens so labels stay legible) */}
+      <div className="w-full overflow-x-auto">
+      <svg
+        viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+        className="block w-full min-w-[640px] h-auto"
+        role="img"
+        aria-label={tr('mapAria')}
+        style={{ shapeRendering: 'geometricPrecision' }}
+      >
+        <defs>
+          <pattern id="snm-hatch" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="3" stroke={INK} strokeWidth="0.6" strokeOpacity="0.55" />
+          </pattern>
+          {/* Masks reveal dashed lines without breaking their dash pattern */}
+          {dashed.map(({ id, d, delay }) => (
+            <mask key={id} id={`snm-mask-${id}`} maskUnits="userSpaceOnUse" x="0" y="0" width={MAP_W} height={MAP_H}>
+              <motion.path
+                d={d}
                 fill="none"
-                stroke="currentColor"
-                strokeWidth="0.5"
-                className="text-[#0E0E0E]/[0.04]"
+                stroke="#fff"
+                strokeWidth="6"
+                {...draw(delay, T.remoteDur)}
+                onAnimationComplete={chained(id)}
               />
-            </pattern>
-          </defs>
+            </mask>
+          ))}
+        </defs>
 
-          {/* Background drafting coordinate grid */}
-          <rect width="540" height="380" fill="url(#studioMapGrid)" />
+        {/* Graticule */}
+        <motion.g {...fadeIn('frame', 1)}>
+          {GRATICULE.map((g) => (
+            <g key={g.label}>
+              <path d={g.d} stroke={INK} strokeOpacity="0.07" strokeWidth="0.5" fill="none" />
+              <text
+                x={g.k === 'lat' ? 6 : g.x}
+                y={g.k === 'lat' ? g.y - 2.5 : 22}
+                textAnchor={g.k === 'lat' ? 'start' : 'middle'}
+                style={textStyle(7, 400, INK, 0.35)}
+              >
+                {g.label}
+              </text>
+            </g>
+          ))}
+        </motion.g>
 
-          {/* Dotted Coastline Buffer (+4px offset effect) */}
-          <path
-            d={MALLORCA_OUTLINE}
+        {/* Island */}
+        <g style={gs('base')}>
+          <motion.path d={ISLAND_PATH} fill={INK} fillOpacity="0.025" stroke="none" {...fadeIn('habitat', 1)} />
+          <motion.path
+            d={ISLAND_PATH}
             fill="none"
-            stroke="currentColor"
-            strokeWidth="0.75"
-            strokeDasharray="2 3"
-            className="text-[#0E0E0E]/20"
-            transform="matrix(1.025 0 0 1.025 -6 -5)"
+            stroke={INK}
+            strokeWidth="1.1"
+            strokeLinejoin="round"
+            {...draw(T.island, T.islandDur)}
           />
+        </g>
 
-          {/* Accurate Simplified Mallorca Coastline */}
-          <path
-            d={MALLORCA_OUTLINE}
-            fill="#0E0E0E"
-            fillOpacity={isBlock01 ? '0.04' : '0.02'}
-            stroke="currentColor"
-            strokeWidth="1.2"
-            className="text-[#0E0E0E]/80 transition-all duration-300"
-          />
-
-          {/* Tramuntana Mountain Contours (Highlights on Block 01) */}
-          <g className={`transition-all duration-300 ${isBlock01 ? 'opacity-100' : 'opacity-40'}`}>
-            {CONTOURS.map((c) => (
-              <path
-                key={c.id}
-                d={c.d}
-                fill="none"
-                stroke={isBlock01 ? '#FF4D00' : 'currentColor'}
-                strokeWidth={isBlock01 ? '1.4' : '0.75'}
-                strokeDasharray="3 3"
-                className="transition-colors duration-300"
-              />
-            ))}
-            {/* Tramuntana mountain peak & range indicator */}
-            <text
-              x="160"
-              y="112"
-              fill={isBlock01 ? '#FF4D00' : 'currentColor'}
-              className="text-[7.5px] tracking-wider uppercase transition-colors"
-            >
-              {i18n.tramuntana}
-            </text>
-            {isBlock01 && (
-              <motion.g
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <text x="210" y="82" fill="#FF4D00" className="text-[7px]">
-                  {i18n.microclimate}
-                </text>
-                <text x="75" y="200" fill="#FF4D00" className="text-[7px]">
-                  {i18n.habitat}
-                </text>
-              </motion.g>
-            )}
-          </g>
-
-          {/* Thin Network Connection Lines (Draw in on scroll, refined motion, linking studio, artisans, specialists & sites) */}
-          <g className="transition-all duration-300">
-            {/* Lines to Artisans */}
-            {ARTISAN_NODES.map((node, idx) => (
-              <motion.line
-                key={`line-art-${node.id}`}
-                x1={STUDIO_NODE.x}
-                y1={STUDIO_NODE.y}
-                x2={node.x}
-                y2={node.y}
-                initial={{ pathLength: 0, opacity: 0 }}
-                whileInView={{ pathLength: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.15 + idx * 0.05, ease: smoothEase }}
-                stroke={isBlock05 ? '#FF4D00' : 'currentColor'}
-                strokeWidth={isBlock05 ? '1.2' : '0.6'}
-                strokeDasharray={isBlock05 ? 'none' : '2 3'}
-                className={`transition-colors duration-300 ${
-                  isBlock05 ? 'opacity-90' : 'opacity-25'
-                }`}
-              />
-            ))}
-
-            {/* Lines to Specialists */}
-            {SPECIALIST_NODES.map((node, idx) => (
-              <motion.line
-                key={`line-spec-${node.id}`}
-                x1={STUDIO_NODE.x}
-                y1={STUDIO_NODE.y}
-                x2={node.x}
-                y2={node.y}
-                initial={{ pathLength: 0, opacity: 0 }}
-                whileInView={{ pathLength: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.25 + idx * 0.05, ease: smoothEase }}
-                stroke={isBlock05 ? '#FF4D00' : 'currentColor'}
-                strokeWidth={isBlock05 ? '1.2' : '0.6'}
-                strokeDasharray="2 2"
-                className={`transition-colors duration-300 ${
-                  isBlock05 ? 'opacity-90' : 'opacity-20'
-                }`}
-              />
-            ))}
-
-            {/* Lines to Project Sites */}
-            {SITE_NODES.map((site, idx) => (
-              <motion.line
-                key={`line-site-${site.id}`}
-                x1={STUDIO_NODE.x}
-                y1={STUDIO_NODE.y}
-                x2={site.x}
-                y2={site.y}
-                initial={{ pathLength: 0, opacity: 0 }}
-                whileInView={{ pathLength: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.35 + idx * 0.05, ease: smoothEase }}
-                stroke={isBlock03 ? '#FF4D00' : 'currentColor'}
-                strokeWidth={isBlock03 ? '1.4' : '0.6'}
-                className={`transition-colors duration-300 ${
-                  isBlock03 ? 'opacity-95' : 'opacity-25'
-                }`}
-              />
-            ))}
-          </g>
-
-          {/* Block 02: Dashed "Remote" line going off-map (highlights on Block 02) */}
-          <g
-            className={`transition-all duration-300 ${
-              isBlock02 ? 'opacity-100' : 'opacity-25'
-            }`}
-          >
-            <line
-              x1={STUDIO_NODE.x}
-              y1={STUDIO_NODE.y}
-              x2="0"
-              y2="15"
-              stroke="#FF4D00"
-              strokeWidth={isBlock02 ? '1.5' : '0.8'}
-              strokeDasharray="4 4"
-            />
-            {/* Arrow & remote label */}
-            <circle cx="15" cy="27" r="2.5" fill="#FF4D00" />
-            <text x="25" y="30" fill="#FF4D00" className="text-[8px] font-bold tracking-wider">
-              {i18n.remoteSync}
-            </text>
-          </g>
-
-          {/* Artisans Nodes (generic small symbols spread across the island, staggered fade-in) */}
-          {ARTISAN_NODES.map((art, idx) => {
-            const isHighlight = isBlock05;
-            const craftLabel = i18n[art.craftKey];
-            return (
-              <motion.g
-                key={art.id}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 + idx * 0.06, ease: smoothEase }}
-                className="transition-all duration-300"
-              >
-                <circle
-                  cx={art.x}
-                  cy={art.y}
-                  r={isHighlight ? 4 : 2.5}
-                  fill={isHighlight ? '#FF4D00' : '#0E0E0E'}
-                  className="transition-colors"
-                />
-                <text
-                  x={art.x + 6}
-                  y={art.y + 3}
-                  fill={isHighlight ? '#FF4D00' : 'currentColor'}
-                  className={`text-[7.5px] transition-colors ${
-                    isHighlight ? 'font-bold' : 'opacity-65'
-                  }`}
-                >
-                  {craftLabel} [{art.location.toUpperCase()}]
-                </text>
-              </motion.g>
-            );
-          })}
-
-          {/* Specialists Nodes (analysis, computational design, engineering, staggered fade-in) */}
-          {SPECIALIST_NODES.map((spec, idx) => {
-            const isHighlight = isBlock05;
-            const fieldLabel = i18n[spec.fieldKey];
-            return (
-              <motion.g
-                key={spec.id}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 + idx * 0.06, ease: smoothEase }}
-                className="transition-all duration-300"
-              >
-                <rect
-                  x={spec.x - 2.5}
-                  y={spec.y - 2.5}
-                  width="5"
-                  height="5"
-                  fill="none"
-                  stroke={isHighlight ? '#FF4D00' : 'currentColor'}
-                  strokeWidth="1"
-                  transform={`rotate(45 ${spec.x} ${spec.y})`}
-                  className="transition-colors"
-                />
-                <circle cx={spec.x} cy={spec.y} r="1" fill={isHighlight ? '#FF4D00' : 'currentColor'} />
-                <text
-                  x={spec.x + 6}
-                  y={spec.y + 3}
-                  fill={isHighlight ? '#FF4D00' : 'currentColor'}
-                  className={`text-[7px] transition-colors ${
-                    isHighlight ? 'font-bold' : 'opacity-60'
-                  }`}
-                >
-                  {fieldLabel} [{spec.location.toUpperCase()}]
-                </text>
-              </motion.g>
-            );
-          })}
-
-          {/* Project Sites (small squares, staggered fade-in) */}
-          {SITE_NODES.map((site, idx) => {
-            const isHighlight = isBlock03;
-            return (
-              <motion.g
-                key={site.id}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.35 + idx * 0.06, ease: smoothEase }}
-                className="transition-all duration-300"
-              >
-                <rect
-                  x={site.x - 3}
-                  y={site.y - 3}
-                  width="6"
-                  height="6"
-                  fill={isHighlight ? '#FF4D00' : '#0E0E0E'}
-                  className="transition-colors"
-                />
-                <text
-                  x={site.x + 6}
-                  y={site.y + 3}
-                  fill={isHighlight ? '#FF4D00' : 'currentColor'}
-                  className={`text-[7.5px] transition-colors ${
-                    isHighlight ? 'font-bold' : 'opacity-70'
-                  }`}
-                >
-                  {labels.sites[currentLang].toUpperCase()} {site.ref} [{site.name.toUpperCase()}]
-                </text>
-              </motion.g>
-            );
-          })}
-
-          {/* Studio Node (orange, Palma area, anchor, staggered fade-in) */}
-          <motion.g
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1, ease: smoothEase }}
-            className="transition-all duration-300"
-          >
-            {/* Concentric radar ring */}
-            <circle
-              cx={STUDIO_NODE.x}
-              cy={STUDIO_NODE.y}
-              r="7"
+        {/* Tramuntana contours */}
+        <g style={gs('contours')}>
+          {CONTOURS.map((c, i) => (
+            <motion.path
+              key={i}
+              d={c.d}
               fill="none"
-              stroke="#FF4D00"
-              strokeWidth="0.8"
-              strokeDasharray="2 2"
-              className={isBlock02 ? 'animate-spin' : ''}
-              style={{ transformOrigin: `${STUDIO_NODE.x}px ${STUDIO_NODE.y}px` }}
+              stroke={INK}
+              strokeOpacity={0.12 + ((9000 - c.lvl) / 9000) * 0.24}
+              strokeWidth="0.6"
+              {...draw(T.contours + i * 0.08, 1)}
             />
-            {/* Center orange dot */}
-            <circle cx={STUDIO_NODE.x} cy={STUDIO_NODE.y} r="3" fill="#FF4D00" />
-            <text
-              x={STUDIO_NODE.x + 10}
-              y={STUDIO_NODE.y + 3}
-              fill="#FF4D00"
-              className="text-[8.5px] font-bold tracking-wider"
-            >
-              {STUDIO_NODE.name.toUpperCase()} [{STUDIO_NODE.code}]
+          ))}
+        </g>
+
+        {/* Habitats */}
+        <g style={gs('habitat')}><motion.g {...fadeIn('habitat')}>
+          <path d={`M${PTS.puig[0]},${PTS.puig[1] - 4} l4,7 h-8 z`} fill="none" stroke={INK} strokeWidth="0.9" />
+          <text x={PTS.puig[0]} y={PTS.puig[1] - 17} textAnchor="middle" style={textStyle(8.5, 500)}>Puig Major</text>
+          <text x={PTS.puig[0]} y={PTS.puig[1] - 8} textAnchor="middle" style={textStyle(7.5, 400, INK, 0.5)}>
+            {tr('peak')} · 1436 m
+          </text>
+          <ellipse cx={PTS.albufera[0]} cy={PTS.albufera[1]} rx="10" ry="5.5" fill="url(#snm-hatch)" stroke={INK} strokeOpacity="0.5" strokeWidth="0.6" />
+          <text x={PTS.albufera[0] + 15} y={PTS.albufera[1] - 1} style={textStyle(8.5, 500)}>S&apos;Albufera</text>
+          <text x={PTS.albufera[0] + 15} y={PTS.albufera[1] + 8.5} style={textStyle(7.5, 400, INK, 0.5)}>{tr('wetland')}</text>
+        </motion.g></g>
+
+        {/* Remote zone rule */}
+        <g style={gs('remote')}>
+          <motion.line
+            x1="16" y1="452" x2={MAP_W - 16} y2="452"
+            stroke={ACCENT} strokeOpacity="0.5" strokeWidth="0.6"
+            {...draw(T.remote, 1.2)}
+          />
+          <text x="16" y="444" style={textStyle(8.5, 500, ACCENT)}>
+            <Scramble text={tr('remoteZone')} play={on('remoteRule')} reduced={reduced} />
+          </text>
+        </g>
+
+        {/* In-person lines (solid) */}
+        {local.map((n, i) => (
+          <g key={`l-${n.id}`} style={gs(n.group)}>
+            <motion.path
+              d={curve(studio, PTS[n.id], i % 2 ? 0.14 : -0.14)}
+              fill="none"
+              stroke={INK}
+              strokeOpacity="0.5"
+              strokeWidth="0.8"
+              {...draw(T.local + i * T.localStagger, T.localDur)}
+              onAnimationComplete={chained(n.id)}
+            />
+          </g>
+        ))}
+
+        {/* Remote lines (dashed, revealed through masks) */}
+        {remote.map((r) => (
+          <g key={`r-${r.id}`} style={gs(r.group)}>
+            <path
+              d={remotePath(r.x)}
+              fill="none"
+              stroke={ACCENT}
+              strokeWidth="0.9"
+              strokeDasharray="3 3"
+              mask={`url(#snm-mask-${r.id})`}
+            />
+          </g>
+        ))}
+
+        {/* Local nodes */}
+        {local.map((n) => {
+          const [x, y] = PTS[n.id];
+          return (
+            <g key={`n-${n.id}`} style={gs(n.group)}>
+              <motion.g {...nodeIn(n.id)}>
+                {n.kind === 'site' && <rect x={x - 3} y={y - 3} width="6" height="6" fill={INK} />}
+                {n.kind === 'artisan' && <circle cx={x} cy={y} r="2.8" fill={INK} />}
+                {n.kind === 'builder' && <circle cx={x} cy={y} r="3.2" fill={PAPER} stroke={INK} strokeWidth="1" />}
+              </motion.g>
+              <text x={x + n.lx} y={y + n.ly} textAnchor={n.anchor} style={textStyle(8.5, 500)}>
+                <Scramble text={n.title} play={on(n.id)} reduced={reduced} />
+              </text>
+              <text x={x + n.lx} y={y + n.ly + 9.5} textAnchor={n.anchor} style={textStyle(7.5, 400, INK, 0.5)}>
+                <Scramble text={n.place} play={on(n.id)} reduced={reduced} />
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Remote nodes */}
+        {remote.map((r) => (
+          <g key={`rn-${r.id}`} style={gs(r.group)}>
+            <motion.g {...nodeIn(r.id)}>
+              <path
+                d={`M${r.x},${REMOTE_Y - 5} l5,5 l-5,5 l-5,-5 z`}
+                fill={r.id === 'team' ? ACCENT : PAPER}
+                stroke={ACCENT}
+                strokeWidth="1"
+              />
+            </motion.g>
+            <text x={r.x} y={REMOTE_Y + 21} textAnchor="middle" style={textStyle(8.5, 500)}>
+              <Scramble text={r.title} play={on(r.id)} reduced={reduced} />
             </text>
+          </g>
+        ))}
+
+        {/* Studio */}
+        <g style={gs('studio')}>
+          {!reduced && (
+            <motion.circle
+              cx={studio[0]} cy={studio[1]} r="4" fill="none" stroke={ACCENT} strokeWidth="0.8"
+              initial={{ scale: 1, opacity: 0 }}
+              animate={on('studio') ? { scale: 5, opacity: [0, 0.8, 0] } : { scale: 1, opacity: 0 }}
+              transition={{ duration: 1.4, ease: EASE }}
+              style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
+            />
+          )}
+          <motion.g {...nodeIn('studio')}>
+            <circle cx={studio[0]} cy={studio[1]} r="4.2" fill={ACCENT} />
           </motion.g>
-        </svg>
+          <text x={studio[0] - 9} y={studio[1] + 2} textAnchor="end" style={textStyle(9.5, 600, ACCENT)}>
+            <Scramble text={content.studio.mapLabels.studio[currentLang]} play={on('studio')} reduced={reduced} />
+          </text>
+          <text x={studio[0] - 9} y={studio[1] + 12} textAnchor="end" style={textStyle(7.5, 400, INK, 0.5)}>
+            <Scramble text={tr('studioPlace')} play={on('studio')} reduced={reduced} />
+          </text>
+        </g>
 
-        {/* Small Inset in Top-Right Corner: schematic outline of Germany and Spain with DE and ES markers connected by a thin line to Mallorca */}
-        <div
-          className={`absolute top-3 right-3 border bg-[#F5F5F2]/95 backdrop-blur-xs p-2 transition-all duration-300 shadow-xs ${
-            isBlock04 ? 'border-[#FF4D00] ring-1 ring-[#FF4D00]' : 'border-hairline'
-          }`}
-          style={{ width: '138px' }}
-        >
-          <div className="flex items-center justify-between pb-1 border-b border-hairline text-[8px] text-[#0E0E0E]/60">
-            <span className="font-semibold uppercase text-[#0E0E0E]">{i18n.corridor}</span>
-            <span className={isBlock04 ? 'text-[#FF4D00] font-bold' : ''}>DE · ES</span>
-          </div>
-
-          <svg viewBox="0 0 120 70" className="w-full h-14 mt-1 overflow-visible">
-            {/* Spain simplified shape */}
-            <polygon
-              points="15,40 38,36 44,52 30,62 12,56"
-              fill={isBlock04 ? 'rgba(255,77,0,0.12)' : 'rgba(14,14,14,0.03)'}
-              stroke={isBlock04 ? '#FF4D00' : 'currentColor'}
-              strokeWidth="0.8"
+        {/* Inset: DE · ES project experience */}
+        <g style={gs('inset')}>
+          <motion.rect
+            x={INSET_BOX.x} y={INSET_BOX.y} width={INSET_BOX.w} height={INSET_BOX.h}
+            fill={PAPER} stroke={INK} strokeOpacity="0.25" strokeWidth="0.6"
+            {...fadeIn('insetFrame')}
+          />
+          {[...INSET.es, ...INSET.de].map((d, i) => (
+            <motion.path
+              key={i}
+              d={d}
+              fill="none"
+              stroke={INK}
+              strokeOpacity="0.6"
+              strokeWidth="0.6"
+              strokeLinejoin="round"
+              {...draw(T.inset + i * 0.05, 1)}
             />
-            <circle cx="28" cy="46" r="2" fill="#0E0E0E" />
-            <text x="22" y="44" fill="#0E0E0E" className="text-[7px] font-bold">
-              ES
-            </text>
+          ))}
+          <motion.g {...fadeIn('insetLabels')}>
+            <text x={INSET_BOX.x + 8} y={INSET_BOX.y + 15} style={textStyle(8.5, 500)}>{tr('experience')}</text>
+            <text x={INSET_PTS.de[0]} y={INSET_PTS.de[1] + 3} textAnchor="middle" style={textStyle(9, 600)}>DE</text>
+            <text x={INSET_PTS.es[0]} y={INSET_PTS.es[1] + 3} textAnchor="middle" style={textStyle(9, 600)}>ES</text>
+            <circle cx={INSET_PTS.mallorca[0]} cy={INSET_PTS.mallorca[1]} r="2.6" fill={ACCENT} />
+          </motion.g>
+          <path d={INSET_LINK} fill="none" stroke={ACCENT} strokeWidth="0.9" strokeDasharray="3 3" mask="url(#snm-mask-insetLink)" />
+        </g>
 
-            {/* Germany simplified shape */}
-            <polygon
-              points="65,10 85,8 90,26 78,32 62,24"
-              fill={isBlock04 ? 'rgba(255,77,0,0.12)' : 'rgba(14,14,14,0.03)'}
-              stroke={isBlock04 ? '#FF4D00' : 'currentColor'}
-              strokeWidth="0.8"
-            />
-            <circle cx="76" cy="18" r="2" fill="#0E0E0E" />
-            <text x="79" y="19" fill="#0E0E0E" className="text-[7px] font-bold">
-              DE
-            </text>
-
-            {/* Mallorca marker in inset */}
-            <circle cx="58" cy="54" r="2.5" fill="#FF4D00" />
-            <text x="63" y="56" fill="#FF4D00" className="text-[6.5px] font-bold">
-              MALLORCA
-            </text>
-
-            {/* Connection vectors */}
-            <line
-              x1="28"
-              y1="46"
-              x2="58"
-              y2="54"
-              stroke={isBlock04 ? '#FF4D00' : 'currentColor'}
-              strokeWidth="0.8"
-              strokeDasharray="2 2"
-              className={isBlock04 ? 'opacity-100' : 'opacity-40'}
-            />
-            <line
-              x1="76"
-              y1="18"
-              x2="58"
-              y2="54"
-              stroke={isBlock04 ? '#FF4D00' : 'currentColor'}
-              strokeWidth="0.8"
-              strokeDasharray="2 2"
-              className={isBlock04 ? 'opacity-100' : 'opacity-40'}
-            />
-          </svg>
-
-          <div className="text-[7.5px] text-[#0E0E0E]/60 pt-0.5 leading-tight">
-            DE &amp; ES ⇄ MALLORCA
-          </div>
-        </div>
-
-        {/* Small Readout Panel: "Mode: Remote · On site", "Projects / year: [X]", "Disciplines: 3" */}
-        <div className="absolute bottom-3 left-3 bg-[#F5F5F2]/95 border border-hairline p-2 text-[9px] space-y-1 shadow-xs min-w-[170px]">
-          <div className="flex items-center justify-between text-[#0E0E0E] pb-1 border-b border-hairline">
-            <span className="text-[#0E0E0E]/70 font-medium">{readouts.mode[currentLang]}</span>
-          </div>
-          <div className="flex items-center justify-between text-[#0E0E0E]">
-            <span className="text-[#0E0E0E]/70 font-medium">{readouts.projectsPerYear[currentLang]}</span>
-          </div>
-          <div className="flex items-center justify-between text-[#0E0E0E]">
-            <span className="text-[#0E0E0E]/70 font-medium">{readouts.disciplines[currentLang]}</span>
-          </div>
-        </div>
+        {/* Scale bar + north arrow */}
+        <motion.g {...fadeIn('legend')}>
+          <g transform="translate(516 404)">
+            <rect x="0" y="0" width={KM_PX * 5} height="3" fill={INK} />
+            <rect x={KM_PX * 5} y="0" width={KM_PX * 5} height="3" fill="none" stroke={INK} strokeWidth="0.6" />
+            {[0, 5, 10].map((k) => (
+              <text key={k} x={KM_PX * k} y="14" textAnchor="middle" style={textStyle(7, 400, INK, 0.6)}>
+                {k === 10 ? '10 km' : k}
+              </text>
+            ))}
+          </g>
+          <g transform="translate(680 396)">
+            <path d="M0,-10 L4,4 L0,1 L-4,4 Z" fill={INK} />
+            <text x="0" y="16" textAnchor="middle" style={textStyle(8, 600)}>{tr('north')}</text>
+          </g>
+        </motion.g>
+      </svg>
       </div>
 
-      {/* Map Legend Footer */}
-      <div className="px-4 py-2 border-t border-hairline bg-[#F5F5F2] flex flex-wrap items-center justify-between gap-2 text-[9.5px] text-[#0E0E0E]/70">
-        <div className="flex items-center gap-4">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#FF4D00]" />
-            <span>{labels.studio[currentLang]}</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0E0E0E]" />
-            <span>{labels.artisans[currentLang]}</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 border border-[#0E0E0E] rotate-45" />
-            <span>{labels.specialists[currentLang]}</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="w-2 h-2 bg-[#0E0E0E]" />
-            <span>{labels.sites[currentLang]}</span>
-          </span>
-        </div>
-        <div className="text-[9px] text-[#0E0E0E]/50">
-          {i18n.hoverHint}
-        </div>
+      {/* Readouts */}
+      <div className="border-t border-hairline grid grid-cols-2 sm:grid-cols-4 text-[11px]">
+        {[
+          { k: 'dailyWork', v: tr('legendRemote') },
+          { k: 'meetings', v: tr('legendInPerson') },
+          { k: 'projectsYear', v: '[X]' },
+          { k: 'disciplines', v: '3' },
+        ].map((r, i) => (
+          <motion.div
+            key={r.k}
+            {...fadeIn(`readout${i}`)}
+            className={`px-4 py-2.5 border-hairline ${i < 3 ? 'sm:border-r' : ''} ${i % 2 === 0 ? 'border-r' : ''} ${i < 2 ? 'border-b sm:border-b-0' : ''}`}
+          >
+            <div className="text-[#0E0E0E]/50">{tr(r.k)}</div>
+            <div className="text-[#0E0E0E] font-medium mt-0.5">{r.v}</div>
+          </motion.div>
+        ))}
       </div>
-    </div>
+
+      {/* Legend */}
+      <motion.div
+        {...fadeIn('legend')}
+        className="border-t border-hairline px-4 py-2.5 flex flex-wrap gap-x-5 gap-y-1.5 text-[10.5px] text-[#0E0E0E]/70"
+      >
+        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#FF4D00]" />{content.studio.mapLabels.studio[currentLang]}</span>
+        <span className="flex items-center gap-1.5"><span className="w-5 h-px bg-[#0E0E0E]/70" />{tr('legendInPerson')}</span>
+        <span className="flex items-center gap-1.5">
+          <svg width="20" height="2" aria-hidden><line x1="0" y1="1" x2="20" y2="1" stroke={ACCENT} strokeDasharray="3 3" /></svg>
+          {tr('legendRemote')}
+        </span>
+        <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#0E0E0E]" />{tr('legendArtisans')}</span>
+        <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 bg-[#0E0E0E]" />{tr('legendSites')}</span>
+        <span className="flex items-center gap-1.5">
+          <svg width="10" height="8" aria-hidden><path d="M5,0.5 L9.5,7.5 H0.5 Z" fill="none" stroke={INK} strokeWidth="1" /></svg>
+          {tr('legendHabitat')}
+        </span>
+      </motion.div>
+    </figure>
   );
 };
