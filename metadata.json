@@ -1,0 +1,6 @@
+{
+  "name": "NOLOBO — Architecture & Interior Design Studio",
+  "description": "Architecture and interior design studio based in Mallorca. Remote-first precision design, architectural development, and full-service project execution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

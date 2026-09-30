@@ -1,0 +1,245 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-canvas: #F5F5F2;
+    --text-ink: #0E0E0E;
+    --accent-signal: #FF4D00;
+  }
+
+  body {
+    background-color: var(--bg-canvas);
+    color: var(--text-ink);
+    font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Monospace font utility */
+  .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  .font-sans {
+    font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+/* Global cursor rule: completely remove system cursor on fine pointer devices */
+@media (hover: hover) and (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
+/* Touch devices: restore normal cursor and touch behavior */
+@media (hover: none) and (pointer: coarse) {
+  *, *::before, *::after {
+    cursor: auto !important;
+  }
+}
+
+/* Hairline border utilities */
+.border-hairline {
+  border-color: rgba(14, 14, 14, 0.12);
+}
+
+.border-hairline-subtle {
+  border-color: rgba(14, 14, 14, 0.06);
+}
+
+.divide-hairline > * + * {
+  border-color: rgba(14, 14, 14, 0.12);
+}
+
+/* Technical drawing grid */
+.drawing-grid-pattern {
+  background-size: 80px 80px;
+  background-image: 
+    linear-gradient(to right, rgba(14, 14, 14, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(14, 14, 14, 0.035) 1px, transparent 1px);
+}
+
+/* Faint scanline overlay */
+.scanline-overlay {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(14, 14, 14, 0.03) 0px,
+    rgba(14, 14, 14, 0.03) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+}
+
+/* Dark section technical raster scanline */
+.dark-scanlines {
+  position: relative;
+}
+.dark-scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.02) 0px,
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+}
+
+/* Controlled RGB Channel Split & Horizontal Slice Displacement on Image Hover */
+.glitch-image-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.glitch-image-wrap img {
+  transition: filter 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes glitch-slice-1 {
+  0% {
+    clip-path: inset(15% 0 65% 0);
+    transform: translate(-3px, 1px);
+    filter: drop-shadow(2px 0 #FF4D00);
+  }
+  25% {
+    clip-path: inset(45% 0 35% 0);
+    transform: translate(3px, -1px);
+    filter: drop-shadow(-2px 0 #00E5FF);
+  }
+  50% {
+    clip-path: inset(70% 0 10% 0);
+    transform: translate(-4px, 0);
+    filter: drop-shadow(3px 0 #FF4D00);
+  }
+  75% {
+    clip-path: inset(5% 0 85% 0);
+    transform: translate(2px, 2px);
+    filter: drop-shadow(-2px 0 #00E5FF);
+  }
+  100% {
+    clip-path: inset(30% 0 50% 0);
+    transform: translate(-2px, -1px);
+    filter: drop-shadow(2px 0 #FF4D00);
+  }
+}
+
+@keyframes glitch-slice-2 {
+  0% {
+    clip-path: inset(60% 0 20% 0);
+    transform: translate(4px, -1px);
+    filter: drop-shadow(-3px 0 #00E5FF);
+  }
+  30% {
+    clip-path: inset(10% 0 75% 0);
+    transform: translate(-2px, 1px);
+    filter: drop-shadow(2px 0 #FF4D00);
+  }
+  60% {
+    clip-path: inset(80% 0 5% 0);
+    transform: translate(3px, 0);
+    filter: drop-shadow(-2px 0 #00E5FF);
+  }
+  100% {
+    clip-path: inset(25% 0 60% 0);
+    transform: translate(1px, -2px);
+    filter: drop-shadow(2px 0 #FF4D00);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .glitch-image-wrap:hover .glitch-slice-layer-1 {
+    display: block;
+    animation: glitch-slice-1 0.28s steps(2, end) infinite;
+  }
+  .glitch-image-wrap:hover .glitch-slice-layer-2 {
+    display: block;
+    animation: glitch-slice-2 0.32s steps(2, end) infinite;
+  }
+}
+
+/* Image loading: pixelated resolve to sharp */
+.image-pixelated-loading {
+  filter: blur(12px) contrast(150%);
+  transform: scale(1.02);
+  transition: filter 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.image-pixelated-loaded {
+  filter: blur(0px) contrast(100%);
+  transform: scale(1);
+}
+
+/* Brief Hero Random Glitch */
+@keyframes hero-glitch-pulse {
+  0% {
+    transform: translate(0);
+    filter: none;
+  }
+  20% {
+    transform: translate(-2px, 1px) skewX(-0.5deg);
+    filter: drop-shadow(1.5px 0 #FF4D00) drop-shadow(-1.5px 0 #00E5FF);
+  }
+  40% {
+    transform: translate(3px, -1px) skewX(0.5deg);
+    filter: drop-shadow(-2px 0 #FF4D00);
+  }
+  60% {
+    transform: translate(-1px, 2px);
+    filter: drop-shadow(2px 0 #00E5FF);
+  }
+  80% {
+    transform: translate(1px, -1px);
+    filter: drop-shadow(-1px 0 #FF4D00);
+  }
+  100% {
+    transform: translate(0);
+    filter: none;
+  }
+}
+
+.glitch-active {
+  animation: hero-glitch-pulse 0.16s ease-in-out;
+}
+
+/* Disable glitch effects and 3D motion when prefers-reduced-motion is active */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .glitch-image-wrap:hover .glitch-slice-layer-1,
+  .glitch-image-wrap:hover .glitch-slice-layer-2,
+  .glitch-active {
+    animation: none !important;
+    display: none !important;
+  }
+}
+
+/* Custom minimal scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F5F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(14, 14, 14, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF4D00;
+}
+
+/* Focus styles for keyboard accessibility */
+:focus-visible {
+  outline: 2px solid #FF4D00;
+  outline-offset: 2px;
+}
