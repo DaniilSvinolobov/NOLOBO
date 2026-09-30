@@ -22,7 +22,12 @@ export default function App() {
 
   // Initialize or synchronize language with browser or user preference if available
   useEffect(() => {
-    const saved = localStorage.getItem('nolobo_lang') as Language | null;
+    let saved: Language | null = null;
+    try {
+      saved = localStorage.getItem('nolobo_lang') as Language | null;
+    } catch {
+      // Storage unavailable, keep default language
+    }
     if (saved && (saved === 'en' || saved === 'de' || saved === 'es' || saved === 'ca' || saved === 'ru')) {
       setCurrentLang(saved);
     }

@@ -271,36 +271,17 @@ export interface ContentData {
   studio: {
     sectionNumber: string;
     label: LocalizedString;
-    kicker: LocalizedString;
     headline: LocalizedString;
     subline: LocalizedString;
     blocks: {
       number: string;
       title: LocalizedString;
       text: LocalizedString;
-      full: LocalizedString;
     }[];
     mapLabels: {
       studio: LocalizedString;
-      artisans: LocalizedString;
-      specialists: LocalizedString;
-      sites: LocalizedString;
     };
-    readouts: {
-      mode: LocalizedString;
-      projectsPerYear: LocalizedString;
-      disciplines: LocalizedString;
-    };
-    manifesto?: {
-      p1: LocalizedString;
-      p2: LocalizedString;
-    };
-    metrics?: {
-      label: LocalizedString;
-      value: string;
-      note: LocalizedString;
-    }[];
-    networkNodes?: string[];
+    map: Record<string, LocalizedString>;
   };
   contact: {
     sectionNumber: string;
@@ -1605,208 +1586,49 @@ export const content: ContentData = {
   ],
   studio: {
     sectionNumber: "04",
-    label: {
-      en: "04 · Studio",
-      es: "04 · Estudio",
-      ca: "04 · Estudi",
-      de: "04 · Studio",
-      ru: "04 · Студия"
-    },
-    kicker: {
-      en: "04 · Studio",
-      es: "04 · Estudio",
-      ca: "04 · Estudi",
-      de: "04 · Studio",
-      ru: "04 · Студия"
-    },
-    headline: {
-      en: "Small by choice.",
-      es: "Pequeños por elección.",
-      ca: "Petits per elecció.",
-      de: "Bewusst klein.",
-      ru: "Небольшие — осознанно."
-    },
-    subline: {
-      en: "Architecture, urbanism and landscape. Based in Mallorca.",
-      es: "Arquitectura, urbanismo y paisaje. Desde Mallorca.",
-      ca: "Arquitectura, urbanisme i paisatge. Des de Mallorca.",
-      de: "Architektur, Städtebau und Landschaft. Mit Sitz auf Mallorca.",
-      ru: "Архитектура, градостроительство и ландшафт. Базируемся на Майорке."
-    },
+    label: {"en": "Studio", "es": "Estudio", "ca": "Estudi", "de": "Studio", "ru": "Студия"},
+    headline: {"en": "Rooted on the island.\nConnected beyond it.", "es": "Arraigados en la isla.\nConectados más allá.", "ca": "Arrelats a l'illa.\nConnectats més enllà.", "de": "Auf der Insel verwurzelt.\nWeit darüber hinaus vernetzt.", "ru": "Корни — на острове.\nСвязи — далеко за его пределами."},
+    subline: {"en": "Architecture, urbanism and landscape from Mallorca. Local knowledge on the ground, specialists wherever the best ones are.", "es": "Arquitectura, urbanismo y paisaje desde Mallorca. Conocimiento local sobre el terreno, especialistas allí donde estén los mejores.", "ca": "Arquitectura, urbanisme i paisatge des de Mallorca. Coneixement local sobre el terreny, especialistes allà on siguin els millors.", "de": "Architektur, Städtebau und Landschaft von Mallorca aus. Lokales Wissen vor Ort, Fachleute dort, wo die besten sind.", "ru": "Архитектура, градостроительство и ландшафт с Майорки. Местные знания — на месте, специалисты — там, где лучшие."},
     blocks: [
-      {
-        number: "01",
-        title: {
-          en: "Local",
-          es: "Locales",
-          ca: "Locals",
-          de: "Vor Ort",
-          ru: "Местные"
-        },
-        text: {
-          en: "We live on the island. We know its terrain, climate, rules and habitats, and we work to keep them intact.",
-          es: "Vivimos en la isla. Conocemos su terreno, su clima, su normativa y sus hábitats, y trabajamos para conservarlos.",
-          ca: "Vivim a l'illa. Coneixem el seu terreny, el clima, la normativa i els hàbitats, i treballam per conservar-los.",
-          de: "Wir leben auf der Insel. Wir kennen Gelände, Klima, Vorschriften und Lebensräume – und arbeiten daran, sie zu erhalten.",
-          ru: "Мы живём на острове. Знаем его рельеф, климат, нормы и природную среду — и работаем, чтобы их сохранить."
-        },
-        full: {
-          en: "Local — We live on the island. We know its terrain, climate, rules and habitats, and we work to keep them intact.",
-          es: "Locales — Vivimos en la isla. Conocemos su terreno, su clima, su normativa y sus hábitats, y trabajamos para conservarlos.",
-          ca: "Locals — Vivim a l'illa. Coneixem el seu terreny, el clima, la normativa i els hàbitats, i treballam per conservar-los.",
-          de: "Vor Ort — Wir leben auf der Insel. Wir kennen Gelände, Klima, Vorschriften und Lebensräume – und arbeiten daran, sie zu erhalten.",
-          ru: "Местные — Мы живём на острове. Знаем его рельеф, климат, нормы и природную среду — и работаем, чтобы их сохранить."
-        }
-      },
-      {
-        number: "02",
-        title: {
-          en: "Flexible",
-          es: "Flexibles",
-          ca: "Flexibles",
-          de: "Flexibel",
-          ru: "Гибкие"
-        },
-        text: {
-          en: "Remote by default. Face to face whenever the project needs it: with you, on site, with builders.",
-          es: "En remoto por defecto. En persona siempre que el proyecto lo pida: contigo, en obra y con las constructoras.",
-          ca: "En remot per defecte. En persona sempre que el projecte ho demani: amb tu, a l'obra i amb les constructores.",
-          de: "Standardmäßig remote. Persönlich, wann immer das Projekt es braucht: mit Ihnen, auf der Baustelle, mit den Baufirmen.",
-          ru: "По умолчанию удалённо. Лично — всегда, когда это нужно проекту: с вами, на площадке, с подрядчиками."
-        },
-        full: {
-          en: "Flexible — Remote by default. Face to face whenever the project needs it: with you, on site, with builders.",
-          es: "Flexibles — En remoto por defecto. En persona siempre que el proyecto lo pida: contigo, en obra y con las constructoras.",
-          ca: "Flexibles — En remot per defecte. En persona sempre que el projecte ho demani: amb tu, a l'obra i amb les constructores.",
-          de: "Flexibel — Standardmäßig remote. Persönlich, wann immer das Projekt es braucht: mit Ihnen, auf der Baustelle, mit den Baufirmen.",
-          ru: "Гибкие — По умолчанию удалённо. Лично — всегда, когда это нужно проекту: с вами, на площадке, с подрядчиками."
-        }
-      },
-      {
-        number: "03",
-        title: {
-          en: "Focused",
-          es: "Enfocados",
-          ca: "Enfocats",
-          de: "Fokussiert",
-          ru: "Сфокусированные"
-        },
-        text: {
-          en: "A limited number of projects per year. Full attention for every client, a healthy team.",
-          es: "Un número limitado de proyectos al año. Atención plena a cada cliente y un equipo con equilibrio.",
-          ca: "Un nombre limitat de projectes a l'any. Atenció plena a cada client i un equip amb equilibri.",
-          de: "Eine begrenzte Zahl an Projekten pro Jahr. Volle Aufmerksamkeit für jeden Kunden, ein Team mit Balance.",
-          ru: "Ограниченное число проектов в год. Полное внимание каждому клиенту и команда без выгорания."
-        },
-        full: {
-          en: "Focused — A limited number of projects per year. Full attention for every client, a healthy team.",
-          es: "Enfocados — Un número limitado de proyectos al año. Atención plena a cada cliente y un equipo con equilibrio.",
-          ca: "Enfocats — Un nombre limitat de projectes a l'any. Atenció plena a cada client i un equip amb equilibri.",
-          de: "Fokussiert — Eine begrenzte Zahl an Projekten pro Jahr. Volle Aufmerksamkeit für jeden Kunden, ein Team mit Balance.",
-          ru: "Сфокусированные — Ограниченное число проектов в год. Полное внимание каждому клиенту и команда без выгорания."
-        }
-      },
-      {
-        number: "04",
-        title: {
-          en: "Experienced",
-          es: "Con experiencia",
-          ca: "Amb experiència",
-          de: "Erfahren",
-          ru: "Опытные"
-        },
-        text: {
-          en: "Architecture, urbanism and landscape projects in Germany and Spain, national and international.",
-          es: "Proyectos de arquitectura, urbanismo y paisaje en Alemania y España, nacionales e internacionales.",
-          ca: "Projectes d'arquitectura, urbanisme i paisatge a Alemanya i Espanya, nacionals i internacionals.",
-          de: "Architektur-, Städtebau- und Landschaftsprojekte in Deutschland und Spanien, national wie international.",
-          ru: "Проекты в архитектуре, градостроительстве и ландшафте в Германии и Испании — национальные и международные."
-        },
-        full: {
-          en: "Experienced — Architecture, urbanism and landscape projects in Germany and Spain, national and international.",
-          es: "Con experiencia — Proyectos de arquitectura, urbanismo y paisaje en Alemania y España, nacionales e internacionales.",
-          ca: "Amb experiència — Projectes d'arquitectura, urbanisme i paisatge a Alemanya i Espanya, nacionals i internacionals.",
-          de: "Erfahren — Architektur-, Städtebau- und Landschaftsprojekte in Deutschland und Spanien, national wie international.",
-          ru: "Опытные — Проекты в архитектуре, градостроительстве и ландшафте в Германии и Испании — национальные и международные."
-        }
-      },
-      {
-        number: "05",
-        title: {
-          en: "Connected",
-          es: "Conectados",
-          ca: "Connectats",
-          de: "Vernetzt",
-          ru: "Сеть партнёров"
-        },
-        text: {
-          en: "Local artisans. Local specialists in analysis, computational design and engineering.",
-          es: "Artesanos locales. Especialistas locales en análisis, diseño computacional e ingeniería.",
-          ca: "Artesans locals. Especialistes locals en anàlisi, disseny computacional i enginyeria.",
-          de: "Lokales Handwerk. Lokale Fachleute für Analyse, Computational Design und Ingenieurwesen.",
-          ru: "Местные мастера. Местные специалисты по анализу, вычислительному проектированию и инженерии."
-        },
-        full: {
-          en: "Connected — Local artisans. Local specialists in analysis, computational design and engineering.",
-          es: "Conectados — Artesanos locales. Especialistas locales en análisis, diseño computacional e ingeniería.",
-          ca: "Connectats — Artesans locals. Especialistes locals en anàlisi, disseny computacional i enginyeria.",
-          de: "Vernetzt — Lokales Handwerk. Lokale Fachleute für Analyse, Computational Design und Ingenieurwesen.",
-          ru: "Сеть партнёров — Местные мастера. Местные специалисты по анализу, вычислительному проектированию и инженерии."
-        }
-      }
+      { number: "01", title: {"en": "Local", "es": "Locales", "ca": "Locals", "de": "Vor Ort", "ru": "Местные"}, text: {"en": "We live on the island. We know its terrain, climate, rules and habitats, and we work to keep them intact.", "es": "Vivimos en la isla. Conocemos su terreno, su clima, su normativa y sus hábitats, y trabajamos para conservarlos.", "ca": "Vivim a l'illa. Coneixem el seu terreny, el clima, la normativa i els hàbitats, i treballam per conservar-los.", "de": "Wir leben auf der Insel. Wir kennen Gelände, Klima, Vorschriften und Lebensräume – und arbeiten daran, sie zu erhalten.", "ru": "Мы живём на острове. Знаем его рельеф, климат, нормы и природную среду — и работаем, чтобы их сохранить."} },
+      { number: "02", title: {"en": "Remote-first", "es": "Teletrabajo", "ca": "Teletreball", "de": "Remote-first", "ru": "Удалённо"}, text: {"en": "The team works remotely. We meet in person whenever it matters: with you, on site, with builders.", "es": "El equipo trabaja en remoto. Nos vemos en persona siempre que importa: contigo, en obra y con las constructoras.", "ca": "L'equip treballa en remot. Ens veiem en persona sempre que importa: amb tu, a l'obra i amb les constructores.", "de": "Das Team arbeitet remote. Persönlich treffen wir uns, wann immer es zählt: mit Ihnen, auf der Baustelle, mit den Baufirmen.", "ru": "Команда работает удалённо. Встречаемся лично, когда это важно: с вами, на площадке, с подрядчиками."} },
+      { number: "03", title: {"en": "Focused", "es": "Enfocados", "ca": "Enfocats", "de": "Fokussiert", "ru": "Сфокусированные"}, text: {"en": "A limited number of projects per year. Full attention for every client, a healthy team.", "es": "Un número limitado de proyectos al año. Atención plena a cada cliente y un equipo con equilibrio.", "ca": "Un nombre limitat de projectes a l'any. Atenció plena a cada client i un equip amb equilibri.", "de": "Eine begrenzte Zahl an Projekten pro Jahr. Volle Aufmerksamkeit für jeden Kunden, ein Team mit Balance.", "ru": "Ограниченное число проектов в год. Полное внимание каждому клиенту и команда без выгорания."} },
+      { number: "04", title: {"en": "Experienced", "es": "Con experiencia", "ca": "Amb experiència", "de": "Erfahren", "ru": "Опытные"}, text: {"en": "Architecture, urbanism and landscape projects in Germany and Spain, national and international.", "es": "Proyectos de arquitectura, urbanismo y paisaje en Alemania y España, nacionales e internacionales.", "ca": "Projectes d'arquitectura, urbanisme i paisatge a Alemanya i Espanya, nacionals i internacionals.", "de": "Architektur-, Städtebau- und Landschaftsprojekte in Deutschland und Spanien, national wie international.", "ru": "Проекты в архитектуре, градостроительстве и ландшафте в Германии и Испании — национальные и международные."} },
+      { number: "05", title: {"en": "Connected", "es": "Conectados", "ca": "Connectats", "de": "Vernetzt", "ru": "Сеть партнёров"}, text: {"en": "Local artisans, techniques and materials, and people we know personally. Computational design and engineering from a remote network of specialists.", "es": "Artesanos, técnicas y materiales locales, y gente a la que conocemos en persona. Diseño computacional e ingeniería con una red remota de especialistas.", "ca": "Artesans, tècniques i materials locals, i gent que coneixem en persona. Disseny computacional i enginyeria amb una xarxa remota d'especialistes.", "de": "Lokales Handwerk, Techniken und Materialien – und Menschen, die wir persönlich kennen. Computational Design und Engineering über ein Remote-Netzwerk von Fachleuten.", "ru": "Местные мастера, техники и материалы — и люди, которых мы знаем лично. Вычислительное проектирование и инженерия — через удалённую сеть специалистов."} }
     ],
-    mapLabels: {
-      studio: {
-        en: "Studio",
-        es: "Estudio",
-        ca: "Estudi",
-        de: "Studio",
-        ru: "Студия"
-      },
-      artisans: {
-        en: "Artisans",
-        es: "Artesanos",
-        ca: "Artesans",
-        de: "Handwerk",
-        ru: "Мастера"
-      },
-      specialists: {
-        en: "Specialists",
-        es: "Especialistas",
-        ca: "Especialistes",
-        de: "Fachleute",
-        ru: "Специалисты"
-      },
-      sites: {
-        en: "Sites",
-        es: "Proyectos",
-        ca: "Projectes",
-        de: "Projekte",
-        ru: "Объекты"
-      }
-    },
-    readouts: {
-      mode: {
-        en: "Mode: Remote · On site",
-        es: "Modalidad: Remoto · En obra",
-        ca: "Modalitat: Remot · A l'obra",
-        de: "Modus: Remote · Vor Ort",
-        ru: "Режим: Удалённо · На площадке"
-      },
-      projectsPerYear: {
-        en: "Projects / year: [X]",
-        es: "Proyectos / año: [X]",
-        ca: "Projectes / any: [X]",
-        de: "Projekte / Jahr: [X]",
-        ru: "Проектов в год: [X]"
-      },
-      disciplines: {
-        en: "Disciplines: 3",
-        es: "Disciplinas: 3",
-        ca: "Disciplines: 3",
-        de: "Disziplinen: 3",
-        ru: "Направлений: 3"
-      }
+    mapLabels: { studio: {"en": "Studio", "es": "Estudio", "ca": "Estudi", "de": "Studio", "ru": "Студия"} },
+    map: {
+      fig: {"en": "Fig. 04 · Studio network", "es": "Fig. 04 · Red del estudio", "ca": "Fig. 04 · Xarxa de l'estudi", "de": "Abb. 04 · Studionetzwerk", "ru": "Рис. 04 · Сеть студии"},
+      layerAria: {"en": "Map layers", "es": "Capas del mapa", "ca": "Capes del mapa", "de": "Kartenebenen", "ru": "Слои карты"},
+      both: {"en": "Both", "es": "Todo", "ca": "Tot", "de": "Beides", "ru": "Всё"},
+      island: {"en": "Island", "es": "Isla", "ca": "Illa", "de": "Insel", "ru": "Остров"},
+      remote: {"en": "Remote", "es": "Remoto", "ca": "Remot", "de": "Remote", "ru": "Удалённо"},
+      studioPlace: {"en": "Palma", "es": "Palma", "ca": "Palma", "de": "Palma", "ru": "Пальма"},
+      site: {"en": "Site", "es": "Obra", "ca": "Obra", "de": "Projekt", "ru": "Объект"},
+      stone: {"en": "Stone", "es": "Piedra", "ca": "Pedra", "de": "Naturstein", "ru": "Камень"},
+      drystone: {"en": "Dry-stone walls", "es": "Piedra en seco", "ca": "Pedra en sec", "de": "Trockenmauern", "ru": "Сухая кладка"},
+      ceramics: {"en": "Ceramics", "es": "Cerámica", "ca": "Ceràmica", "de": "Keramik", "ru": "Керамика"},
+      wood: {"en": "Olive wood", "es": "Madera de olivo", "ca": "Fusta d'olivera", "de": "Olivenholz", "ru": "Оливковое дерево"},
+      builders: {"en": "Builders", "es": "Constructoras", "ca": "Constructores", "de": "Baufirmen", "ru": "Подрядчики"},
+      wetland: {"en": "Wetland", "es": "Humedal", "ca": "Zona humida", "de": "Feuchtgebiet", "ru": "Водно-болотные угодья"},
+      peak: {"en": "Highest peak", "es": "Cima más alta", "ca": "Cim més alt", "de": "Höchster Gipfel", "ru": "Высшая точка"},
+      remoteZone: {"en": "Remote · from anywhere", "es": "En remoto · desde cualquier lugar", "ca": "En remot · des de qualsevol lloc", "de": "Remote · ortsunabhängig", "ru": "Удалённо · из любой точки"},
+      team: {"en": "Studio team", "es": "Equipo", "ca": "Equip", "de": "Studioteam", "ru": "Команда"},
+      comp: {"en": "Computational design", "es": "Diseño computacional", "ca": "Disseny computacional", "de": "Computational Design", "ru": "Вычислительный дизайн"},
+      eng: {"en": "Engineering", "es": "Ingeniería", "ca": "Enginyeria", "de": "Ingenieurwesen", "ru": "Инженерия"},
+      analysis: {"en": "Analysis", "es": "Análisis", "ca": "Anàlisi", "de": "Analyse", "ru": "Анализ"},
+      experience: {"en": "Project experience", "es": "Experiencia en proyectos", "ca": "Experiència en projectes", "de": "Projekterfahrung", "ru": "Опыт проектов"},
+      legendInPerson: {"en": "In person", "es": "En persona", "ca": "En persona", "de": "Persönlich", "ru": "Лично"},
+      legendRemote: {"en": "Remote", "es": "En remoto", "ca": "En remot", "de": "Remote", "ru": "Удалённо"},
+      legendArtisans: {"en": "Artisans", "es": "Artesanos", "ca": "Artesans", "de": "Handwerk", "ru": "Мастера"},
+      legendSites: {"en": "Sites", "es": "Obras", "ca": "Obres", "de": "Projekte", "ru": "Объекты"},
+      legendHabitat: {"en": "Habitat", "es": "Hábitat", "ca": "Hàbitat", "de": "Lebensraum", "ru": "Природная среда"},
+      dailyWork: {"en": "Daily work", "es": "Trabajo diario", "ca": "Feina diària", "de": "Tagesarbeit", "ru": "Ежедневная работа"},
+      meetings: {"en": "Meetings", "es": "Reuniones", "ca": "Reunions", "de": "Termine", "ru": "Встречи"},
+      projectsYear: {"en": "Projects / year", "es": "Proyectos / año", "ca": "Projectes / any", "de": "Projekte / Jahr", "ru": "Проектов в год"},
+      disciplines: {"en": "Disciplines", "es": "Disciplinas", "ca": "Disciplines", "de": "Disziplinen", "ru": "Направлений"},
+      north: {"en": "N", "es": "N", "ca": "N", "de": "N", "ru": "С"},
+      mapAria: {"en": "Map of Mallorca showing the studio in Palma, local artisans, builders and project sites connected in person, and a remote network of specialists.", "es": "Mapa de Mallorca con el estudio en Palma, artesanos, constructoras y obras conectados en persona, y una red remota de especialistas.", "ca": "Mapa de Mallorca amb l'estudi a Palma, artesans, constructores i obres connectats en persona, i una xarxa remota d'especialistes.", "de": "Karte von Mallorca mit dem Studio in Palma, lokalem Handwerk, Baufirmen und Projekten vor Ort sowie einem Remote-Netzwerk von Fachleuten.", "ru": "Карта Майорки: студия в Пальме, мастера, подрядчики и объекты — лично, и удалённая сеть специалистов."}
     }
   },
   contact: {
