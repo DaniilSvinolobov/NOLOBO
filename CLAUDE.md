@@ -12,6 +12,9 @@ React + Vite + Tailwind + motion. All copy lives in src/content.ts.
 - Copy tone: simple, direct, confident; no marketing words or poetic phrasing
 
 ## Languages
+**Current phase: English only.** The site runs in English only for now (`ENABLED_LANGUAGES = ['en']` in content.ts, language switcher hidden). Write and edit only the `en` values. ES, CA, DE and RU are optional and fall back to English automatically, so new strings need English only. Don't add or update translations until I say so; leave existing ones as they are. When I ask, we translate all final copy at once and re-enable the switcher by adding the languages back to `ENABLED_LANGUAGES`.
+
+Rules for when we translate:
 Every visible string exists in EN, ES, CA, DE, RU in content.ts. Translate by meaning, not word for word. DE uses "Sie", ES/CA use "tú", RU uses "вы", CA uses Balearic forms (escoltam, treballam). Never hardcode text in components.
 
 ## Workflow

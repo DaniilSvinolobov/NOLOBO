@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { content, Language } from '../content';
+import { content, Language, ENABLED_LANGUAGES } from '../content';
 
 interface HeaderProps {
   currentLang: Language;
@@ -28,7 +28,9 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
     }
   };
 
-  const languages: Language[] = ['en', 'es', 'ca', 'de', 'ru'];
+  const languages: Language[] = (['en', 'es', 'ca', 'de', 'ru'] as Language[]).filter((lang) =>
+    ENABLED_LANGUAGES.includes(lang)
+  );
 
   return (
     <header className="sticky top-0 z-40 bg-[#F5F5F2]/90 backdrop-blur-md border-b border-hairline">
@@ -61,27 +63,29 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
 
         {/* Zone 3: Language switcher in mono + quick CTA */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <div
-            className="flex items-center text-xs font-mono divide-x divide-hairline border border-hairline bg-[#F5F5F2]"
-            role="group"
-            aria-label={content.aria.langSelect[currentLang]}
-          >
-            {languages.map((lang) => (
-              <button
-                key={lang}
-                type="button"
-                onClick={() => onLanguageChange(lang)}
-                className={`px-1.5 sm:px-2 py-1 uppercase transition-colors whitespace-nowrap text-[11px] ${
-                  currentLang === lang
-                    ? 'bg-[#0E0E0E] text-[#F5F5F2] font-semibold'
-                    : 'text-[#0E0E0E]/70 hover:text-[#0E0E0E] hover:bg-[#0E0E0E]/5'
-                }`}
-                aria-pressed={currentLang === lang}
-              >
-                {lang}
-              </button>
-            ))}
-          </div>
+          {languages.length > 1 && (
+            <div
+              className="flex items-center text-xs font-mono divide-x divide-hairline border border-hairline bg-[#F5F5F2]"
+              role="group"
+              aria-label={content.aria.langSelect[currentLang]}
+            >
+              {languages.map((lang) => (
+                <button
+                  key={lang}
+                  type="button"
+                  onClick={() => onLanguageChange(lang)}
+                  className={`px-1.5 sm:px-2 py-1 uppercase transition-colors whitespace-nowrap text-[11px] ${
+                    currentLang === lang
+                      ? 'bg-[#0E0E0E] text-[#F5F5F2] font-semibold'
+                      : 'text-[#0E0E0E]/70 hover:text-[#0E0E0E] hover:bg-[#0E0E0E]/5'
+                  }`}
+                  aria-pressed={currentLang === lang}
+                >
+                  {lang}
+                </button>
+              ))}
+            </div>
+          )}
 
           <a
             href="#contact"

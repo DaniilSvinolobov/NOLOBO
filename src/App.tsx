@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { content, Language } from './content';
+import { content, Language, ENABLED_LANGUAGES } from './content';
 import { BackgroundGrid } from './components/BackgroundGrid';
 import { CrosshairCursor } from './components/CrosshairCursor';
 import { Header } from './components/Header';
@@ -28,7 +28,7 @@ export default function App() {
     } catch {
       // Storage unavailable, keep default language
     }
-    if (saved && (saved === 'en' || saved === 'de' || saved === 'es' || saved === 'ca' || saved === 'ru')) {
+    if (saved && ENABLED_LANGUAGES.includes(saved)) {
       setCurrentLang(saved);
     }
   }, []);
