@@ -128,6 +128,16 @@ interface ContentSource {
     locationName: string;
     timezone: string;
     availability: LocalizedStringSource;
+    conditions: {
+      place: LocalizedStringSource;
+      sunsetLabel: LocalizedStringSource;
+      seaLabel: LocalizedStringSource;
+      /** Static placeholder values in °C until a live source is connected. */
+      airTemp: number;
+      seaTemp: number;
+      latitude: number;
+      longitude: number;
+    };
     documentTitle: LocalizedStringSource;
     description: LocalizedStringSource;
   };
@@ -247,6 +257,7 @@ interface ContentSource {
     intro: LocalizedStringSource;
     closeCollaboration: LocalizedStringSource;
     steps: ApproachStepSource[];
+    commitments: LocalizedStringSource[];
   };
   services: {
     sectionNumber: string;
@@ -318,6 +329,11 @@ interface ContentSource {
     email: string;
     phone: string;
     address: string;
+    portrait: {
+      src: string;
+      alt: LocalizedStringSource;
+      line: LocalizedStringSource;
+    };
     form: {
       nameLabel: LocalizedStringSource;
       emailLabel: LocalizedStringSource;
@@ -403,15 +419,24 @@ const source: ContentSource = {
       ca: "Acceptant projectes 2027",
       ru: "Прием проектов на 2027 год"
     },
+    conditions: {
+      place: { en: "Palma" },
+      sunsetLabel: { en: "Sunset" },
+      seaLabel: { en: "Sea" },
+      airTemp: 24,
+      seaTemp: 23,
+      latitude: 39.5696,
+      longitude: 2.6502
+    },
     documentTitle: {
-      en: "NOLOBO — Architecture that starts with the site",
+      en: "NOLOBO — Architecture & Landscape, Mallorca",
       es: "NOLOBO — Arquitectura que parte del lugar",
       ca: "NOLOBO — Arquitectura que parteix del lloc",
       de: "NOLOBO — Architektur, die beim Ort beginnt",
       ru: "NOLOBO — Архитектура, которая начинается с места"
     },
     description: {
-      en: "Architects and landscape architects in Mallorca. We listen first, work with local materials and use digital tools where they make a difference.",
+      en: "Architects and landscape architects in Mallorca. We start with your values, study the site with local knowledge and advanced tools, and build so Mallorca stays Mallorca.",
       es: "Arquitectos y paisajistas en Mallorca. Primero escuchamos, trabajamos con materiales locales y usamos herramientas digitales donde marcan la diferencia.",
       ca: "Arquitectes i paisatgistes a Mallorca. Primer escoltam, treballam amb materials locals i utilitzam eines digitals on marquen la diferència.",
       de: "Architekten und Landschaftsarchitekten auf Mallorca. Wir hören zuerst zu, arbeiten mit lokalen Materialien und setzen digitale Werkzeuge dort ein, wo sie den Unterschied machen.",
@@ -699,7 +724,7 @@ const source: ContentSource = {
           ru: "Диалог"
         },
         title: {
-          en: "Understanding the client, their daily life and wishes",
+          en: "Brief on site: routines, priorities, budget, timeline.",
           de: "Verständnis für den Bauherrn, ihren Alltag und persönliche Wünsche",
           es: "Comprender al cliente, su vida cotidiana y anhelos",
           ca: "Comprendre el client, la seva vida quotidiana i desitjos",
@@ -734,7 +759,7 @@ const source: ContentSource = {
           ru: "Место"
         },
         title: {
-          en: "Reading the terrain, light, wind and vegetation",
+          en: "Survey, microclimate, vegetation, regulations.",
           de: "Gelände, Licht, Wind und Vegetation lesen",
           es: "Leer el terreno, la luz, el viento y la vegetación",
           ca: "Llegir el terreny, la llum, el vent i la vegetació",
@@ -769,7 +794,7 @@ const source: ContentSource = {
           ru: "Проект"
         },
         title: {
-          en: "Architecture and landscape as one",
+          en: "Building and landscape as one project.",
           de: "Architektur und Landschaft als Einheit",
           es: "Arquitectura y paisaje como uno solo",
           ca: "Arquitectura i paisatge com un sol organisme",
@@ -804,7 +829,7 @@ const source: ContentSource = {
           ru: "Ремесло"
         },
         title: {
-          en: "Craft: local materials",
+          en: "Local builders and artisans we know by name.",
           de: "Handwerk: lokale Materialien",
           es: "Oficio: materiales locales",
           ca: "Artesania: materials locals",
@@ -839,7 +864,7 @@ const source: ContentSource = {
           ru: "Технологии"
         },
         title: {
-          en: "High-end tech for optimisation, analysis, and aftercare",
+          en: "Energy, earthworks and cost simulated before building.",
           de: "High-End-Technologie für Optimierung, Analyse und Nachsorge",
           es: "Tecnología avanzada para optimización, análisis y posventa",
           ca: "Tecnologia avançada per a optimització, anàlisi i cura posterior",
@@ -864,6 +889,12 @@ const source: ContentSource = {
           value: "LONG-TERM CARE"
         }
       }
+    ],
+    commitments: [
+      { en: "One architect from first meeting to handover" },
+      { en: "On site regularly during construction" },
+      { en: "Reply within one working day" },
+      { en: "6 projects per year" }
     ]
   },
   services: {
@@ -1711,6 +1742,12 @@ const source: ContentSource = {
     email: "studio@nolobo.es",
     phone: "+34 971 88 42 10",
     address: "Carrer de Sant Feliu 17, 07012 Palma de Mallorca, Illes Balears",
+    portrait: {
+      // Placeholder until a real portrait is added to public/images/.
+      src: "/images/portrait-placeholder.svg",
+      alt: { en: "Portrait of Daniil" },
+      line: { en: "You'll talk to Daniil directly." }
+    },
     form: {
       nameLabel: {
         en: "Full Name / Organization",

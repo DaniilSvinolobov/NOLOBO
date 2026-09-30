@@ -3,39 +3,28 @@ import { motion } from 'motion/react';
 import { content, Language } from '../content';
 import { TerrainWireframe } from './TerrainWireframe';
 import { ScrambleHeadline } from './ScrambleHeadline';
+import { formatSunset } from './sunset';
 
 interface HeroProps {
   currentLang: Language;
 }
 
 export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
-  const [mallorcaTime, setMallorcaTime] = useState('');
+  const [sunset, setSunset] = useState<string | null>(null);
   const [isGlitching, setIsGlitching] = useState(false);
   const t = content.hero;
   const meta = content.meta;
 
-  // Live Mallorca local time
-  useEffect(() => {
-    const updateTime = () => {
-      try {
-        const now = new Date();
-        const formatter = new Intl.DateTimeFormat('en-GB', {
-          timeZone: 'Europe/Madrid',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        });
-        setMallorcaTime(`${formatter.format(now)} CEST`);
-      } catch {
-        setMallorcaTime('12:45:00 CEST');
-      }
-    };
+  const conditions = meta.conditions;
 
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
+  // Today's sunset in Palma, recalculated every 10 minutes so it rolls over at midnight
+  useEffect(() => {
+    const update = () =>
+      setSunset(formatSunset(new Date(), conditions.latitude, conditions.longitude, meta.timezone));
+    update();
+    const interval = setInterval(update, 10 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [conditions.latitude, conditions.longitude, meta.timezone]);
 
   // Brief (100-200ms) random glitch every 6-10 seconds
   useEffect(() => {
@@ -72,26 +61,28 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Technical Corner & Metadata Bar */}
         <div className="border border-hairline bg-[#F5F5F2]/80 p-3 sm:p-3.5 mb-6 sm:mb-10 flex flex-wrap items-center justify-between gap-y-2.5 font-mono text-[11px] text-[#0E0E0E]/70 divide-y sm:divide-y-0 sm:divide-x divide-hairline">
-          {/* Node 01: Location & Coordinates */}
-          <div className="flex items-center gap-2 pr-0 sm:pr-4">
+          {/* Node 01: Island conditions */}
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pr-0 sm:pr-4 tabular-nums">
             <span className="text-[#FF4D00]">⊕</span>
-            <span className="text-[#0E0E0E] font-medium">{meta.locationName}</span>
+            <span className="text-[#0E0E0E] font-medium">{conditions.place[currentLang]}</span>
             <span className="text-[#0E0E0E]/40">·</span>
-            <span>{meta.coordinates}</span>
+            <span className="text-[#0E0E0E]">{conditions.airTemp}°C</span>
+            {sunset && (
+              <>
+                <span className="text-[#0E0E0E]/40">·</span>
+                <span>
+                  {conditions.sunsetLabel[currentLang]} <span className="text-[#0E0E0E]">{sunset}</span>
+                </span>
+              </>
+            )}
+            <span className="text-[#0E0E0E]/40">·</span>
+            <span>
+              {conditions.seaLabel[currentLang]} <span className="text-[#0E0E0E]">{conditions.seaTemp}°C</span>
+            </span>
           </div>
 
-          {/* Node 02: Real-time Mallorca clock */}
-          <div className="flex items-center gap-2 pt-2 sm:pt-0 sm:px-4 tabular-nums">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[#0E0E0E]/50">CLOCK:</span>
-            <span className="text-[#0E0E0E] font-semibold">{mallorcaTime || '12:00:00 CEST'}</span>
-          </div>
-
-          {/* Node 03: Status & Elevation */}
+          {/* Node 02: Availability */}
           <div className="flex items-center gap-3 pt-2 sm:pt-0 sm:pl-4">
-            <span className="text-[#0E0E0E]/50">DATUM:</span>
-            <span className="text-[#0E0E0E]">{meta.elevation}</span>
-            <span className="text-[#0E0E0E]/40">·</span>
             <span className="inline-flex items-center gap-1.5 text-[#0E0E0E] font-medium">
               <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
               <span>{meta.availability[currentLang]}</span>

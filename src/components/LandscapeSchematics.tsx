@@ -2,6 +2,23 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'motion/react';
 import { content, Language, MaterialItem } from '../content';
 import { ScrambleHeadline } from './ScrambleHeadline';
+import { useColourOnView } from './useColourOnView';
+
+/** Greyscale material photo: colour on hover, or while in view on touch devices. */
+const MaterialTileImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
+  const [ref, inColour] = useColourOnView<HTMLImageElement>();
+  return (
+    <img
+      ref={ref}
+      src={src}
+      alt={alt}
+      loading="lazy"
+      className={`w-full h-full object-cover filter contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out ${
+        inColour ? 'grayscale-0' : 'grayscale'
+      }`}
+    />
+  );
+};
 
 interface LandscapeSchematicsProps {
   currentLang: Language;
@@ -375,12 +392,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
 
                 {/* Large Macro Texture Image */}
                 <div className="aspect-[4/3] overflow-hidden relative bg-[#0E0E0E]/10">
-                  <img
-                    src={mat.image}
-                    alt={mat.name[currentLang]}
-                    loading="lazy"
-                    className="w-full h-full object-cover filter grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out"
-                  />
+                  <MaterialTileImage src={mat.image} alt={mat.name[currentLang]} />
                   <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-[#F5F5F2]/95 border border-hairline font-mono text-[9px] text-[#0E0E0E]">
                     {mat.spec}
                   </div>

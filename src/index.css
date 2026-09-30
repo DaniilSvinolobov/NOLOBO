@@ -47,7 +47,7 @@
   border-color: rgba(14, 14, 14, 0.06);
 }
 
-.divide-hairline > * + * {
+.divide-hairline > * {
   border-color: rgba(14, 14, 14, 0.12);
 }
 
@@ -243,3 +243,4 @@
   outline: 2px solid #FF4D00;
   outline-offset: 2px;
 }
+

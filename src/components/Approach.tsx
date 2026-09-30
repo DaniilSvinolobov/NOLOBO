@@ -12,18 +12,10 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
   const t = content.approach;
   const smoothEase = [0.16, 1, 0.3, 1] as const;
 
-  // 5 elaborate schematic SVG line drawings with one-word titles + one short mono line
+  // 5 schematic SVG line drawings; titles and lines come from content.approach.steps
   const stepsData = [
     {
       step: '01',
-      title: { en: 'LISTEN', de: 'ZUHÖREN', es: 'ESCUCHAR', ca: 'ESCOLTAR', ru: 'ДИАЛОГ' },
-      monoLine: {
-        en: 'Understanding the client, their daily life and wishes',
-        de: 'Verständnis für den Bauherrn, Alltag und persönliche Wünsche',
-        es: 'Comprender al cliente, su vida cotidiana y anhelos',
-        ca: 'Comprendre el client, la seva vida quotidiana i desitjos',
-        ru: 'Понимание клиента, его повседневной жизни и желаний',
-      },
       renderDrawing: (isActive: boolean) => (
         <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
           {/* Architectural drawing sheet on drafting plane */}
@@ -55,14 +47,6 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
     },
     {
       step: '02',
-      title: { en: 'SITE', de: 'ORT', es: 'LUGAR', ca: 'LLOC', ru: 'МЕСТО' },
-      monoLine: {
-        en: 'Reading the terrain, light, wind and vegetation',
-        de: 'Gelände, Licht, Wind und Vegetation lesen',
-        es: 'Leer el terreno, la luz, el viento y la vegetación',
-        ca: 'Interpretar el terreny, la llum, el vent i la vegetació',
-        ru: 'Чтение рельефа, света, ветра и растительности',
-      },
       renderDrawing: (isActive: boolean) => (
         <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
           {/* Stepped hillside contours */}
@@ -90,14 +74,6 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
     },
     {
       step: '03',
-      title: { en: 'DESIGN', de: 'ENTWURF', es: 'DISEÑO', ca: 'DISSENY', ru: 'ПРОЕКТ' },
-      monoLine: {
-        en: 'Architecture and landscape as one',
-        de: 'Architektur und Landschaft als Einheit',
-        es: 'Arquitectura y paisaje como uno solo',
-        ca: 'Arquitectura i paisatge com una sola unitat',
-        ru: 'Архитектура и ландшафт как единое целое',
-      },
       renderDrawing: (isActive: boolean) => (
         <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
           {/* Natural slope profile */}
@@ -126,14 +102,6 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
     },
     {
       step: '04',
-      title: { en: 'CRAFT', de: 'HANDWERK', es: 'OFICIO', ca: 'ARTESANIA', ru: 'РЕМЕСЛО' },
-      monoLine: {
-        en: 'Craft: local materials',
-        de: 'Handwerk: lokale Materialien',
-        es: 'Oficio: materiales locales',
-        ca: 'Artesania: materials locals',
-        ru: 'Ремесло: местные материалы',
-      },
       renderDrawing: (isActive: boolean) => (
         <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
           {/* Traditional Dry-Stone Wall Course (Pedra en Sec) */}
@@ -161,14 +129,6 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
     },
     {
       step: '05',
-      title: { en: 'TECH', de: 'TECHNIK', es: 'TECNOLOGÍA', ca: 'TECNOLOGIA', ru: 'ТЕХНОЛОГИИ' },
-      monoLine: {
-        en: 'High-end tech for optimisation, analysis, and aftercare',
-        de: 'High-End-Technologie für Optimierung, Analyse und Nachsorge',
-        es: 'Tecnología avanzada para optimización, análisis y posventa',
-        ca: 'Tecnologia avançada per a optimització, anàlisi i cura posterior',
-        ru: 'Передовые технологии для оптимизации, анализа и сопровождения',
-      },
       renderDrawing: (isActive: boolean) => (
         <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
           {/* Ground datum */}
@@ -265,16 +225,26 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
                 {/* Bottom Row: Exact same divider line, Title on same line, and Description */}
                 <div className="pt-3 border-t border-hairline shrink-0 space-y-1.5 font-mono">
                   <div className="h-5 flex items-center text-base font-bold tracking-wider text-[#0E0E0E] uppercase">
-                    {item.title[currentLang]}
+                    {t.steps[idx].phase[currentLang]}
                   </div>
                   <div className="text-[11px] text-[#0E0E0E]/70 leading-snug min-h-[2.5rem] flex items-start">
-                    {item.monoLine[currentLang]}
+                    {t.steps[idx].title[currentLang]}
                   </div>
                 </div>
               </motion.div>
             );
           })}
         </div>
+
+        {/* Commitments */}
+        <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[rgba(14,14,14,0.12)] border border-hairline font-mono text-[11px] text-[#0E0E0E]/70">
+          {t.commitments.map((line) => (
+            <li key={line.en} className="bg-[#F5F5F2] px-5 py-3 flex items-center gap-2">
+              <span className="w-1 h-1 shrink-0 bg-[#0E0E0E]/40" />
+              <span>{line[currentLang]}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
