@@ -16,8 +16,35 @@ import oliveWoodImg from './assets/images/olive_wood_1790607904582.jpg';
 import ceramicImg from './assets/images/ceramic_tile_1790607919348.jpg';
 
 export type Language = 'en' | 'de' | 'es' | 'ca' | 'ru';
+
+/**
+ * Localized value as written in this file: English is required, the other
+ * languages are optional and fall back to English at runtime.
+ */
+export type Localized<T> = { en: T } & Partial<Record<Exclude<Language, 'en'>, T>>;
+type LocalizedStringSource = Localized<string>;
+type LocalizedListSource = Localized<string[]>;
+
+/** Localized value as components see it: every language is always present. */
 export type LocalizedString = Record<Language, string>;
 export type LocalizedList = Record<Language, string[]>;
+
+/** Maps a source type (optional translations) to its resolved form (all languages present). */
+type Resolved<T> = T extends { en: infer E }
+  ? Record<Language, Resolved<E>>
+  : T extends (infer U)[]
+    ? Resolved<U>[]
+    : T extends object
+      ? { [K in keyof T]: Resolved<T[K]> }
+      : T;
+
+/**
+ * Languages visible on the site. While copy is being finalised the site runs
+ * in English only; the other translations stay in this file untouched and are
+ * updated once the English copy is final. Add languages back here to re-enable
+ * the switcher.
+ */
+export const ENABLED_LANGUAGES: Language[] = ['en'];
 
 /**
  * Format numbers per locale:
@@ -35,32 +62,32 @@ export function formatLocaleNumber(num: number, lang: Language): string {
   return num.toLocaleString('de-DE');
 }
 
-export interface MaterialItem {
+interface MaterialItemSource {
   id: string;
-  name: LocalizedString;
+  name: LocalizedStringSource;
   localName: string;
-  subtitle: LocalizedString;
-  description: LocalizedString;
+  subtitle: LocalizedStringSource;
+  description: LocalizedStringSource;
   origin: string;
   distance: string;
   image: string;
   spec: string;
 }
 
-export interface Project {
+interface ProjectSource {
   id: string;
   number: string;
   title: string;
   location: string;
   year: string;
-  category: LocalizedString;
+  category: LocalizedStringSource;
   area: string;
   orientation: string;
   materials: string;
   image: string;
   aspect: string;
-  summary: LocalizedString;
-  details: Record<Language, {
+  summary: LocalizedStringSource;
+  details: Localized<{
     challenge: string;
     solution: string;
     collaboration: string;
@@ -71,264 +98,291 @@ export interface Project {
   }[];
 }
 
-export interface ApproachStep {
+interface ApproachStepSource {
   step: string;
-  phase: LocalizedString;
-  title: LocalizedString;
-  description: LocalizedString;
-  deliverables: LocalizedList;
+  phase: LocalizedStringSource;
+  title: LocalizedStringSource;
+  description: LocalizedStringSource;
+  deliverables: LocalizedListSource;
   protocolMetric: {
     label: string;
     value: string;
   };
 }
 
-export interface ServiceItem {
+interface ServiceItemSource {
   id: string;
   number: string;
-  title: LocalizedString;
-  summary: LocalizedString;
-  scope: LocalizedList;
+  title: LocalizedStringSource;
+  summary: LocalizedStringSource;
+  scope: LocalizedListSource;
   typicalScale: string;
 }
 
-export interface ContentData {
+interface ContentSource {
   meta: {
     brand: string;
-    tagline: LocalizedString;
+    tagline: LocalizedStringSource;
     coordinates: string;
     elevation: string;
     locationName: string;
     timezone: string;
-    availability: LocalizedString;
-    documentTitle: LocalizedString;
-    description: LocalizedString;
+    availability: LocalizedStringSource;
+    documentTitle: LocalizedStringSource;
+    description: LocalizedStringSource;
   };
   nav: {
-    approach: LocalizedString;
-    services: LocalizedString;
-    work: LocalizedString;
-    materials: LocalizedString;
-    studio: LocalizedString;
-    contact: LocalizedString;
+    approach: LocalizedStringSource;
+    services: LocalizedStringSource;
+    work: LocalizedStringSource;
+    materials: LocalizedStringSource;
+    studio: LocalizedStringSource;
+    contact: LocalizedStringSource;
   };
   aria: {
-    skipLink: LocalizedString;
-    mainNav: LocalizedString;
-    langSelect: LocalizedString;
-    openMenu: LocalizedString;
-    closeMenu: LocalizedString;
-    homeLink: LocalizedString;
-    closeModal: LocalizedString;
-    prevMaterial: LocalizedString;
-    nextMaterial: LocalizedString;
-    prevProject: LocalizedString;
-    nextProject: LocalizedString;
-    inspectSpec: LocalizedString;
-    backToTop: LocalizedString;
-    interactiveModel: LocalizedString;
+    skipLink: LocalizedStringSource;
+    mainNav: LocalizedStringSource;
+    langSelect: LocalizedStringSource;
+    openMenu: LocalizedStringSource;
+    closeMenu: LocalizedStringSource;
+    homeLink: LocalizedStringSource;
+    closeModal: LocalizedStringSource;
+    prevMaterial: LocalizedStringSource;
+    nextMaterial: LocalizedStringSource;
+    prevProject: LocalizedStringSource;
+    nextProject: LocalizedStringSource;
+    inspectSpec: LocalizedStringSource;
+    backToTop: LocalizedStringSource;
+    interactiveModel: LocalizedStringSource;
   };
   hero: {
-    headline: LocalizedString;
-    subline: LocalizedString;
-    ctaWork: LocalizedString;
-    ctaInquire: LocalizedString;
+    headline: LocalizedStringSource;
+    subline: LocalizedStringSource;
+    ctaWork: LocalizedStringSource;
+    ctaInquire: LocalizedStringSource;
     labels: {
-      listen: LocalizedString;
-      study: LocalizedString;
-      preserve: LocalizedString;
-      localMaterials?: LocalizedString;
-      closeCollaboration?: LocalizedString;
-      digitalPrecision?: LocalizedString;
+      listen: LocalizedStringSource;
+      study: LocalizedStringSource;
+      preserve: LocalizedStringSource;
+      localMaterials?: LocalizedStringSource;
+      closeCollaboration?: LocalizedStringSource;
+      digitalPrecision?: LocalizedStringSource;
     };
     model: {
-      header: LocalizedString;
+      header: LocalizedStringSource;
       locationCode: string;
-      tabs: LocalizedString[];
-      captions: LocalizedString[];
+      tabs: LocalizedStringSource[];
+      captions: LocalizedStringSource[];
       readouts: {
         scan: {
-          title: LocalizedString;
-          hoursSimulated: LocalizedString;
-          treesMapped: LocalizedString;
-          solarExposure: LocalizedString;
-          prevailingWind: LocalizedString;
-          windVal: LocalizedString;
-          simulatedSunLabel: LocalizedString;
+          title: LocalizedStringSource;
+          hoursSimulated: LocalizedStringSource;
+          treesMapped: LocalizedStringSource;
+          solarExposure: LocalizedStringSource;
+          prevailingWind: LocalizedStringSource;
+          windVal: LocalizedStringSource;
+          simulatedSunLabel: LocalizedStringSource;
         };
         fit: {
-          title: LocalizedString;
-          testedCount: LocalizedString;
-          morningSun: LocalizedString;
-          terraceShade: LocalizedString;
-          seaView: LocalizedString;
-          treesKept: LocalizedString;
-          optimalEnvelope: LocalizedString;
+          title: LocalizedStringSource;
+          testedCount: LocalizedStringSource;
+          morningSun: LocalizedStringSource;
+          terraceShade: LocalizedStringSource;
+          seaView: LocalizedStringSource;
+          treesKept: LocalizedStringSource;
+          optimalEnvelope: LocalizedStringSource;
         };
         ground: {
-          title: LocalizedString;
-          cut: LocalizedString;
-          fill: LocalizedString;
-          reused: LocalizedString;
-          trucks: LocalizedString;
-          materialFlow: LocalizedString;
+          title: LocalizedStringSource;
+          cut: LocalizedStringSource;
+          fill: LocalizedStringSource;
+          reused: LocalizedStringSource;
+          trucks: LocalizedStringSource;
+          materialFlow: LocalizedStringSource;
         };
         build: {
-          title: LocalizedString;
-          componentsTracked: LocalizedString;
-          avgDistance: LocalizedString;
-          carbon: LocalizedString;
-          carbonVal: LocalizedString;
-          plinthTag: LocalizedString;
-          roofTag: LocalizedString;
-          glazingTag: LocalizedString;
-          rings: { km: string; label: LocalizedString }[];
+          title: LocalizedStringSource;
+          componentsTracked: LocalizedStringSource;
+          avgDistance: LocalizedStringSource;
+          carbon: LocalizedStringSource;
+          carbonVal: LocalizedStringSource;
+          plinthTag: LocalizedStringSource;
+          roofTag: LocalizedStringSource;
+          glazingTag: LocalizedStringSource;
+          rings: { km: string; label: LocalizedStringSource }[];
         };
         evolve: {
-          title: LocalizedString;
-          year: LocalizedString;
-          canopyCover: LocalizedString;
-          waterRetained: LocalizedString;
-          energyBalance: LocalizedString;
-          netPositive: LocalizedString;
-          sensorMoisture: LocalizedString;
-          sensorFlux: LocalizedString;
-          sensorCistern: LocalizedString;
+          title: LocalizedStringSource;
+          year: LocalizedStringSource;
+          canopyCover: LocalizedStringSource;
+          waterRetained: LocalizedStringSource;
+          energyBalance: LocalizedStringSource;
+          netPositive: LocalizedStringSource;
+          sensorMoisture: LocalizedStringSource;
+          sensorFlux: LocalizedStringSource;
+          sensorCistern: LocalizedStringSource;
         };
       };
       controls: {
-        orbit: LocalizedString;
-        paused: LocalizedString;
-        prev: LocalizedString;
-        next: LocalizedString;
-        seaDatum: LocalizedString;
-        dragHint: LocalizedString;
-        treeKept: LocalizedString;
+        orbit: LocalizedStringSource;
+        paused: LocalizedStringSource;
+        prev: LocalizedStringSource;
+        next: LocalizedStringSource;
+        seaDatum: LocalizedStringSource;
+        dragHint: LocalizedStringSource;
+        treeKept: LocalizedStringSource;
       };
     };
     stats: {
       coordLabel: string;
-      statusLabel: LocalizedString;
+      statusLabel: LocalizedStringSource;
       modelSpec: string;
       cycle: string;
     };
   };
   approach: {
     sectionNumber: string;
-    kicker: LocalizedString;
-    headline: LocalizedString;
-    intro: LocalizedString;
-    closeCollaboration: LocalizedString;
-    steps: ApproachStep[];
+    kicker: LocalizedStringSource;
+    headline: LocalizedStringSource;
+    intro: LocalizedStringSource;
+    closeCollaboration: LocalizedStringSource;
+    steps: ApproachStepSource[];
   };
   services: {
     sectionNumber: string;
-    kicker: LocalizedString;
-    headline: LocalizedString;
-    intro: LocalizedString;
-    items: ServiceItem[];
+    kicker: LocalizedStringSource;
+    headline: LocalizedStringSource;
+    intro: LocalizedStringSource;
+    items: ServiceItemSource[];
   };
   materialsSection: {
     sectionNumber: string;
-    kicker: LocalizedString;
-    headline: LocalizedString;
-    intro?: LocalizedString;
-    gridTab: LocalizedString;
-    schematicsTab: LocalizedString;
-    prevBtn: LocalizedString;
-    nextBtn: LocalizedString;
-    inspectBtn: LocalizedString;
-    closeBtn: LocalizedString;
-    navigateLabel: LocalizedString;
-    provenanceLabel: LocalizedString;
-    jumpToLabel: LocalizedString;
-    dossierTitle: LocalizedString;
-    footerPalette: LocalizedString;
-    footerHint: LocalizedString;
+    kicker: LocalizedStringSource;
+    headline: LocalizedStringSource;
+    intro?: LocalizedStringSource;
+    gridTab: LocalizedStringSource;
+    schematicsTab: LocalizedStringSource;
+    prevBtn: LocalizedStringSource;
+    nextBtn: LocalizedStringSource;
+    inspectBtn: LocalizedStringSource;
+    closeBtn: LocalizedStringSource;
+    navigateLabel: LocalizedStringSource;
+    provenanceLabel: LocalizedStringSource;
+    jumpToLabel: LocalizedStringSource;
+    dossierTitle: LocalizedStringSource;
+    footerPalette: LocalizedStringSource;
+    footerHint: LocalizedStringSource;
   };
   work: {
     sectionNumber: string;
-    kicker: LocalizedString;
-    headline: LocalizedString;
-    filterAll: LocalizedString;
-    filterResidential: LocalizedString;
-    filterInterior: LocalizedString;
-    viewDetails: LocalizedString;
-    closeSpec: LocalizedString;
-    modalSpecTitle: LocalizedString;
-    modalOverview: LocalizedString;
-    modalChallenge: LocalizedString;
-    modalSolution: LocalizedString;
-    modalCollaboration: LocalizedString;
-    modalTechSpec: LocalizedString;
-    primaryPalette: LocalizedString;
-    inquireSimilar: LocalizedString;
-    prevProject: LocalizedString;
-    nextProject: LocalizedString;
-    projects: Project[];
+    kicker: LocalizedStringSource;
+    headline: LocalizedStringSource;
+    filterAll: LocalizedStringSource;
+    filterResidential: LocalizedStringSource;
+    filterInterior: LocalizedStringSource;
+    viewDetails: LocalizedStringSource;
+    closeSpec: LocalizedStringSource;
+    modalSpecTitle: LocalizedStringSource;
+    modalOverview: LocalizedStringSource;
+    modalChallenge: LocalizedStringSource;
+    modalSolution: LocalizedStringSource;
+    modalCollaboration: LocalizedStringSource;
+    modalTechSpec: LocalizedStringSource;
+    primaryPalette: LocalizedStringSource;
+    inquireSimilar: LocalizedStringSource;
+    prevProject: LocalizedStringSource;
+    nextProject: LocalizedStringSource;
+    projects: ProjectSource[];
   };
-  materials: MaterialItem[];
+  materials: MaterialItemSource[];
   studio: {
     sectionNumber: string;
-    label: LocalizedString;
-    headline: LocalizedString;
-    subline: LocalizedString;
+    label: LocalizedStringSource;
+    headline: LocalizedStringSource;
+    subline: LocalizedStringSource;
     blocks: {
       number: string;
-      title: LocalizedString;
-      text: LocalizedString;
+      title: LocalizedStringSource;
+      text: LocalizedStringSource;
     }[];
     mapLabels: {
-      studio: LocalizedString;
+      studio: LocalizedStringSource;
     };
-    map: Record<string, LocalizedString>;
+    map: Record<string, LocalizedStringSource>;
   };
   contact: {
     sectionNumber: string;
-    kicker: LocalizedString;
-    headline: LocalizedString;
-    subtext: LocalizedString;
+    kicker: LocalizedStringSource;
+    headline: LocalizedStringSource;
+    subtext: LocalizedStringSource;
     email: string;
     phone: string;
     address: string;
     form: {
-      nameLabel: LocalizedString;
-      emailLabel: LocalizedString;
-      projectTypeLabel: LocalizedString;
+      nameLabel: LocalizedStringSource;
+      emailLabel: LocalizedStringSource;
+      projectTypeLabel: LocalizedStringSource;
       projectTypes: {
         value: string;
-        label: LocalizedString;
+        label: LocalizedStringSource;
       }[];
-      locationScaleLabel: LocalizedString;
-      messageLabel: LocalizedString;
-      namePlaceholder?: LocalizedString;
-      scalePlaceholder?: LocalizedString;
-      messagePlaceholder?: LocalizedString;
-      submitBtn: LocalizedString;
-      submitting: LocalizedString;
-      successTitle: LocalizedString;
-      successDesc: LocalizedString;
-      successRef: LocalizedString;
-      resetBtn: LocalizedString;
+      locationScaleLabel: LocalizedStringSource;
+      messageLabel: LocalizedStringSource;
+      namePlaceholder?: LocalizedStringSource;
+      scalePlaceholder?: LocalizedStringSource;
+      messagePlaceholder?: LocalizedStringSource;
+      submitBtn: LocalizedStringSource;
+      submitting: LocalizedStringSource;
+      successTitle: LocalizedStringSource;
+      successDesc: LocalizedStringSource;
+      successRef: LocalizedStringSource;
+      resetBtn: LocalizedStringSource;
       validation: {
-        nameRequired: LocalizedString;
-        emailRequired: LocalizedString;
-        messageRequired: LocalizedString;
+        nameRequired: LocalizedStringSource;
+        emailRequired: LocalizedStringSource;
+        messageRequired: LocalizedStringSource;
       };
     };
   };
   footer: {
-    legalNotice: LocalizedString;
-    privacy: LocalizedString;
-    impressum: LocalizedString;
-    backToTop: LocalizedString;
+    legalNotice: LocalizedStringSource;
+    privacy: LocalizedStringSource;
+    impressum: LocalizedStringSource;
+    backToTop: LocalizedStringSource;
     rights: string;
-    impressumContent: LocalizedString;
-    privacyContent: LocalizedString;
+    impressumContent: LocalizedStringSource;
+    privacyContent: LocalizedStringSource;
   };
 }
 
-export const content: ContentData = {
+export type MaterialItem = Resolved<MaterialItemSource>;
+export type Project = Resolved<ProjectSource>;
+export type ApproachStep = Resolved<ApproachStepSource>;
+export type ServiceItem = Resolved<ServiceItemSource>;
+export type ContentData = Resolved<ContentSource>;
+
+const LANGUAGES: Language[] = ['en', 'de', 'es', 'ca', 'ru'];
+
+/** Fills every missing translation with the English value, recursively. */
+function withFallback<T>(value: T): Resolved<T> {
+  if (Array.isArray(value)) {
+    return value.map(withFallback) as Resolved<T>;
+  }
+  if (value !== null && typeof value === 'object') {
+    const obj = value as Record<string, unknown>;
+    if ('en' in obj) {
+      return Object.fromEntries(
+        LANGUAGES.map((lang) => [lang, withFallback(obj[lang] ?? obj.en)])
+      ) as Resolved<T>;
+    }
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, v]) => [key, withFallback(v)])
+    ) as Resolved<T>;
+  }
+  return value as Resolved<T>;
+}
+
+const source: ContentSource = {
   meta: {
     brand: "NOLOBO",
     tagline: {
@@ -1824,3 +1878,5 @@ export const content: ContentData = {
     }
   }
 };
+
+export const content: ContentData = withFallback(source);
