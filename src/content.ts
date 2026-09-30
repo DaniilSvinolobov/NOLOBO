@@ -892,9 +892,9 @@ const source: ContentSource = {
     ],
     commitments: [
       { en: "One architect from first meeting to handover" },
-      { en: "On site weekly during construction" },
+      { en: "On site regularly during construction" },
       { en: "Reply within one working day" },
-      { en: "[X] projects per year" }
+      { en: "6 projects per year" }
     ]
   },
   services: {
