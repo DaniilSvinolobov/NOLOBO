@@ -110,24 +110,6 @@ interface ApproachStepSource {
   };
 }
 
-/** A handwritten note in the Listen layer. Set `image` to a scan to replace the placeholder font. */
-interface ProcessNoteSource {
-  id: string;
-  text: LocalizedStringSource;
-  image?: string;
-}
-
-interface ProcessLabelSource {
-  id: string;
-  text: LocalizedStringSource;
-}
-
-interface ProcessReadoutSource {
-  id: string;
-  label: LocalizedStringSource;
-  value: string;
-}
-
 interface ServiceItemSource {
   id: string;
   number: string;
@@ -275,22 +257,7 @@ interface ContentSource {
     intro: LocalizedStringSource;
     closeCollaboration: LocalizedStringSource;
     steps: ApproachStepSource[];
-    process: {
-      figureLabel: LocalizedStringSource;
-      photo: {
-        src: string;
-        width: number;
-        height: number;
-        /** Crop focus, 0–100 (% of photo width / height). */
-        focusX: number;
-        focusY: number;
-        alt: LocalizedStringSource;
-      };
-      notes: ProcessNoteSource[];
-      siteLabels: ProcessLabelSource[];
-      craftLabels: ProcessLabelSource[];
-      readouts: ProcessReadoutSource[];
-    };
+    commitments: LocalizedStringSource[];
   };
   services: {
     sectionNumber: string;
@@ -757,7 +724,7 @@ const source: ContentSource = {
           ru: "Диалог"
         },
         title: {
-          en: "Understanding the client, their daily life and wishes",
+          en: "Brief on site: routines, priorities, budget, timeline.",
           de: "Verständnis für den Bauherrn, ihren Alltag und persönliche Wünsche",
           es: "Comprender al cliente, su vida cotidiana y anhelos",
           ca: "Comprendre el client, la seva vida quotidiana i desitjos",
@@ -792,7 +759,7 @@ const source: ContentSource = {
           ru: "Место"
         },
         title: {
-          en: "Reading the terrain, light, wind and vegetation",
+          en: "Survey, microclimate, vegetation, regulations.",
           de: "Gelände, Licht, Wind und Vegetation lesen",
           es: "Leer el terreno, la luz, el viento y la vegetación",
           ca: "Llegir el terreny, la llum, el vent i la vegetació",
@@ -827,7 +794,7 @@ const source: ContentSource = {
           ru: "Проект"
         },
         title: {
-          en: "Architecture and landscape as one",
+          en: "Building and landscape as one project.",
           de: "Architektur und Landschaft als Einheit",
           es: "Arquitectura y paisaje como uno solo",
           ca: "Arquitectura i paisatge com un sol organisme",
@@ -862,7 +829,7 @@ const source: ContentSource = {
           ru: "Ремесло"
         },
         title: {
-          en: "Craft: local materials",
+          en: "Local builders and artisans we know by name.",
           de: "Handwerk: lokale Materialien",
           es: "Oficio: materiales locales",
           ca: "Artesania: materials locals",
@@ -897,7 +864,7 @@ const source: ContentSource = {
           ru: "Технологии"
         },
         title: {
-          en: "High-end tech for optimisation, analysis, and aftercare",
+          en: "Energy, earthworks and cost simulated before building.",
           de: "High-End-Technologie für Optimierung, Analyse und Nachsorge",
           es: "Tecnología avanzada para optimización, análisis y posventa",
           ca: "Tecnologia avançada per a optimització, anàlisi i cura posterior",
@@ -923,37 +890,12 @@ const source: ContentSource = {
         }
       }
     ],
-    process: {
-      figureLabel: { en: "One site, five layers" },
-      photo: {
-        // Placeholder drawing until the final photograph is chosen (see IMAGE_CREDITS.md).
-        // Overlay positions live in src/components/processOverlays.ts as % of this image.
-        src: "/images/process-site-placeholder.svg",
-        width: 2400,
-        height: 1600,
-        focusX: 50,
-        focusY: 45,
-        alt: { en: "Terraced slope with dry-stone walls and olive trees above the sea" }
-      },
-      notes: [
-        { id: "coffee", text: { en: "Morning coffee here" } },
-        { id: "carob", text: { en: "Keep the old carob tree" } },
-        { id: "grandchildren", text: { en: "Grandchildren in summer" } }
-      ],
-      siteLabels: [
-        { id: "sun", text: { en: "sun path · 21 Jun" } },
-        { id: "wind", text: { en: "sea breeze" } }
-      ],
-      craftLabels: [
-        { id: "dryStone", text: { en: "dry-stone, from the site" } },
-        { id: "mares", text: { en: "marès · 34 km" } }
-      ],
-      readouts: [
-        { id: "energy", label: { en: "Energy" }, value: "18 kWh/m²·yr" },
-        { id: "cutFill", label: { en: "Cut / fill" }, value: "140 / 132 m³" },
-        { id: "trees", label: { en: "Trees kept" }, value: "23/23" }
-      ]
-    }
+    commitments: [
+      { en: "One architect from first meeting to handover" },
+      { en: "On site weekly during construction" },
+      { en: "Reply within one working day" },
+      { en: "[X] projects per year" }
+    ]
   },
   services: {
     sectionNumber: "02",
