@@ -110,6 +110,24 @@ interface ApproachStepSource {
   };
 }
 
+/** A handwritten note in the Listen layer. Set `image` to a scan to replace the placeholder font. */
+interface ProcessNoteSource {
+  id: string;
+  text: LocalizedStringSource;
+  image?: string;
+}
+
+interface ProcessLabelSource {
+  id: string;
+  text: LocalizedStringSource;
+}
+
+interface ProcessReadoutSource {
+  id: string;
+  label: LocalizedStringSource;
+  value: string;
+}
+
 interface ServiceItemSource {
   id: string;
   number: string;
@@ -128,6 +146,16 @@ interface ContentSource {
     locationName: string;
     timezone: string;
     availability: LocalizedStringSource;
+    conditions: {
+      place: LocalizedStringSource;
+      sunsetLabel: LocalizedStringSource;
+      seaLabel: LocalizedStringSource;
+      /** Static placeholder values in °C until a live source is connected. */
+      airTemp: number;
+      seaTemp: number;
+      latitude: number;
+      longitude: number;
+    };
     documentTitle: LocalizedStringSource;
     description: LocalizedStringSource;
   };
@@ -247,6 +275,22 @@ interface ContentSource {
     intro: LocalizedStringSource;
     closeCollaboration: LocalizedStringSource;
     steps: ApproachStepSource[];
+    process: {
+      figureLabel: LocalizedStringSource;
+      photo: {
+        src: string;
+        width: number;
+        height: number;
+        /** Crop focus, 0–100 (% of photo width / height). */
+        focusX: number;
+        focusY: number;
+        alt: LocalizedStringSource;
+      };
+      notes: ProcessNoteSource[];
+      siteLabels: ProcessLabelSource[];
+      craftLabels: ProcessLabelSource[];
+      readouts: ProcessReadoutSource[];
+    };
   };
   services: {
     sectionNumber: string;
@@ -318,6 +362,11 @@ interface ContentSource {
     email: string;
     phone: string;
     address: string;
+    portrait: {
+      src: string;
+      alt: LocalizedStringSource;
+      line: LocalizedStringSource;
+    };
     form: {
       nameLabel: LocalizedStringSource;
       emailLabel: LocalizedStringSource;
@@ -403,15 +452,24 @@ const source: ContentSource = {
       ca: "Acceptant projectes 2027",
       ru: "Прием проектов на 2027 год"
     },
+    conditions: {
+      place: { en: "Palma" },
+      sunsetLabel: { en: "Sunset" },
+      seaLabel: { en: "Sea" },
+      airTemp: 24,
+      seaTemp: 23,
+      latitude: 39.5696,
+      longitude: 2.6502
+    },
     documentTitle: {
-      en: "NOLOBO — Architecture that starts with the site",
+      en: "NOLOBO — Architecture & Landscape, Mallorca",
       es: "NOLOBO — Arquitectura que parte del lugar",
       ca: "NOLOBO — Arquitectura que parteix del lloc",
       de: "NOLOBO — Architektur, die beim Ort beginnt",
       ru: "NOLOBO — Архитектура, которая начинается с места"
     },
     description: {
-      en: "Architects and landscape architects in Mallorca. We listen first, work with local materials and use digital tools where they make a difference.",
+      en: "Architects and landscape architects in Mallorca. We start with your values, study the site with local knowledge and advanced tools, and build so Mallorca stays Mallorca.",
       es: "Arquitectos y paisajistas en Mallorca. Primero escuchamos, trabajamos con materiales locales y usamos herramientas digitales donde marcan la diferencia.",
       ca: "Arquitectes i paisatgistes a Mallorca. Primer escoltam, treballam amb materials locals i utilitzam eines digitals on marquen la diferència.",
       de: "Architekten und Landschaftsarchitekten auf Mallorca. Wir hören zuerst zu, arbeiten mit lokalen Materialien und setzen digitale Werkzeuge dort ein, wo sie den Unterschied machen.",
@@ -864,7 +922,38 @@ const source: ContentSource = {
           value: "LONG-TERM CARE"
         }
       }
-    ]
+    ],
+    process: {
+      figureLabel: { en: "One site, five layers" },
+      photo: {
+        // Placeholder drawing until the final photograph is chosen (see IMAGE_CREDITS.md).
+        // Overlay positions live in src/components/processOverlays.ts as % of this image.
+        src: "/images/process-site-placeholder.svg",
+        width: 2400,
+        height: 1600,
+        focusX: 50,
+        focusY: 45,
+        alt: { en: "Terraced slope with dry-stone walls and olive trees above the sea" }
+      },
+      notes: [
+        { id: "coffee", text: { en: "Morning coffee here" } },
+        { id: "carob", text: { en: "Keep the old carob tree" } },
+        { id: "grandchildren", text: { en: "Grandchildren in summer" } }
+      ],
+      siteLabels: [
+        { id: "sun", text: { en: "sun path · 21 Jun" } },
+        { id: "wind", text: { en: "sea breeze" } }
+      ],
+      craftLabels: [
+        { id: "dryStone", text: { en: "dry-stone, from the site" } },
+        { id: "mares", text: { en: "marès · 34 km" } }
+      ],
+      readouts: [
+        { id: "energy", label: { en: "Energy" }, value: "18 kWh/m²·yr" },
+        { id: "cutFill", label: { en: "Cut / fill" }, value: "140 / 132 m³" },
+        { id: "trees", label: { en: "Trees kept" }, value: "23/23" }
+      ]
+    }
   },
   services: {
     sectionNumber: "02",
@@ -1711,6 +1800,12 @@ const source: ContentSource = {
     email: "studio@nolobo.es",
     phone: "+34 971 88 42 10",
     address: "Carrer de Sant Feliu 17, 07012 Palma de Mallorca, Illes Balears",
+    portrait: {
+      // Placeholder until a real portrait is added to public/images/.
+      src: "/images/portrait-placeholder.svg",
+      alt: { en: "Portrait of Daniil" },
+      line: { en: "You'll talk to Daniil directly." }
+    },
     form: {
       nameLabel: {
         en: "Full Name / Organization",
