@@ -88,11 +88,11 @@ export default function App() {
       {/* Main Content Sections */}
       <main id="main-content" className="relative z-10">
         <Hero currentLang={currentLang} />
+        <Work currentLang={currentLang} />
+        <LandscapeSchematics currentLang={currentLang} />
+        <Studio currentLang={currentLang} />
         <Approach currentLang={currentLang} />
         <Services currentLang={currentLang} />
-        <LandscapeSchematics currentLang={currentLang} />
-        <Work currentLang={currentLang} />
-        <Studio currentLang={currentLang} />
         <Contact currentLang={currentLang} />
       </main>
 

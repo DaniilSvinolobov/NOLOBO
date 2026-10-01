@@ -444,9 +444,9 @@ const source: ContentSource = {
     }
   },
   nav: {
-    approach: { en: "Approach", de: "Ansatz", es: "Método", ca: "Mètode", ru: "Подход" },
+    approach: { en: "Method", de: "Ansatz", es: "Método", ca: "Mètode", ru: "Подход" },
     services: { en: "Services", de: "Leistungen", es: "Servicios", ca: "Serveis", ru: "Услуги" },
-    work: { en: "Selected Work", de: "Projekte", es: "Obras", ca: "Projectes", ru: "Проекты" },
+    work: { en: "Projects", de: "Projekte", es: "Obras", ca: "Projectes", ru: "Проекты" },
     materials: { en: "Materials", de: "Materialien", es: "Materiales", ca: "Materials", ru: "Материалы" },
     studio: { en: "Studio", de: "Studio", es: "Estudio", ca: "Estudi", ru: "Студия" },
     contact: { en: "Contact", de: "Kontakt", es: "Contacto", ca: "Contacte", ru: "Контакты" }
@@ -684,7 +684,7 @@ const source: ContentSource = {
     }
   },
   approach: {
-    sectionNumber: "01",
+    sectionNumber: "04",
     kicker: {
       en: "Process & Philosophy",
       de: "Prozess & Haltung",
@@ -898,7 +898,7 @@ const source: ContentSource = {
     ]
   },
   services: {
-    sectionNumber: "02",
+    sectionNumber: "05",
     kicker: {
       en: "Disciplines",
       de: "Disziplinen",
@@ -1028,7 +1028,7 @@ const source: ContentSource = {
     ]
   },
   materialsSection: {
-    sectionNumber: "03",
+    sectionNumber: "02",
     kicker: {
       en: "Local Materials",
       de: "Lokale Materialien",
@@ -1112,16 +1112,16 @@ const source: ContentSource = {
     }
   },
   work: {
-    sectionNumber: "04",
+    sectionNumber: "01",
     kicker: {
-      en: "Selected Architecture",
+      en: "Design concepts",
       de: "Ausgewählte Arbeiten",
       es: "Obras seleccionadas",
       ca: "Obres seleccionades",
       ru: "Избранные проекты"
     },
     headline: {
-      en: "Built projects.",
+      en: "Selected projects.",
       de: "Realisierte Projekte.",
       es: "Obras construidas.",
       ca: "Obres construïdes.",
@@ -1670,7 +1670,7 @@ const source: ContentSource = {
     }
   ],
   studio: {
-    sectionNumber: "04",
+    sectionNumber: "03",
     label: {"en": "Studio", "es": "Estudio", "ca": "Estudi", "de": "Studio", "ru": "Студия"},
     headline: {"en": "Rooted on the island.\nConnected beyond it.", "es": "Arraigados en la isla.\nConectados más allá.", "ca": "Arrelats a l'illa.\nConnectats més enllà.", "de": "Auf der Insel verwurzelt.\nWeit darüber hinaus vernetzt.", "ru": "Корни — на острове.\nСвязи — далеко за его пределами."},
     subline: {"en": "Architecture, urbanism and landscape from Mallorca. Local knowledge on the ground, specialists wherever the best ones are.", "es": "Arquitectura, urbanismo y paisaje desde Mallorca. Conocimiento local sobre el terreno, especialistas allí donde estén los mejores.", "ca": "Arquitectura, urbanisme i paisatge des de Mallorca. Coneixement local sobre el terreny, especialistes allà on siguin els millors.", "de": "Architektur, Städtebau und Landschaft von Mallorca aus. Lokales Wissen vor Ort, Fachleute dort, wo die besten sind.", "ru": "Архитектура, градостроительство и ландшафт с Майорки. Местные знания — на месте, специалисты — там, где лучшие."},
