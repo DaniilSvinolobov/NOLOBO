@@ -2,23 +2,16 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'motion/react';
 import { content, Language, MaterialItem } from '../content';
 import { ScrambleHeadline } from './ScrambleHeadline';
-import { useColourOnView } from './useColourOnView';
 
-/** Greyscale material photo: colour on hover, or while in view on touch devices. */
-const MaterialTileImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
-  const [ref, inColour] = useColourOnView<HTMLImageElement>();
-  return (
-    <img
-      ref={ref}
-      src={src}
-      alt={alt}
-      loading="lazy"
-      className={`w-full h-full object-cover filter contrast-105 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out ${
-        inColour ? 'grayscale-0' : 'grayscale'
-      }`}
-    />
-  );
-};
+/** Material photo: always in colour, slight zoom on hover. */
+const MaterialTileImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
+  <img
+    src={src}
+    alt={alt}
+    loading="lazy"
+    className="w-full h-full object-cover contrast-105 group-hover:scale-105 transition-transform duration-700 ease-out"
+  />
+);
 
 interface LandscapeSchematicsProps {
   currentLang: Language;
