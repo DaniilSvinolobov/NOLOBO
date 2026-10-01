@@ -11,11 +11,11 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
   const t = content.nav;
 
   const navItems = [
+    { label: t.work[currentLang], href: '#work' },
+    { label: t.materials[currentLang], href: '#materials' },
+    { label: t.studio[currentLang], href: '#studio' },
     { label: t.approach[currentLang], href: '#approach' },
     { label: t.services[currentLang], href: '#services' },
-    { label: t.materials[currentLang], href: '#materials' },
-    { label: t.work[currentLang], href: '#work' },
-    { label: t.studio[currentLang], href: '#studio' },
     { label: t.contact[currentLang], href: '#contact' },
   ];
 

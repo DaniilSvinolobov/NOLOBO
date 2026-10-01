@@ -273,7 +273,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-hairline">
           <div className="space-y-2">
             <div className="flex items-center gap-3 text-xs font-mono text-[#0E0E0E]/60 uppercase tracking-widest">
-              <span className="text-[#FF4D00] font-bold">03</span>
+              <span className="text-[#FF4D00] font-bold">02</span>
               <span className="h-[1px] w-6 bg-[#0E0E0E]/20" />
               <span>{titles.kicker[currentLang]}</span>
             </div>
