@@ -137,7 +137,7 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
                 }}
                 aria-label={`${content.aria.inspectSpec[currentLang]}: ${project.title}`}
               >
-                {/* Dominant Image Container with Controlled RGB Split & Slice Displacement Glitch on Hover */}
+                {/* Dominant Image Container */}
                 <div className="glitch-image-wrap relative bg-[#0E0E0E]/10 overflow-hidden">
                   <div className="w-full aspect-[16/10] sm:aspect-[16/9] overflow-hidden">
                     <img
@@ -151,17 +151,6 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
                       }`}
                     />
 
-                    {/* Glitch Slice Overlay Layers (active only on fine-pointer hover, disabled in reduced motion) */}
-                    <div
-                      aria-hidden="true"
-                      className="glitch-slice-layer-1 hidden absolute inset-0 pointer-events-none mix-blend-screen opacity-70 bg-cover bg-center filter drop-shadow-[2px_0_#FF4D00]"
-                      style={{ backgroundImage: `url(${project.image})` }}
-                    />
-                    <div
-                      aria-hidden="true"
-                      className="glitch-slice-layer-2 hidden absolute inset-0 pointer-events-none mix-blend-screen opacity-70 bg-cover bg-center filter drop-shadow-[-2px_0_#00E5FF]"
-                      style={{ backgroundImage: `url(${project.image})` }}
-                    />
                   </div>
 
                   {/* Corner Survey Reference Tag */}
