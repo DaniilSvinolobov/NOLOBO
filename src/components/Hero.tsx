@@ -11,7 +11,6 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
   const [sunset, setSunset] = useState<string | null>(null);
-  const [isGlitching, setIsGlitching] = useState(false);
   const t = content.hero;
   const meta = content.meta;
 
@@ -26,37 +25,11 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
     return () => clearInterval(interval);
   }, [conditions.latitude, conditions.longitude, meta.timezone]);
 
-  // Brief (100-200ms) random glitch every 6-10 seconds
-  useEffect(() => {
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (prefersReducedMotion) return;
-
-    let timeoutId: number;
-    const scheduleGlitch = () => {
-      const delay = 6000 + Math.random() * 4000; // 6-10 seconds
-      timeoutId = window.setTimeout(() => {
-        setIsGlitching(true);
-        window.setTimeout(() => {
-          setIsGlitching(false);
-          scheduleGlitch();
-        }, 160); // 160ms brief pulse
-      }, delay);
-    };
-
-    scheduleGlitch();
-    return () => clearTimeout(timeoutId);
-  }, []);
-
   const smoothEase = [0.16, 1, 0.3, 1] as const;
 
   return (
     <section
-      className={`relative border-b border-hairline overflow-hidden pt-5 pb-10 sm:py-14 transition-all ${
-        isGlitching ? 'glitch-active' : ''
-      }`}
+      className="relative border-b border-hairline overflow-hidden pt-5 pb-10 sm:py-14"
     >
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Technical Corner & Metadata Bar */}
