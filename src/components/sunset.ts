@@ -30,3 +30,30 @@ export function formatSunset(date: Date, latitude: number, longitude: number, ti
     return null;
   }
 }
+
+/**
+ * Sun altitude and azimuth (degrees, azimuth clockwise from north) for a place and time.
+ * Low-precision astronomical formulae, good to a fraction of a degree.
+ */
+export function sunPosition(date: Date, latitude: number, longitude: number): { altitude: number; azimuth: number } {
+  const rad = Math.PI / 180;
+  const d = date.getTime() / 86400000 + 2440587.5 - 2451545.0;
+  const g = (357.528 + 0.9856003 * d) * rad;
+  const lambda = (280.46 + 0.9856474 * d + 1.915 * Math.sin(g) + 0.02 * Math.sin(2 * g)) * rad;
+  const eps = (23.439 - 0.0000004 * d) * rad;
+  const ra = Math.atan2(Math.cos(eps) * Math.sin(lambda), Math.cos(lambda));
+  const dec = Math.asin(Math.sin(eps) * Math.sin(lambda));
+  const gmst = (18.697374558 + 24.06570982441908 * d) * 15 * rad;
+  const hourAngle = gmst + longitude * rad - ra;
+  const lat = latitude * rad;
+  const altitude = Math.asin(Math.sin(lat) * Math.sin(dec) + Math.cos(lat) * Math.cos(dec) * Math.cos(hourAngle));
+  const azimuth =
+    Math.atan2(Math.sin(hourAngle), Math.cos(hourAngle) * Math.sin(lat) - Math.tan(dec) * Math.cos(lat)) / rad + 180;
+  return { altitude: altitude / rad, azimuth: ((azimuth % 360) + 360) % 360 };
+}
+
+/** Length in metres of the shadow of a 1 m pole, or null when the sun is below about 3°. */
+export function poleShadow(altitudeDeg: number): number | null {
+  if (altitudeDeg < 3) return null;
+  return 1 / Math.tan((altitudeDeg * Math.PI) / 180);
+}

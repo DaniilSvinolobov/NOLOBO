@@ -89,10 +89,10 @@ export default function App() {
       <main id="main-content" className="relative z-10">
         <Hero currentLang={currentLang} />
         <Work currentLang={currentLang} />
-        <LandscapeSchematics currentLang={currentLang} />
         <Studio currentLang={currentLang} />
         <Approach currentLang={currentLang} />
         <Services currentLang={currentLang} />
+        <LandscapeSchematics currentLang={currentLang} />
         <Contact currentLang={currentLang} />
       </main>
 

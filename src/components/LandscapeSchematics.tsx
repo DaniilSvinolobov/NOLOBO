@@ -17,6 +17,23 @@ interface LandscapeSchematicsProps {
   currentLang: Language;
 }
 
+/** Single-language drawing captions: English only for now, other languages fall back. */
+const L = (en: string): Record<Language, string> => ({ en, de: en, es: en, ca: en, ru: en });
+
+/** Condition tags: what the material acts on. */
+const ConditionChips: React.FC<{ ids: string[]; currentLang: Language }> = ({ ids, currentLang }) => (
+  <>
+    {ids.map((id) => (
+      <span
+        key={id}
+        className="px-2 py-0.5 bg-[#F5F5F2]/95 border border-hairline font-mono text-[9px] uppercase tracking-wider text-[#0E0E0E]"
+      >
+        {content.conditions.find((c) => c.id === id)?.label[currentLang] ?? id}
+      </span>
+    ))}
+  </>
+);
+
 export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ currentLang }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isInView = useInView(containerRef, { once: true, margin: '-60px' });
@@ -62,16 +79,10 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
   const schematics = [
     {
       id: 'stratigraphy',
-      code: 'DWG-LS-01',
-      title: {
-        en: 'SITE STRATIGRAPHY & BEDROCK',
-        de: 'STRATIGRAFIE & FELSBETT',
-        es: 'ESTRATIGRAFÍA Y LECHO ROCOSO',
-        ca: 'ESTRATIGRAFIA I BASE ROCOSA',
-        ru: 'СТРАТИГРАФИЯ И СКАЛЬНАЯ ОСНОВА',
-      },
+      code: 'DWG-01',
+      title: L('GROUND · WHAT THE SLOPE HOLDS'),
       scale: 'SCALE 1:50',
-      specs: ['SANTANYÍ CALCARENITE BED', 'TERRACED FOUNDATION ANCHOR', 'BALEARIC BEDROCK RESTING'],
+      specs: ['BEDROCK UNDER THE TERRACES', 'FOUNDATION ANCHORED IN THE BED', 'BUILDING SET INTO THE SLOPE'],
       renderSvg: (inView: boolean) => (
         <svg viewBox="0 0 280 160" className="w-full h-44 stroke-current fill-none" strokeWidth="1">
           <motion.path
@@ -101,23 +112,17 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
           <line x1="140" y1="68" x2="140" y2="145" stroke="#FF4D00" strokeWidth="1.4" strokeDasharray="3 2" />
           <polygon points="65,48 160,48 160,38 65,38" className="opacity-80 stroke-[#0E0E0E]" />
           <text x="70" y="44" fill="currentColor" stroke="none" className="text-[8px] font-mono">
-            TERRACE EMBEDMENT
+            TERRACE
           </text>
         </svg>
       ),
     },
     {
       id: 'hydrology',
-      code: 'DWG-LS-02',
-      title: {
-        en: 'PRECIPITATION & SUB-TERRAIN DRAINAGE',
-        de: 'NIEDERSCHLAG & ENTWÄSSERUNG',
-        es: 'PRECIPITACIÓN Y DRENAJE',
-        ca: 'PRECIPITACIÓ I DRENATGE SUBSÒL',
-        ru: 'ГИДРОЛОГИЯ И ДРЕНАЖ СКЛОНА',
-      },
-      scale: 'SYSTEMIC WATER',
-      specs: ['MORTARLESS WALL INFILTRATION', 'RAINWATER CISTERN COLLECTION', 'ZERO HYDRAULIC PRESSURE'],
+      code: 'DWG-02',
+      title: L('WATER · WHERE IT GOES'),
+      scale: 'WATER',
+      specs: ['RAIN PASSES THROUGH DRY-STONE WALLS', 'CISTERN COLLECTS WHAT FALLS', 'NO PRESSURE BEHIND THE WALL'],
       renderSvg: (inView: boolean) => (
         <svg viewBox="0 0 280 160" className="w-full h-44 stroke-current fill-none" strokeWidth="1">
           <path d="M10,50 L90,50 L90,95 L190,95 L190,135 L270,135" className="opacity-70 stroke-[#0E0E0E]" strokeWidth="1.2" />
@@ -134,23 +139,17 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
           />
           <circle cx="140" cy="115" r="14" className="stroke-[#0E0E0E] opacity-50" strokeDasharray="3 2" />
           <text x="118" y="117" fill="currentColor" stroke="none" className="text-[7px] font-mono opacity-80">
-            CISTERN 80M³
+            CISTERN
           </text>
         </svg>
       ),
     },
     {
       id: 'solar',
-      code: 'DWG-LS-03',
-      title: {
-        en: 'SOLAR RADIATION & THERMAL MASS',
-        de: 'SOLARSTRAHLUNG & THERMISCHE MASSE',
-        es: 'RADIACIÓN SOLAR Y MASA TÉRMICA',
-        ca: 'RADIACIÓ SOLAR I MASSA TÈRMICA',
-        ru: 'СОЛНЕЧНАЯ ИНСОЛЯЦИЯ И ТЕПЛОЕМКОСТЬ',
-      },
-      scale: 'SOLSTICE 39.5°N',
-      specs: ['SUMMER NOON ZENITH 73.5°', 'WINTER SOLSTICE 26.5° INFILTRATION', 'MARÈS RADIANT RETENTION'],
+      code: 'DWG-03',
+      title: L('LIGHT · SUN ANGLE AND MASS'),
+      scale: 'SOLSTICE · 39.6°N',
+      specs: ['SUMMER NOON: SUN 74° HIGH', 'WINTER NOON: SUN 27° HIGH', 'STONE TAKES THE HEAT AND HOLDS IT'],
       renderSvg: (inView: boolean) => (
         <svg viewBox="0 0 280 160" className="w-full h-44 stroke-current fill-none" strokeWidth="1">
           <line x1="20" y1="120" x2="260" y2="120" className="opacity-40" />
@@ -165,7 +164,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
             strokeWidth="1.4"
           />
           <text x="25" y="20" fill="#FF4D00" stroke="none" className="text-[8px] font-mono">
-            SUMMER ZENITH 73.5°
+            SUMMER NOON 74°
           </text>
           <motion.path
             d="M20,60 L140,118"
@@ -176,23 +175,17 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
             strokeDasharray="3 3"
           />
           <text x="15" y="55" fill="currentColor" stroke="none" className="text-[8px] font-mono opacity-60">
-            WINTER LOW 26.5°
+            WINTER NOON 27°
           </text>
         </svg>
       ),
     },
     {
       id: 'microclimate',
-      code: 'DWG-LS-04',
-      title: {
-        en: 'EMBAT BREEZE & PASSIVE COOLING',
-        de: 'EMBAT-SEEBRISEN & KÜHLUNG',
-        es: 'BRISA EMBAT Y VENTILACIÓN PASIVA',
-        ca: 'BRISA EMBAT I VENTILACIÓ PASSIVA',
-        ru: 'МОРСКОЙ БРИЗ И ЕСТЕСТВЕННАЯ ВЕНТИЛЯЦИЯ',
-      },
-      scale: 'COASTAL CONVECTION',
-      specs: ['DIURNAL DIALECTIC SEA/LAND', 'CROSS-VENTILATION PATIO CHIMNEY', 'SOLAR DEPRESSION SUCTION'],
+      code: 'DWG-04',
+      title: L('AIR · EMBAT BREEZE'),
+      scale: 'AFTERNOON',
+      specs: ['SEA BREEZE ENTERS LOW', 'WARM AIR LEAVES HIGH', 'THE PATIO WORKS AS A CHIMNEY'],
       renderSvg: (inView: boolean) => (
         <svg viewBox="0 0 280 160" className="w-full h-44 stroke-current fill-none" strokeWidth="1">
           <line x1="20" y1="120" x2="260" y2="120" className="opacity-40" />
@@ -209,26 +202,20 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
           />
           <polygon points="135,40 131,48 139,48" fill="#FF4D00" stroke="none" />
           <text x="145" y="50" fill="#FF4D00" stroke="none" className="text-[8px] font-mono">
-            THERMAL DRAW
+            WARM AIR OUT
           </text>
           <text x="15" y="92" fill="currentColor" stroke="none" className="text-[8px] font-mono opacity-60">
-            EMBAT BREEZE INTAKE
+            SEA BREEZE IN
           </text>
         </svg>
       ),
     },
     {
       id: 'vegetation',
-      code: 'DWG-LS-05',
-      title: {
-        en: 'BIOMASS ROOT ANCHORAGE',
-        de: 'WURZELARCHITEKTUR & BIOMASSE',
-        es: 'ENRAIZADO BIOMÁSICO',
-        ca: 'ENRELAMENT BIOMÀSIC',
-        ru: 'КОРНЕВАЯ СТАБИЛИЗАЦИЯ ПОЧВЫ',
-      },
-      scale: 'INDIGENOUS FLORA',
-      specs: ['CENTENARY OLIVE ROOT GRID', 'MYCORRHIZAL SOIL STABILIZATION', 'PINE TREE CANOPY SHIFT'],
+      code: 'DWG-05',
+      title: L('SHADE · TREES AND ROOTS'),
+      scale: 'TIME',
+      specs: ['OLIVE CANOPY SHADES THE GROUND', 'ROOTS HOLD THE SOIL', 'TREES GROW, SHADE MOVES'],
       renderSvg: (inView: boolean) => (
         <svg viewBox="0 0 280 160" className="w-full h-44 stroke-current fill-none" strokeWidth="1">
           <path d="M10,80 Q80,85 140,80 T270,75" className="opacity-60 stroke-[#0E0E0E]" strokeWidth="1.2" />
@@ -248,7 +235,53 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
             CANOPY SHADE
           </text>
           <text x="105" y="130" fill="#FF4D00" stroke="none" className="text-[8px] font-mono font-medium">
-            DEEP ROOT ANCHOR
+            ROOTS
+          </text>
+        </svg>
+      ),
+    },
+    {
+      id: 'shutters',
+      code: 'DWG-06',
+      title: L('SUN INTO SHADE · SHUTTERS'),
+      scale: 'SECTION',
+      specs: ['CLOSED: DIRECT SUN STOPS AT THE SLATS', 'LIGHT STAYS, HEAT STAYS OUT', 'OPEN AT NIGHT: AIR PASSES'],
+      renderSvg: (inView: boolean) => (
+        <svg viewBox="0 0 280 160" className="w-full h-44 stroke-current fill-none" strokeWidth="1">
+          {/* Ground and wall in section, with the window opening */}
+          <line x1="20" y1="130" x2="260" y2="130" className="opacity-40" />
+          <rect x="150" y="20" width="18" height="30" className="opacity-80 stroke-[#0E0E0E]" strokeWidth="1.2" />
+          <rect x="150" y="110" width="18" height="20" className="opacity-80 stroke-[#0E0E0E]" strokeWidth="1.2" />
+
+          {/* Shutter slats on the outside, tilted down and away */}
+          {[52, 62, 72, 82, 92, 102].map((y) => (
+            <line key={y} x1="128" y1={y} x2="146" y2={y + 8} stroke="#0E0E0E" strokeWidth="1.6" />
+          ))}
+
+          {/* Sun rays stop at the slats */}
+          {[[30, 14, 128, 52], [48, 14, 128, 72], [66, 14, 128, 92]].map(([x1, y1, x2, y2]) => (
+            <motion.line
+              key={y2}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              initial={{ pathLength: 0 }}
+              animate={inView ? { pathLength: 1 } : {}}
+              transition={{ duration: 1.2, delay: 0.1 }}
+              className="stroke-[#FF4D00]"
+              strokeWidth="1.4"
+            />
+          ))}
+          <text x="20" y="10" fill="#FF4D00" stroke="none" className="text-[8px] font-mono">
+            DIRECT SUN
+          </text>
+
+          {/* Shade inside */}
+          <line x1="172" y1="60" x2="250" y2="60" className="opacity-40" strokeDasharray="2 3" />
+          <line x1="172" y1="100" x2="250" y2="100" className="opacity-40" strokeDasharray="2 3" />
+          <text x="186" y="84" fill="currentColor" stroke="none" className="text-[8px] font-mono opacity-60">
+            SHADE
           </text>
         </svg>
       ),
@@ -266,14 +299,14 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-hairline">
           <div className="space-y-2">
             <div className="flex items-center gap-3 text-xs font-mono text-[#0E0E0E]/60 uppercase tracking-widest">
-              <span className="text-[#FF4D00] font-bold">02</span>
+              <span className="text-[#FF4D00] font-bold">{titles.sectionNumber}</span>
               <span className="h-[1px] w-6 bg-[#0E0E0E]/20" />
               <span>{titles.kicker[currentLang]}</span>
             </div>
             <ScrambleHeadline
               as="h2"
               text={titles.headline[currentLang]}
-              className="text-3xl sm:text-4xl lg:text-5xl font-sans font-bold tracking-tight text-[#0E0E0E]"
+              className="text-3xl sm:text-4xl lg:text-5xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E]"
             />
           </div>
 
@@ -386,8 +419,8 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
                 {/* Large Macro Texture Image */}
                 <div className="aspect-[4/3] overflow-hidden relative bg-[#0E0E0E]/10">
                   <MaterialTileImage src={mat.image} alt={mat.name[currentLang]} />
-                  <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-[#F5F5F2]/95 border border-hairline font-mono text-[9px] text-[#0E0E0E]">
-                    {mat.spec}
+                  <div className="absolute bottom-2 left-2 flex gap-1">
+                    <ConditionChips ids={mat.conditions} currentLang={currentLang} />
                   </div>
                   <div className="absolute top-2 right-2 px-2 py-1 bg-[#0E0E0E] text-[#F5F5F2] font-mono text-[9px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
                     [{titles.inspectBtn[currentLang]} ↗]
@@ -396,6 +429,9 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
 
                 {/* Tile Footer Details */}
                 <div className="p-4 sm:p-5 border-t border-hairline space-y-2">
+                  <h3 className="font-mono text-lg sm:text-xl font-medium tracking-[-0.03em] text-[#0E0E0E] group-hover:text-[#FF4D00] transition-colors">
+                    {mat.does[currentLang]}
+                  </h3>
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="font-mono text-xs text-[#FF4D00] italic">
                       {mat.localName}
@@ -526,8 +562,8 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
                 alt={selectedMaterial.name[currentLang]}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-3 left-3 px-3 py-1 bg-[#F5F5F2]/95 border border-hairline font-mono text-xs text-[#0E0E0E]">
-                {selectedMaterial.spec}
+              <div className="absolute bottom-3 left-3 flex gap-1.5">
+                <ConditionChips ids={selectedMaterial.conditions} currentLang={currentLang} />
               </div>
             </div>
 
@@ -537,11 +573,11 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
                 <span className="font-mono text-xs text-[#FF4D00] uppercase tracking-wider block">
                   {selectedMaterial.localName} · {selectedMaterial.origin}
                 </span>
-                <h3 className="text-2xl sm:text-3xl font-sans font-bold text-[#0E0E0E] mt-1">
-                  {selectedMaterial.name[currentLang]}
+                <h3 className="text-2xl sm:text-3xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E] mt-1">
+                  {selectedMaterial.does[currentLang]}
                 </h3>
-                <p className="text-sm font-sans text-[#0E0E0E]/70 mt-1">
-                  {selectedMaterial.subtitle[currentLang]}
+                <p className="text-sm font-mono text-[#0E0E0E]/70 mt-1">
+                  {selectedMaterial.name[currentLang]} · {selectedMaterial.subtitle[currentLang]}
                 </p>
               </div>
 

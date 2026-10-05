@@ -12,10 +12,10 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
 
   const navItems = [
     { label: t.work[currentLang], href: '#work' },
-    { label: t.materials[currentLang], href: '#materials' },
     { label: t.studio[currentLang], href: '#studio' },
     { label: t.approach[currentLang], href: '#approach' },
     { label: t.services[currentLang], href: '#services' },
+    { label: t.materials[currentLang], href: '#materials' },
     { label: t.contact[currentLang], href: '#contact' },
   ];
 
@@ -120,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
                 <a
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
-                  className="block py-1 text-sm font-sans font-semibold text-[#0E0E0E] hover:text-[#FF4D00]"
+                  className="block py-1 text-sm font-mono font-medium text-[#0E0E0E] hover:text-[#FF4D00]"
                 >
                   {item.label}
                 </a>

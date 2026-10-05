@@ -18,37 +18,6 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
       step: '01',
       renderDrawing: (isActive: boolean) => (
         <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
-          {/* Architectural drawing sheet on drafting plane */}
-          <rect x="14" y="16" width="52" height="36" className="opacity-40" strokeDasharray="3 2" />
-          <line x1="14" y1="20" x2="18" y2="20" stroke="currentColor" />
-          <line x1="62" y1="20" x2="66" y2="20" stroke="currentColor" />
-
-          {/* Spatial program matrix / client dialogue partitions */}
-          <rect x="20" y="22" width="22" height="24" className="opacity-70" />
-          <rect x="42" y="22" width="18" height="14" className="opacity-60" />
-          <rect x="42" y="36" width="18" height="10" className="opacity-50" strokeDasharray="2 2" />
-
-          {/* Precision drafting compass / divider tool */}
-          <path d="M31,10 L31,24 M31,24 L22,44 M31,24 L40,44" stroke={isActive ? '#FF4D00' : 'currentColor'} strokeWidth="1.2" />
-          <circle cx="31" cy="24" r="2.2" fill={isActive ? '#FF4D00' : 'currentColor'} />
-          <path d="M20,44 A18,18 0 0,1 42,44" className="opacity-45" strokeDasharray="1.5 2" stroke={isActive ? '#FF4D00' : 'currentColor'} />
-
-          {/* Dialogue resonance arc / client wishes wave */}
-          <path d="M48,14 C56,14 62,20 62,28" stroke={isActive ? '#FF4D00' : 'currentColor'} strokeWidth="1.2" strokeDasharray="2 2" />
-          <path d="M52,11 C62,11 68,18 68,28" className="opacity-35" strokeDasharray="2 3" />
-
-          {/* Scale rule datum */}
-          <line x1="20" y1="56" x2="60" y2="56" className="opacity-40" />
-          <line x1="20" y1="54" x2="20" y2="58" className="opacity-50" />
-          <line x1="40" y1="54" x2="40" y2="58" className="opacity-50" />
-          <line x1="60" y1="54" x2="60" y2="58" className="opacity-50" />
-        </svg>
-      ),
-    },
-    {
-      step: '02',
-      renderDrawing: (isActive: boolean) => (
-        <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
           {/* Stepped hillside contours */}
           <path d="M8,54 Q25,54 36,46 T62,34 L74,28" className="opacity-40" strokeDasharray="2 2" />
           <path d="M6,46 Q26,44 42,34 T68,22 L76,18" className={isActive ? 'stroke-[#FF4D00]' : 'opacity-70'} strokeWidth="1.2" />
@@ -69,6 +38,33 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
           {/* Prevailing sea breeze stream lines */}
           <path d="M46,38 Q56,36 66,38" className="opacity-45" strokeDasharray="2 2" />
           <path d="M48,42 Q58,40 68,42" className="opacity-30" strokeDasharray="2 2" />
+        </svg>
+      ),
+    },
+    {
+      step: '02',
+      renderDrawing: (isActive: boolean) => (
+        <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
+          {/* Ground datum */}
+          <line x1="8" y1="50" x2="72" y2="50" className="opacity-40" />
+
+          {/* Keep: solid line */}
+          <rect x="12" y="34" width="14" height="16" strokeWidth="1.2" className="opacity-90" />
+
+          {/* Remove: dashed and struck through */}
+          <rect x="32" y="38" width="12" height="12" strokeDasharray="2 2" className="opacity-50" />
+          <line x1="32" y1="38" x2="44" y2="50" stroke={isActive ? '#FF4D00' : 'currentColor'} strokeWidth="1.2" />
+          <line x1="44" y1="38" x2="32" y2="50" stroke={isActive ? '#FF4D00' : 'currentColor'} strokeWidth="1.2" />
+
+          {/* Strengthen: doubled line */}
+          <rect x="50" y="28" width="16" height="22" strokeWidth="1.2" className="opacity-90" />
+          <rect x="52.5" y="30.5" width="11" height="17" stroke={isActive ? '#FF4D00' : 'currentColor'} strokeWidth="1.2" />
+
+          {/* Dimension line above the three marks */}
+          <line x1="12" y1="18" x2="66" y2="18" className="opacity-30" />
+          <line x1="12" y1="15" x2="12" y2="21" className="opacity-40" />
+          <line x1="39" y1="15" x2="39" y2="21" className="opacity-40" />
+          <line x1="66" y1="15" x2="66" y2="21" className="opacity-40" />
         </svg>
       ),
     },
@@ -104,33 +100,6 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
       step: '04',
       renderDrawing: (isActive: boolean) => (
         <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
-          {/* Traditional Dry-Stone Wall Course (Pedra en Sec) */}
-          <rect x="12" y="38" width="18" height="14" className="opacity-70" />
-          <rect x="30" y="38" width="20" height="14" className="opacity-70" />
-          <rect x="50" y="38" width="18" height="14" className="opacity-70" />
-          
-          <rect x="20" y="24" width="22" height="14" className={isActive ? 'stroke-[#FF4D00]' : 'opacity-85'} strokeWidth="1.2" />
-          <rect x="42" y="24" width="20" height="14" className="opacity-70" />
-
-          {/* Stone dressing texture lines */}
-          <line x1="25" y1="28" x2="36" y2="28" className="opacity-30" />
-          <line x1="27" y1="33" x2="34" y2="33" className="opacity-30" />
-
-          {/* Tactile wood joinery / try-square alignment tool */}
-          <path d="M52,14 L52,32 L66,32" stroke={isActive ? '#FF4D00' : 'currentColor'} strokeWidth="1.2" />
-          <line x1="52" y1="20" x2="55" y2="20" stroke="#FF4D00" />
-          <line x1="52" y1="26" x2="55" y2="26" stroke="#FF4D00" />
-          
-          {/* Plumb datum line */}
-          <line x1="20" y1="10" x2="20" y2="48" className="opacity-30" strokeDasharray="2 3" />
-          <polygon points="20,52 18,48 22,48" fill={isActive ? '#FF4D00' : 'currentColor'} stroke="none" />
-        </svg>
-      ),
-    },
-    {
-      step: '05',
-      renderDrawing: (isActive: boolean) => (
-        <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
           {/* Ground datum */}
           <line x1="10" y1="52" x2="70" y2="52" className="opacity-30" />
 
@@ -160,6 +129,33 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
         </svg>
       ),
     },
+    {
+      step: '05',
+      renderDrawing: (isActive: boolean) => (
+        <svg viewBox="0 0 80 64" className="w-16 h-14 stroke-current fill-none" strokeWidth="1">
+          {/* Traditional Dry-Stone Wall Course (Pedra en Sec) */}
+          <rect x="12" y="38" width="18" height="14" className="opacity-70" />
+          <rect x="30" y="38" width="20" height="14" className="opacity-70" />
+          <rect x="50" y="38" width="18" height="14" className="opacity-70" />
+          
+          <rect x="20" y="24" width="22" height="14" className={isActive ? 'stroke-[#FF4D00]' : 'opacity-85'} strokeWidth="1.2" />
+          <rect x="42" y="24" width="20" height="14" className="opacity-70" />
+
+          {/* Stone dressing texture lines */}
+          <line x1="25" y1="28" x2="36" y2="28" className="opacity-30" />
+          <line x1="27" y1="33" x2="34" y2="33" className="opacity-30" />
+
+          {/* Tactile wood joinery / try-square alignment tool */}
+          <path d="M52,14 L52,32 L66,32" stroke={isActive ? '#FF4D00' : 'currentColor'} strokeWidth="1.2" />
+          <line x1="52" y1="20" x2="55" y2="20" stroke="#FF4D00" />
+          <line x1="52" y1="26" x2="55" y2="26" stroke="#FF4D00" />
+          
+          {/* Plumb datum line */}
+          <line x1="20" y1="10" x2="20" y2="48" className="opacity-30" strokeDasharray="2 3" />
+          <polygon points="20,52 18,48 22,48" fill={isActive ? '#FF4D00' : 'currentColor'} stroke="none" />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -176,18 +172,29 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
             <ScrambleHeadline
               as="h2"
               text={t.headline[currentLang]}
-              className="text-3xl sm:text-4xl font-sans font-bold tracking-tight text-[#0E0E0E]"
+              className="text-3xl sm:text-4xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E]"
             />
           </div>
 
-          <div className="font-mono text-xs text-[#0E0E0E]/60 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
-            <span>{t.closeCollaboration[currentLang]}</span>
-          </div>
+          <p className="font-mono text-xs text-[#0E0E0E]/70 leading-relaxed max-w-[56ch]">{t.intro[currentLang]}</p>
         </div>
 
-        {/* 5 Process Steps Row: Listen, Site, Design, Craft, Tech */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch">
+        {/* 5 steps: Observe, Decide, Draw, Calculate, Build */}
+        {/* Order made visible: three steps are decided, one is calculated, one is built */}
+        <div className="mt-8 hidden lg:grid grid-cols-5 gap-4 font-mono text-[10px] tracking-wider text-[#0E0E0E]/50" aria-hidden>
+          {[
+            { span: 'col-span-3', label: t.phaseLabels.decided[currentLang], accent: true },
+            { span: 'col-span-1', label: t.phaseLabels.calculated[currentLang], accent: false },
+            { span: 'col-span-1', label: t.phaseLabels.built[currentLang], accent: false },
+          ].map((b) => (
+            <div key={b.label} className={`${b.span} flex flex-col gap-1.5`}>
+              <span className={b.accent ? 'text-[#FF4D00]' : ''}>{b.label}</span>
+              <span className={`h-px w-full ${b.accent ? 'bg-[#FF4D00]' : 'bg-[#0E0E0E]/30'}`} />
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch">
           {stepsData.map((item, idx) => {
             const isActive = activeStep === idx;
             return (
@@ -198,7 +205,7 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.08, ease: smoothEase }}
                 onClick={() => setActiveStep(idx)}
-                className={`p-5 border bg-[#F5F5F2] hover:border-[#0E0E0E] transition-all flex flex-col h-[280px] sm:h-[300px] select-none ${
+                className={`p-5 border bg-[#F5F5F2] hover:border-[#0E0E0E] transition-all flex flex-col h-[340px] sm:h-[360px] select-none ${
                   isActive ? 'border-[#0E0E0E] bg-[#0E0E0E]/[0.02]' : 'border-hairline'
                 }`}
                 role="button"
@@ -227,8 +234,11 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
                   <div className="h-5 flex items-center text-base font-bold tracking-wider text-[#0E0E0E] uppercase">
                     {t.steps[idx].phase[currentLang]}
                   </div>
-                  <div className="text-[11px] text-[#0E0E0E]/70 leading-snug min-h-[2.5rem] flex items-start">
+                  <div className="text-[12px] text-[#0E0E0E] leading-snug min-h-[2.5rem] flex items-start">
                     {t.steps[idx].title[currentLang]}
+                  </div>
+                  <div className="text-[11px] text-[#0E0E0E]/55 leading-snug">
+                    {t.steps[idx].description[currentLang]}
                   </div>
                 </div>
               </motion.div>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { content, Language } from '../content';
 import { TerrainWireframe } from './TerrainWireframe';
 import { ScrambleHeadline } from './ScrambleHeadline';
-import { formatSunset } from './sunset';
+import { formatSunset, sunPosition, poleShadow } from './sunset';
 
 interface HeroProps {
   currentLang: Language;
@@ -11,6 +11,8 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
   const [sunset, setSunset] = useState<string | null>(null);
+  const [sun, setSun] = useState<{ altitude: number; azimuth: number; shadow: number | null } | null>(null);
+  const reduced = useReducedMotion();
   const t = content.hero;
   const meta = content.meta;
 
@@ -18,10 +20,14 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
 
   // Today's sunset in Palma, recalculated every 10 minutes so it rolls over at midnight
   useEffect(() => {
-    const update = () =>
-      setSunset(formatSunset(new Date(), conditions.latitude, conditions.longitude, meta.timezone));
+    const update = () => {
+      const now = new Date();
+      setSunset(formatSunset(now, conditions.latitude, conditions.longitude, meta.timezone));
+      const pos = sunPosition(now, conditions.latitude, conditions.longitude);
+      setSun({ ...pos, shadow: poleShadow(pos.altitude) });
+    };
     update();
-    const interval = setInterval(update, 10 * 60 * 1000);
+    const interval = setInterval(update, 60 * 1000);
     return () => clearInterval(interval);
   }, [conditions.latitude, conditions.longitude, meta.timezone]);
 
@@ -39,19 +45,33 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
             <span className="text-[#FF4D00]">⊕</span>
             <span className="text-[#0E0E0E] font-medium">{conditions.place[currentLang]}</span>
             <span className="text-[#0E0E0E]/40">·</span>
-            <span className="text-[#0E0E0E]">{conditions.airTemp}°C</span>
+            {sun && sun.altitude > 0 && (
+              <>
+                <span>
+                  {conditions.sunLabel[currentLang]}{' '}
+                  <span className="text-[#0E0E0E]">
+                    {Math.round(sun.altitude)}° / {Math.round(sun.azimuth)}°
+                  </span>
+                </span>
+                {sun.shadow !== null && (
+                  <>
+                    <span className="text-[#0E0E0E]/40">·</span>
+                    <span>
+                      {conditions.poleLabel[currentLang]}{' '}
+                      <span className="text-[#0E0E0E]">{sun.shadow.toFixed(1)} m</span>
+                    </span>
+                  </>
+                )}
+              </>
+            )}
             {sunset && (
               <>
-                <span className="text-[#0E0E0E]/40">·</span>
+                {sun && sun.altitude > 0 && <span className="text-[#0E0E0E]/40">·</span>}
                 <span>
                   {conditions.sunsetLabel[currentLang]} <span className="text-[#0E0E0E]">{sunset}</span>
                 </span>
               </>
             )}
-            <span className="text-[#0E0E0E]/40">·</span>
-            <span>
-              {conditions.seaLabel[currentLang]} <span className="text-[#0E0E0E]">{conditions.seaTemp}°C</span>
-            </span>
           </div>
 
           {/* Node 02: Availability */}
@@ -83,13 +103,33 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
               as="h1"
               text={t.headline[currentLang]}
               scrambleDuration={600}
-              className="text-[22px] sm:text-[26px] md:text-[30px] lg:text-[32px] font-mono font-medium tracking-[-0.03em] leading-[1.12] text-[#0E0E0E] whitespace-pre-line"
+              className="text-[32px] sm:text-[40px] md:text-[46px] lg:text-[52px] font-mono font-medium tracking-[-0.04em] leading-[1.05] text-[#0E0E0E] whitespace-pre-line"
             />
 
-            {/* Subline in JetBrains Mono font, max-width ~42ch */}
-            <p className="text-xs sm:text-[13px] md:text-sm text-[#0E0E0E]/80 font-mono leading-relaxed max-w-[42ch]">
-              {t.subline[currentLang]}
-            </p>
+            {/* Conditions resolve one by one, then the closing line */}
+            <div className="font-mono text-xs sm:text-[13px] md:text-sm text-[#0E0E0E]/80 leading-relaxed">
+              <p className="flex flex-wrap gap-x-2">
+                {t.conditionWords.map((word, i) => (
+                  <motion.span
+                    key={word.en}
+                    initial={reduced ? false : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.9 + i * 0.18, ease: smoothEase }}
+                  >
+                    {word[currentLang]}
+                  </motion.span>
+                ))}
+              </p>
+              <motion.p
+                initial={reduced ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.9 + t.conditionWords.length * 0.18 + 0.3, ease: smoothEase }}
+                className="mt-1 flex items-center gap-2 text-[#0E0E0E]"
+              >
+                <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+                <span>{t.closing[currentLang]}</span>
+              </motion.p>
+            </div>
 
             {/* Precision CTA Actions */}
             <div className="pt-1 flex flex-wrap items-center gap-3">
@@ -109,24 +149,6 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
                 <span>{t.ctaInquire[currentLang]}</span>
                 <span>→</span>
               </a>
-            </div>
-
-            {/* Values Row: 01 Listen · 02 Study · 03 Preserve */}
-            <div className="pt-5 border-t border-hairline-subtle flex flex-wrap items-center gap-y-2 gap-x-4 text-[11px] font-mono text-[#0E0E0E]/70">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1 h-1 bg-[#FF4D00]" />
-                <span>{t.labels.listen[currentLang]}</span>
-              </span>
-              <span className="text-[#0E0E0E]/30">·</span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-1 h-1 bg-[#0E0E0E]/50" />
-                <span>{t.labels.study[currentLang]}</span>
-              </span>
-              <span className="text-[#0E0E0E]/30">·</span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-1 h-1 bg-[#0E0E0E]/50" />
-                <span>{t.labels.preserve[currentLang]}</span>
-              </span>
             </div>
           </motion.div>
 
