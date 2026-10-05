@@ -134,19 +134,19 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
             {/* Image, and the section drawing when the project has one */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className={`${hasProjectSection(project.id) ? 'lg:col-span-7' : 'lg:col-span-12'} relative border border-hairline bg-[#0E0E0E]/5 overflow-hidden`}>
+              <div className={`${hasProjectSection(project.id) ? 'lg:col-span-5' : 'lg:col-span-12'} relative border border-hairline bg-[#0E0E0E]/5 overflow-hidden min-h-[240px]`}>
                 <img
                   src={project.image}
                   alt={`${project.title}, design concept image`}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full max-h-[540px] object-cover"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
                 <div className="absolute bottom-2 left-2 px-2 py-1 bg-[#0E0E0E]/80 backdrop-blur-xs font-mono text-[10px] text-[#F5F5F2]">
                   {project.location}
                 </div>
               </div>
               {hasProjectSection(project.id) && (
-                <div className="lg:col-span-5">
+                <div className="lg:col-span-7">
                   <ProjectSection projectId={project.id} currentLang={currentLang} active={activeRow} />
                 </div>
               )}
@@ -164,14 +164,14 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     <span className="text-[#FF4D00]">{w.conceptTag[currentLang]}</span>
                   </div>
 
-                  <div className="space-y-3 font-mono text-xs divide-y divide-hairline-subtle">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 font-mono text-xs">
                     {[
                       { label: w.dataSite[currentLang], value: project.location },
                       { label: w.dataYear[currentLang], value: project.year },
                       { label: w.dataType[currentLang], value: project.category[currentLang] },
                       { label: w.primaryPalette[currentLang], value: project.materials },
                     ].map((row) => (
-                      <div key={row.label} className="pt-2 flex flex-col gap-0.5">
+                      <div key={row.label} className="flex flex-col gap-0.5">
                         <span className="text-[10px] text-[#0E0E0E]/50 uppercase">{row.label}</span>
                         <span className="text-[#0E0E0E] font-medium leading-snug">{row.value}</span>
                       </div>
