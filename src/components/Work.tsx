@@ -3,7 +3,6 @@ import { motion } from 'motion/react';
 import { content, Language, Project } from '../content';
 import { ProjectModal } from './ProjectModal';
 import { ScrambleHeadline } from './ScrambleHeadline';
-import { DayRule } from './DayRule';
 
 interface WorkProps {
   currentLang: Language;
@@ -167,7 +166,7 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
                   </div>
                 </div>
 
-                {/* Tile metadata: name, year, type, first condition log line */}
+                {/* Tile metadata: name, year, type, thesis */}
                 <div className="p-4 sm:p-5 space-y-4 font-mono">
                   <div className="flex items-baseline justify-between gap-4">
                     <div className="space-y-0.5">
@@ -184,16 +183,11 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
                     </div>
                   </div>
 
-                  {/* First line of the condition log, and the day it sits in */}
-                  <div className="space-y-2.5">
-                    <p className="text-[12px] text-[#0E0E0E]/80 flex gap-3">
-                      <span className="tabular-nums text-[#FF4D00] font-semibold">
-                        {project.conditionLog.entries[0].time}
-                      </span>
-                      <span>{project.conditionLog.entries[0].text[currentLang]}</span>
-                    </p>
-                    <DayRule times={project.conditionLog.entries.map((e) => e.time)} />
-                  </div>
+                  {/* The project's position */}
+                  <p className="text-[12px] uppercase text-[#0E0E0E] flex items-start gap-2">
+                    <span aria-hidden className="mt-[5px] w-1.5 h-1.5 shrink-0 bg-[#FF4D00]" />
+                    <span>{project.thesis[currentLang]}</span>
+                  </p>
                 </div>
               </motion.article>
             );

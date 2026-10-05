@@ -84,13 +84,6 @@ interface ReadoutRowSource {
   value: LocalizedStringSource;
 }
 
-interface ConditionLogEntrySource {
-  /** 24 h clock, "HH:MM". */
-  time: string;
-  condition: ConditionId;
-  text: LocalizedStringSource;
-}
-
 interface ProjectSource {
   id: string;
   number: string;
@@ -101,15 +94,17 @@ interface ProjectSource {
   materials: string;
   image: string;
   aspect: string;
-  summary: LocalizedStringSource;
-  details: Localized<{
-    condition: string;
-    decision: string;
-  }>;
-  conditionLog: {
-    season: LocalizedStringSource;
-    entries: ConditionLogEntrySource[];
-  };
+  /** One imperative sentence: the project's position. */
+  thesis: LocalizedStringSource;
+  /** Two or three short sentences under the thesis. */
+  position: LocalizedStringSource;
+  /** Condition → decision → consequence. Labels come from the project's own site. */
+  reasoning: {
+    label: LocalizedStringSource;
+    condition: LocalizedStringSource;
+    decision: LocalizedStringSource;
+    consequence: LocalizedStringSource;
+  }[];
 }
 
 interface ApproachStepSource {
@@ -272,17 +267,16 @@ interface ContentSource {
     viewDetails: LocalizedStringSource;
     closeSpec: LocalizedStringSource;
     modalSpecTitle: LocalizedStringSource;
-    modalOverview: LocalizedStringSource;
-    modalLog: LocalizedStringSource;
-    modalCondition: LocalizedStringSource;
-    modalDecision: LocalizedStringSource;
+    reasoningCondition: LocalizedStringSource;
+    reasoningDecision: LocalizedStringSource;
+    reasoningConsequence: LocalizedStringSource;
+    sectionLabel: LocalizedStringSource;
     modalData: LocalizedStringSource;
     dataSite: LocalizedStringSource;
     dataYear: LocalizedStringSource;
     dataType: LocalizedStringSource;
     primaryPalette: LocalizedStringSource;
     conceptTag: LocalizedStringSource;
-    dayRuleLabel: LocalizedStringSource;
     inquireSimilar: LocalizedStringSource;
     prevProject: LocalizedStringSource;
     nextProject: LocalizedStringSource;
@@ -470,7 +464,7 @@ const source: ContentSource = {
     nextMaterial: { en: "Next material", de: "Nächstes Material", es: "Siguiente material", ca: "Següent material", ru: "Следующий материал" },
     prevProject: { en: "Previous project", de: "Vorheriges Projekt", es: "Proyecto anterior", ca: "Projecte anterior", ru: "Предыдущий проект" },
     nextProject: { en: "Next project", de: "Nächstes Projekt", es: "Siguiente proyecto", ca: "Següent projecte", ru: "Следующий проект" },
-    inspectSpec: { en: "Open condition log", de: "Spezifikationen einsehen", es: "Ver especificaciones", ca: "Veure especificacions", ru: "Изучить спецификацию" },
+    inspectSpec: { en: "Open project", de: "Spezifikationen einsehen", es: "Ver especificaciones", ca: "Veure especificacions", ru: "Изучить спецификацию" },
     backToTop: { en: "Scroll back to top of page", de: "Zurück zum Seitenanfang", es: "Volver arriba de la página", ca: "Tornar a dalt de la pàgina", ru: "Вернуться в начало страницы" },
     interactiveModel: {
       en: "Interactive 3D model of a site: sun, wind, ground, material and time.",
@@ -797,20 +791,19 @@ const source: ContentSource = {
     filterAll: { en: "All" },
     filterResidential: { en: "Architecture" },
     filterInterior: { en: "Interior" },
-    viewDetails: { en: "Open condition log" },
+    viewDetails: { en: "Open project" },
     closeSpec: { en: "Close [ESC ✕]" },
     modalSpecTitle: { en: "DESIGN CONCEPT" },
-    modalOverview: { en: "SUMMARY" },
-    modalLog: { en: "CONDITION LOG" },
-    modalCondition: { en: "CONDITION" },
-    modalDecision: { en: "DECISION" },
+    reasoningCondition: { en: "WHAT THE SITE GAVE" },
+    reasoningDecision: { en: "WHAT WE DID" },
+    reasoningConsequence: { en: "WHAT IT DOES" },
+    sectionLabel: { en: "SECTION · NOT TO SCALE" },
     modalData: { en: "PROJECT DATA" },
     dataSite: { en: "SITE" },
     dataYear: { en: "YEAR" },
     dataType: { en: "TYPE" },
     primaryPalette: { en: "MATERIALS" },
     conceptTag: { en: "CONCEPT" },
-    dayRuleLabel: { en: "24 H" },
     inquireSimilar: { en: "Talk about a project like this →" },
     prevProject: { en: "[PREV ←]" },
     nextProject: { en: "[NEXT →]" },
@@ -825,26 +818,17 @@ const source: ContentSource = {
         materials: "Santanyí Limestone, Pigmented Concrete, Teak",
         image: tramuntanaImg,
         aspect: "16:9",
-        summary: {
-          en: "The slope is 38°. The house goes into it and the dug stone holds it back. From the coast road it is not visible."
+        thesis: { en: "Build into the slope." },
+        position: {
+          en: "38° slope. We don't fight it. We dig in, and the stone we dig out holds the hill back."
         },
-        details: {
-          en: {
-            condition: "A UNESCO-protected slope. 38 degrees. No visual impact allowed from the coastal road.",
-            decision: "Dig the volume into the hill. Reuse the excavated stone for dry-stone retaining walls. Keep the roofs low, level with the olive terraces."
-          }
-        },
-        conditionLog: {
-          season: { en: "Midsummer" },
-          entries: [
-            { time: "06:30", condition: "heat", text: { en: "north-west slope still holds the night's cool" } },
-            { time: "11:15", condition: "shade", text: { en: "courtyard in shade" } },
-            { time: "14:40", condition: "light", text: { en: "sun reaches the terrace walls" } },
-            { time: "18:50", condition: "air", text: { en: "sea wind enters the courtyard" } },
-            { time: "21:30", condition: "heat", text: { en: "dry-stone wall releases the day's heat" } },
-            { time: "23:10", condition: "air", text: { en: "night air drains through the courtyard" } }
-          ]
-        }
+        reasoning: [
+          { label: { en: "Slope" }, condition: { en: "38°" }, decision: { en: "House enters the terrain" }, consequence: { en: "Roofs sit level with the olive terraces." } },
+          { label: { en: "Sun" }, condition: { en: "Western, in the afternoon" }, decision: { en: "Deep shade" }, consequence: { en: "Terraces and courtyards stay shaded after midday." } },
+          { label: { en: "Air" }, condition: { en: "Evening sea air" }, decision: { en: "Courtyard opens to it" }, consequence: { en: "Sea air crosses the courtyard in the evening." } },
+          { label: { en: "Stone" }, condition: { en: "Excavated on site" }, decision: { en: "Stone returns as retaining walls" }, consequence: { en: "The walls are made of the site." } },
+          { label: { en: "Road" }, condition: { en: "Visible from the coast road" }, decision: { en: "Building stays below the skyline" }, consequence: { en: "From the road: terraces, no house." } }
+        ]
       },
       {
         id: "palma-penthouse",
@@ -856,26 +840,15 @@ const source: ContentSource = {
         materials: "Continuous Microcement, White Oak, Santanyí Stone",
         image: palmaImg,
         aspect: "4:3",
-        summary: {
-          en: "A 17th-century attic. We took out the partitions so daylight and air cross the whole floor."
+        thesis: { en: "Take out the walls. Keep the room." },
+        position: {
+          en: "A 17th-century attic, cut up by centuries of partitions. We removed them. The thick walls stay."
         },
-        details: {
-          en: {
-            condition: "Centuries of partitions. Small rooms. Daylight stops at the first wall.",
-            decision: "Remove the partitions. One continuous floor. Light and air cross it."
-          }
-        },
-        conditionLog: {
-          season: { en: "Midsummer" },
-          entries: [
-            { time: "06:50", condition: "light", text: { en: "first sun enters through the east windows" } },
-            { time: "10:30", condition: "light", text: { en: "daylight reaches the far wall" } },
-            { time: "13:00", condition: "heat", text: { en: "street heat stays outside the thick walls" } },
-            { time: "16:20", condition: "air", text: { en: "warm air collects under the roof and leaves at the ridge" } },
-            { time: "20:45", condition: "sound", text: { en: "street noise drops, windows open" } },
-            { time: "23:30", condition: "weight", text: { en: "stone floor still cool underfoot" } }
-          ]
-        }
+        reasoning: [
+          { label: { en: "Partitions" }, condition: { en: "Centuries of them" }, decision: { en: "Removed" }, consequence: { en: "Light and air cross the whole floor." } },
+          { label: { en: "Walls" }, condition: { en: "17th-century, thick" }, decision: { en: "Kept as they are" }, consequence: { en: "Street heat and noise stay out." } },
+          { label: { en: "Floor" }, condition: { en: "Santanyí stone" }, decision: { en: "Left bare" }, consequence: { en: "Cool underfoot in summer." } }
+        ]
       },
       {
         id: "cliff-pavilion",
@@ -887,25 +860,15 @@ const source: ContentSource = {
         materials: "Lime Plaster, Marine Grade Stainless Steel, Low-Iron Glass",
         image: cliffImg,
         aspect: "16:9",
-        summary: {
-          en: "A pavilion at the cliff edge. Salt air, wind and low western sun decide the materials."
+        thesis: { en: "Let the cliff decide." },
+        position: {
+          en: "Salt air, wind and low afternoon sun. Each one chose a material or a shape. The building stays off the edge."
         },
-        details: {
-          en: {
-            condition: "Salt air corrodes. The cliff catches the wind. The afternoon sun comes in low.",
-            decision: "Lime plaster, stainless steel, low-iron glass. A cantilever keeps the building off the cliff edge and its mass small."
-          }
-        },
-        conditionLog: {
-          season: { en: "Midsummer" },
-          entries: [
-            { time: "08:00", condition: "shade", text: { en: "cliff shades the terrace" } },
-            { time: "12:30", condition: "shade", text: { en: "deep eaves keep sun off the glass" } },
-            { time: "15:45", condition: "air", text: { en: "sea wind arrives from the south-west" } },
-            { time: "19:20", condition: "light", text: { en: "low sun reaches deep into the living room" } },
-            { time: "21:10", condition: "heat", text: { en: "lime wall releases the day's heat" } }
-          ]
-        }
+        reasoning: [
+          { label: { en: "Salt" }, condition: { en: "Air at the cliff" }, decision: { en: "Lime, stainless steel, low-iron glass" }, consequence: { en: "Materials that stand salt air." } },
+          { label: { en: "Edge" }, condition: { en: "The cliff drops away" }, decision: { en: "Cantilever" }, consequence: { en: "The building stays off the edge. Its mass stays small." } },
+          { label: { en: "Sun" }, condition: { en: "Low, from the south-west, in the afternoon" }, decision: { en: "Deep eaves" }, consequence: { en: "The glass stays in shade." } }
+        ]
       },
       {
         id: "finca-son-vida",
@@ -917,25 +880,15 @@ const source: ContentSource = {
         materials: "Original Fieldstone, Blackened Steel, Lime Mortar",
         image: fincaImg,
         aspect: "4:3",
-        summary: {
-          en: "A 19th-century finca. One thin steel addition holds the gallery and the pool. The fieldstone stays as it is."
+        thesis: { en: "The old stays. The new is thin." },
+        position: {
+          en: "A 19th-century finca with thick fieldstone walls. The new programme goes inside the old line, in blackened steel. The stone is not touched."
         },
-        details: {
-          en: {
-            condition: "Thick fieldstone walls. Cool, dark rooms. A pool that needs both sun and shade.",
-            decision: "Add the new inside the old line. Blackened steel against original fieldstone and lime mortar."
-          }
-        },
-        conditionLog: {
-          season: { en: "Midsummer" },
-          entries: [
-            { time: "07:40", condition: "light", text: { en: "sun on the fieldstone wall, wall starts to warm" } },
-            { time: "11:00", condition: "shade", text: { en: "pool in the shade of the old wall" } },
-            { time: "14:30", condition: "heat", text: { en: "gallery stays cool behind the stone" } },
-            { time: "18:10", condition: "light", text: { en: "light from the pool moves across the ceiling" } },
-            { time: "22:00", condition: "weight", text: { en: "stone still warm to the hand" } }
-          ]
-        }
+        reasoning: [
+          { label: { en: "Fieldstone" }, condition: { en: "19th-century walls" }, decision: { en: "Left untouched" }, consequence: { en: "The rooms stay as cool and dark as they were." } },
+          { label: { en: "New use" }, condition: { en: "A gallery and a pool" }, decision: { en: "One thin steel addition" }, consequence: { en: "The new reads as new, inside the old line." } },
+          { label: { en: "Pool" }, condition: { en: "Needs sun and shade" }, decision: { en: "Placed beside the old wall" }, consequence: { en: "Sun first, then the wall's shade." } }
+        ]
       },
       {
         id: "santanyi-studio",
@@ -947,25 +900,15 @@ const source: ContentSource = {
         materials: "Solid Santanyí Stone, Raw Brass, Textured Lime",
         image: santanyiImg,
         aspect: "4:3",
-        summary: {
-          en: "Kitchen and bathroom cut from single blocks of Santanyí limestone. Nothing is applied on top."
+        thesis: { en: "Cut it from one block." },
+        position: {
+          en: "Kitchen and bathroom are carved from single blocks of Santanyí limestone. Nothing is applied on top."
         },
-        details: {
-          en: {
-            condition: "A small interior. Low morning light from the east. Hard surfaces carry sound.",
-            decision: "Carve the volumes from solid stone. Lime on the walls. Brass where the hand touches."
-          }
-        },
-        conditionLog: {
-          season: { en: "Midsummer" },
-          entries: [
-            { time: "06:55", condition: "light", text: { en: "sun reaches the kitchen block" } },
-            { time: "09:30", condition: "heat", text: { en: "stone counter still cold to the touch" } },
-            { time: "13:10", condition: "shade", text: { en: "shutters closed, room stays dark and cool" } },
-            { time: "17:40", condition: "light", text: { en: "lime wall softens the low light" } },
-            { time: "21:50", condition: "sound", text: { en: "stone and lime keep the room quiet" } }
-          ]
-        }
+        reasoning: [
+          { label: { en: "Room" }, condition: { en: "Small" }, decision: { en: "Volumes carved from solid stone" }, consequence: { en: "No joints. No applied finish." } },
+          { label: { en: "Light" }, condition: { en: "Low, from the east, in the morning" }, decision: { en: "Lime on the walls" }, consequence: { en: "The light stays soft." } },
+          { label: { en: "Hand" }, condition: { en: "Where the hand lands" }, decision: { en: "Brass" }, consequence: { en: "Metal exactly where you touch." } }
+        ]
       }
     ]
   },

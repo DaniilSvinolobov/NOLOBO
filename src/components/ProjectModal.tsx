@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Project, Language, content } from '../content';
-import { ConditionLog } from './ConditionLog';
+import { ProjectReasoning } from './ProjectReasoning';
+import { ProjectSection, hasProjectSection } from './ProjectSection';
 
 interface ProjectModalProps {
   project: Project | null;
@@ -19,6 +20,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   currentLang,
 }) => {
   const w = content.work;
+  const [activeRow, setActiveRow] = useState<number | null>(null);
 
   // ESC key listener & body scroll lock
   useEffect(() => {
@@ -39,6 +41,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [project, onClose, onNext, onPrev]);
+
+  useEffect(() => setActiveRow(null), [project?.id]);
 
   if (!project) return null;
 
@@ -117,55 +121,43 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               </h2>
             </div>
 
-            {/* Project image, full colour in the modal */}
-            <div className="relative border border-hairline bg-[#0E0E0E]/5 overflow-hidden">
-              <img
-                src={project.image}
-                alt={`${project.title}, design concept image`}
-                referrerPolicy="no-referrer"
-                className="w-full h-auto max-h-[540px] object-cover"
-              />
-              <div className="absolute bottom-2 left-2 px-2 py-1 bg-[#0E0E0E]/80 backdrop-blur-xs font-mono text-[10px] text-[#F5F5F2]">
-                {project.location}
-              </div>
+            {/* Thesis: the project's position */}
+            <div className="space-y-3">
+              <h3 className="font-mono text-2xl sm:text-3xl md:text-4xl font-medium uppercase tracking-[-0.03em] text-[#0E0E0E] flex items-start gap-3">
+                <span aria-hidden className="mt-[0.45em] w-2 h-2 shrink-0 bg-[#FF4D00]" />
+                <span>{project.thesis[currentLang]}</span>
+              </h3>
+              <p className="font-mono text-[13px] sm:text-sm text-[#0E0E0E]/80 leading-relaxed max-w-[62ch] pl-5">
+                {project.position[currentLang]}
+              </p>
             </div>
 
-            {/* Condition log is the primary reading */}
-            <ConditionLog project={project} currentLang={currentLang} />
-
-            {/* Summary, condition, decision and project data */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pt-2">
-              <div className="md:col-span-7 space-y-6">
-                <div>
-                  <h3 className="font-mono text-xs uppercase text-[#0E0E0E]/40 mb-2">
-                    {w.modalOverview[currentLang]}
-                  </h3>
-                  <p className="text-base sm:text-lg text-[#0E0E0E] leading-relaxed font-mono">
-                    {project.summary[currentLang]}
-                  </p>
-                </div>
-
-                <div className="space-y-4 pt-4 border-t border-hairline-subtle font-mono text-[13px] text-[#0E0E0E]/80 leading-relaxed">
-                  <div>
-                    <h4 className="text-xs uppercase text-[#0E0E0E] font-semibold mb-1 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
-                      <span>{w.modalCondition[currentLang]}</span>
-                    </h4>
-                    <p>{project.details[currentLang].condition}</p>
-                  </div>
-
-                  <div>
-                    <h4 className="text-xs uppercase text-[#0E0E0E] font-semibold mb-1 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 bg-[#0E0E0E]" />
-                      <span>{w.modalDecision[currentLang]}</span>
-                    </h4>
-                    <p>{project.details[currentLang].decision}</p>
-                  </div>
+            {/* Image, and the section drawing when the project has one */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className={`${hasProjectSection(project.id) ? 'lg:col-span-7' : 'lg:col-span-12'} relative border border-hairline bg-[#0E0E0E]/5 overflow-hidden`}>
+                <img
+                  src={project.image}
+                  alt={`${project.title}, design concept image`}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full max-h-[540px] object-cover"
+                />
+                <div className="absolute bottom-2 left-2 px-2 py-1 bg-[#0E0E0E]/80 backdrop-blur-xs font-mono text-[10px] text-[#F5F5F2]">
+                  {project.location}
                 </div>
               </div>
+              {hasProjectSection(project.id) && (
+                <div className="lg:col-span-5">
+                  <ProjectSection projectId={project.id} currentLang={currentLang} active={activeRow} />
+                </div>
+              )}
+            </div>
 
+            {/* Condition → decision → consequence */}
+            <ProjectReasoning project={project} currentLang={currentLang} active={activeRow} onActive={setActiveRow} />
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
               {/* Project data: facts only */}
-              <div className="md:col-span-5">
+              <div className="md:col-span-12">
                 <div className="border border-hairline bg-[#F5F5F2] p-5 space-y-4">
                   <div className="font-mono text-xs font-bold uppercase text-[#0E0E0E] pb-2 border-b border-hairline flex items-center justify-between">
                     <span>{w.modalData[currentLang]}</span>

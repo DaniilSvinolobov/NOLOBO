@@ -13,7 +13,7 @@ Hierarchy, never reversed: **PLACE → CONDITIONS → ARCHITECTURE → TOOLS.**
 - Materials are described by what they physically do (stone stores heat, lime softens light, wood changes sound), not as a finish or a heritage mood.
 - Mallorca is not the aesthetic. It is the set of conditions the architecture must understand: sun angle, summer heat, sea air, topography, stone, vegetation, water scarcity, shade, seasonality, construction culture.
 - Visual idea: the interface looks technical, the content is human. The site is an instrument that measures life (light, temperature, shade, sound, wind, time, movement, occupation).
-- The shared condition vocabulary lives in `content.conditions` (`ConditionId`). Reuse it for log entries, material tags and service tags.
+- The shared condition vocabulary lives in `content.conditions` (`ConditionId`). Reuse it for material tags and service tags, not for project pages.
 
 ## Copy principles
 - Concrete over abstract.
@@ -30,7 +30,8 @@ Hierarchy, never reversed: **PLACE → CONDITIONS → ARCHITECTURE → TOOLS.**
 - Use "we" for NOLOBO's work and project team. Use "I" only when Daniil is personally speaking.
 - When possible, describe architecture through time, light, temperature, sound, movement and material behaviour. Present consequences rather than adjectives.
 - If a sentence could appear unchanged on 100 architecture studio websites, rewrite it.
-- Do not invent measurements or performance claims. Project pages are design concepts; their condition logs are illustrative observations. Anything presented as fact about a real project needs a source from Daniil.
+- Do not invent measurements or performance claims. Project pages are design concepts; their reasoning is illustrative. Anything presented as fact about a real project needs a source from Daniil.
+- Project pages show reasoning, not measurement: a thesis, then condition → decision → consequence. The row labels come from that project's own site. No timestamps, sensor-style readouts or shared category lists unless a project genuinely needs them.
 
 ## Stack
 React + Vite + Tailwind + motion. All copy lives in src/content.ts.
