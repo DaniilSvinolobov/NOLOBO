@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { content, Language, formatLocaleNumber } from '../content';
+import { content, Language } from '../content';
 
 export type StageId = 0 | 1 | 2 | 3 | 4;
 
@@ -542,8 +542,9 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
         // Label on sun
         ctx.font = '8px "JetBrains Mono", monospace';
         ctx.fillStyle = '#0E0E0E';
-        const simulatedHours = Math.floor(scanCycle * 8760);
-        ctx.fillText(`SIMULATED SUN · ${simulatedHours.toLocaleString()}H`, sunPt.x + 8, sunPt.y - 2);
+        const dayMinutes = Math.floor((6 + scanCycle * 14) * 60);
+        const clock = `${String(Math.floor(dayMinutes / 60)).padStart(2, '0')}:${String(dayMinutes % 60).padStart(2, '0')}`;
+        ctx.fillText(`SUN · ${clock}`, sunPt.x + 8, sunPt.y - 2);
 
         ctx.restore();
       }
@@ -603,7 +604,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
             if (isOptimal) {
               ctx.font = '8px "JetBrains Mono", monospace';
               ctx.fillStyle = '#FF4D00';
-              ctx.fillText('OPTIMAL ENVELOPE [98.4%]', c3.x + 6, c3.y + 2);
+              ctx.fillText(modelContent.readouts.fit.chosenLabel[currentLang], c3.x + 6, c3.y + 2);
             }
           }
         });
@@ -1125,172 +1126,59 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
       >
         <canvas ref={canvasRef} className="w-full h-full block" />
 
-        {/* HUD OVERLAY: STAGE 01 SCAN READOUTS */}
-        {activeStage === 0 && (
-          <div className="absolute top-3 left-3 z-10 pointer-events-none space-y-1 font-mono text-[9px] sm:text-[10px] text-[#0E0E0E] bg-[#F5F5F2]/90 p-2 sm:p-2.5 border border-hairline shadow-xs">
-            <div className="flex items-center gap-1.5 text-[#FF4D00] font-bold pb-1 border-b border-hairline">
-              <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
-              <span>{modelContent.readouts.scan.title[currentLang]}</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.scan.hoursSimulated[currentLang]}</span>
-              <span className="font-bold text-[#0E0E0E]">{formatLocaleNumber(8760, currentLang)} H</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.scan.treesMapped[currentLang]}</span>
-              <span className="font-bold text-[#0E0E0E]">23 / 23 (T-01..T-23)</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.scan.solarExposure[currentLang]}</span>
-              <span className="font-bold text-[#0E0E0E]">{formatLocaleNumber(2840, currentLang)} KWH/M²</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.scan.prevailingWind[currentLang]}</span>
-              <span className="font-bold text-[#0E0E0E]">{modelContent.readouts.scan.windVal[currentLang]}</span>
-            </div>
-          </div>
-        )}
-
-        {/* HUD OVERLAY: STAGE 02 FIT READOUTS & CLIENT WEIGHTED SLIDERS */}
-        {activeStage === 1 && (
-          <div className="absolute top-3 left-3 z-10 space-y-1.5 font-mono text-[9px] sm:text-[10px] text-[#0E0E0E] bg-[#F5F5F2]/95 p-2 sm:p-2.5 border border-hairline shadow-xs max-w-[240px]">
-            <div className="flex items-center justify-between text-[#FF4D00] font-bold pb-1 border-b border-hairline">
-              <span>{modelContent.readouts.fit.title[currentLang]}</span>
-              <span>{formatLocaleNumber(12480, currentLang)} {modelContent.readouts.fit.testedCount[currentLang]}</span>
-            </div>
-            <div className="space-y-1 text-[9px]">
-              <div>
-                <div className="flex justify-between text-[#0E0E0E]/70 mb-0.5">
-                  <span>{modelContent.readouts.fit.morningSun[currentLang]}</span>
-                  <span className="font-bold text-[#0E0E0E]">88%</span>
-                </div>
-                <div className="h-1 bg-[#0E0E0E]/10 w-full overflow-hidden">
-                  <div className="h-full bg-[#0E0E0E] w-[88%]" />
-                </div>
+        {/* HUD OVERLAY: one readout panel per stage, text from content */}
+        {(() => {
+          const r = modelContent.readouts;
+          const panels = [r.scan, r.fit, r.ground, r.build, r.evolve];
+          const panel = panels[activeStage];
+          if (!panel) return null;
+          return (
+            <div
+              className={`absolute top-3 left-3 z-10 space-y-1 font-mono text-[9px] sm:text-[10px] text-[#0E0E0E] bg-[#F5F5F2]/90 p-2 sm:p-2.5 border border-hairline shadow-xs min-w-[190px] ${
+                activeStage === 4 ? '' : 'pointer-events-none'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-4 text-[#FF4D00] font-bold pb-1 border-b border-hairline">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+                  <span>{panel.title[currentLang]}</span>
+                </span>
+                {activeStage === 4 && (
+                  <span>
+                    {r.evolve.year[currentLang]} +{evolveYear}
+                  </span>
+                )}
               </div>
-              <div>
-                <div className="flex justify-between text-[#0E0E0E]/70 mb-0.5">
-                  <span>{modelContent.readouts.fit.terraceShade[currentLang]}</span>
-                  <span className="font-bold text-[#0E0E0E]">92%</span>
-                </div>
-                <div className="h-1 bg-[#0E0E0E]/10 w-full overflow-hidden">
-                  <div className="h-full bg-[#0E0E0E] w-[92%]" />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-[#0E0E0E]/70 mb-0.5">
-                  <span>{modelContent.readouts.fit.seaView[currentLang]}</span>
-                  <span className="font-bold text-[#0E0E0E]">95%</span>
-                </div>
-                <div className="h-1 bg-[#0E0E0E]/10 w-full overflow-hidden">
-                  <div className="h-full bg-[#0E0E0E] w-[95%]" />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-[#0E0E0E]/70 mb-0.5">
-                  <span>{modelContent.readouts.fit.treesKept[currentLang]}</span>
-                  <span className="font-bold text-[#FF4D00]">23 / 23 (100%)</span>
-                </div>
-                <div className="h-1 bg-[#0E0E0E]/10 w-full overflow-hidden">
-                  <div className="h-full bg-[#FF4D00] w-[100%]" />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {/* HUD OVERLAY: STAGE 03 GROUND READOUTS */}
-        {activeStage === 2 && (
-          <div className="absolute top-3 left-3 z-10 pointer-events-none space-y-1 font-mono text-[9px] sm:text-[10px] text-[#0E0E0E] bg-[#F5F5F2]/90 p-2 sm:p-2.5 border border-hairline shadow-xs">
-            <div className="flex items-center gap-1.5 text-[#FF4D00] font-bold pb-1 border-b border-hairline">
-              <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
-              <span>{modelContent.readouts.ground.title[currentLang]}</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.ground.cut[currentLang]}</span>
-              <span className="font-bold text-[#0E0E0E]">{formatLocaleNumber(1240, currentLang)} M³</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.ground.fill[currentLang]}</span>
-              <span className="font-bold text-[#0E0E0E]">{formatLocaleNumber(1180, currentLang)} M³</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.ground.reused[currentLang]}</span>
-              <span className="font-bold text-[#FF4D00]">95%</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.ground.trucks[currentLang]}</span>
-              <span className="font-bold text-[#0E0E0E]">0</span>
-            </div>
-          </div>
-        )}
+              {/* Year selector, Time stage only */}
+              {activeStage === 4 && (
+                <div className="flex items-center gap-1 py-1">
+                  {[0, 5, 20, 50].map((yr) => (
+                    <button
+                      key={yr}
+                      type="button"
+                      onClick={() => setEvolveYear(yr)}
+                      className={`flex-1 py-1 text-center border text-[9px] transition-colors ${
+                        evolveYear === yr
+                          ? 'border-[#0E0E0E] bg-[#0E0E0E] text-[#F5F5F2] font-bold'
+                          : 'border-hairline bg-[#F5F5F2] text-[#0E0E0E]/70 hover:border-[#0E0E0E]'
+                      }`}
+                    >
+                      +{yr}Y
+                    </button>
+                  ))}
+                </div>
+              )}
 
-        {/* HUD OVERLAY: STAGE 04 BUILD READOUTS */}
-        {activeStage === 3 && (
-          <div className="absolute top-3 left-3 z-10 pointer-events-none space-y-1 font-mono text-[9px] sm:text-[10px] text-[#0E0E0E] bg-[#F5F5F2]/90 p-2 sm:p-2.5 border border-hairline shadow-xs">
-            <div className="flex items-center gap-1.5 text-[#FF4D00] font-bold pb-1 border-b border-hairline">
-              <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
-              <span>{modelContent.readouts.build.title[currentLang]}</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.build.componentsTracked[currentLang]}</span>
-              <span className="font-bold text-[#0E0E0E]">{formatLocaleNumber(1862, currentLang)}</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.build.avgDistance[currentLang]}</span>
-              <span className="font-bold text-[#0E0E0E]">34 KM</span>
-            </div>
-            <div className="flex justify-between gap-4 text-[#0E0E0E]/70">
-              <span>{modelContent.readouts.build.carbon[currentLang]}</span>
-              <span className="font-bold text-[#FF4D00]">{modelContent.readouts.build.carbonVal[currentLang]}</span>
-            </div>
-          </div>
-        )}
-
-        {/* HUD OVERLAY: STAGE 05 EVOLVE READOUTS & DRAGGABLE TIME SLIDER */}
-        {activeStage === 4 && (
-          <div className="absolute top-3 left-3 z-10 space-y-2 font-mono text-[9px] sm:text-[10px] text-[#0E0E0E] bg-[#F5F5F2]/95 p-2 sm:p-2.5 border border-hairline shadow-xs min-w-[200px]">
-            <div className="flex items-center justify-between text-[#FF4D00] font-bold pb-1 border-b border-hairline">
-              <span>{modelContent.readouts.evolve.title[currentLang]}</span>
-              <span>{modelContent.readouts.evolve.year[currentLang]} +{evolveYear}</span>
-            </div>
-
-            {/* Draggable / Clickable Year Selector */}
-            <div className="flex items-center gap-1 py-1">
-              {[0, 5, 20, 50].map((yr) => (
-                <button
-                  key={yr}
-                  type="button"
-                  onClick={() => setEvolveYear(yr)}
-                  className={`flex-1 py-1 text-center border text-[9px] transition-colors ${
-                    evolveYear === yr
-                      ? 'border-[#0E0E0E] bg-[#0E0E0E] text-[#F5F5F2] font-bold'
-                      : 'border-hairline bg-[#F5F5F2] text-[#0E0E0E]/70 hover:border-[#0E0E0E]'
-                  }`}
-                >
-                  +{yr}Y
-                </button>
+              {panel.rows.map((row) => (
+                <div key={row.label.en} className="flex justify-between gap-4 text-[#0E0E0E]/70">
+                  <span>{row.label[currentLang]}</span>
+                  <span className="font-bold text-[#0E0E0E]">{row.value[currentLang]}</span>
+                </div>
               ))}
             </div>
-
-            <div className="space-y-0.5 pt-0.5 text-[9px]">
-              <div className="flex justify-between text-[#0E0E0E]/70">
-                <span>{modelContent.readouts.evolve.canopyCover[currentLang]}</span>
-                <span className="font-bold text-[#0E0E0E]">
-                  {Math.round(38 + (evolveYear / 50) * 36)}%
-                </span>
-              </div>
-              <div className="flex justify-between text-[#0E0E0E]/70">
-                <span>{modelContent.readouts.evolve.waterRetained[currentLang]}</span>
-                <span className="font-bold text-[#0E0E0E]">100%</span>
-              </div>
-              <div className="flex justify-between text-[#0E0E0E]/70">
-                <span>{modelContent.readouts.evolve.energyBalance[currentLang]}</span>
-                <span className="font-bold text-[#FF4D00]">{modelContent.readouts.evolve.netPositive[currentLang]}</span>
-              </div>
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Top-Right Technical Controls: Step & Orbit Toggle */}
         <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 font-mono text-[9px] bg-[#F5F5F2]/90 p-1 border border-hairline">

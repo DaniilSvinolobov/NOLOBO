@@ -163,7 +163,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
             <ScrambleHeadline
               as="h2"
               text={t.headline[currentLang]}
-              className="text-3xl sm:text-4xl font-sans font-bold tracking-tight text-[#0E0E0E]"
+              className="text-3xl sm:text-4xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E]"
             />
           </div>
 
@@ -183,7 +183,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
               </span>
               <a
                 href={`mailto:${t.email}`}
-                className="text-2xl sm:text-3xl font-sans font-bold tracking-tight text-[#0E0E0E] hover:text-[#FF4D00] transition-colors break-all"
+                className="text-2xl sm:text-3xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E] hover:text-[#FF4D00] transition-colors break-all"
               >
                 {t.email}
               </a>
@@ -256,7 +256,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
                       ✓
                     </div>
                     <div>
-                      <h3 className="text-lg font-sans font-bold text-[#0E0E0E]">
+                      <h3 className="text-lg font-mono font-medium text-[#0E0E0E]">
                         {f.successTitle[currentLang]}
                       </h3>
                       <p className="font-mono text-xs text-[#0E0E0E]/60">
@@ -266,7 +266,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
                   </div>
 
                   <div className="p-4 border border-hairline bg-[#0E0E0E]/[0.02] font-mono text-xs space-y-2">
-                    <div className="text-[#0E0E0E]/70 font-sans text-xs">
+                    <div className="text-[#0E0E0E]/70 font-mono text-xs">
                       {f.successDesc[currentLang]}
                     </div>
                     <div className="pt-2 border-t border-hairline-subtle text-[10px] text-[#0E0E0E]/60">
@@ -303,7 +303,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder={cl.namePlaceholder}
-                        className="w-full px-3 py-2 bg-[#F5F5F2] border border-hairline font-sans text-sm text-[#0E0E0E] placeholder:text-[#0E0E0E]/30 focus:border-[#0E0E0E] focus:outline-none transition-colors"
+                        className="w-full px-3 py-2 bg-[#F5F5F2] border border-hairline font-mono text-sm text-[#0E0E0E] placeholder:text-[#0E0E0E]/30 focus:border-[#0E0E0E] focus:outline-none transition-colors"
                       />
                     </div>
 
@@ -318,7 +318,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="name@domain.com"
-                        className="w-full px-3 py-2 bg-[#F5F5F2] border border-hairline font-sans text-sm text-[#0E0E0E] placeholder:text-[#0E0E0E]/30 focus:border-[#0E0E0E] focus:outline-none transition-colors"
+                        className="w-full px-3 py-2 bg-[#F5F5F2] border border-hairline font-mono text-sm text-[#0E0E0E] placeholder:text-[#0E0E0E]/30 focus:border-[#0E0E0E] focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -333,7 +333,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
                         id="contact-type"
                         value={formData.projectType}
                         onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                        className="w-full px-3 py-2 bg-[#F5F5F2] border border-hairline font-sans text-sm text-[#0E0E0E] focus:border-[#0E0E0E] focus:outline-none transition-colors"
+                        className="w-full px-3 py-2 bg-[#F5F5F2] border border-hairline font-mono text-sm text-[#0E0E0E] focus:border-[#0E0E0E] focus:outline-none transition-colors"
                       >
                         {f.projectTypes.map((type) => (
                           <option key={type.value} value={type.value}>
@@ -354,7 +354,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
                         value={formData.locationScale}
                         onChange={(e) => setFormData({ ...formData, locationScale: e.target.value })}
                         placeholder={cl.scalePlaceholder}
-                        className="w-full px-3 py-2 bg-[#F5F5F2] border border-hairline font-sans text-sm text-[#0E0E0E] placeholder:text-[#0E0E0E]/30 focus:border-[#0E0E0E] focus:outline-none transition-colors"
+                        className="w-full px-3 py-2 bg-[#F5F5F2] border border-hairline font-mono text-sm text-[#0E0E0E] placeholder:text-[#0E0E0E]/30 focus:border-[#0E0E0E] focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -370,7 +370,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder={cl.messagePlaceholder}
-                      className="w-full px-3 py-2 bg-[#F5F5F2] border border-hairline font-sans text-sm text-[#0E0E0E] placeholder:text-[#0E0E0E]/30 focus:border-[#0E0E0E] focus:outline-none transition-colors resize-y"
+                      className="w-full px-3 py-2 bg-[#F5F5F2] border border-hairline font-mono text-sm text-[#0E0E0E] placeholder:text-[#0E0E0E]/30 focus:border-[#0E0E0E] focus:outline-none transition-colors resize-y"
                     />
                   </div>
 

@@ -85,7 +85,18 @@ export const Studio: React.FC<StudioProps> = ({ currentLang }) => {
               {t.subline[currentLang]}
             </motion.p>
 
-            <ul className="mt-9 border-t border-hairline">
+            {/* Who leads the studio: the evidence for the headline */}
+            <motion.div {...reveal(0.5)} className="mt-7 border border-hairline px-4 py-3.5 text-[12.5px] leading-[1.6]">
+              <div className="flex items-center gap-2 text-[13px] font-medium text-[#0E0E0E]">
+                <span className="w-1.5 h-1.5 bg-[#FF4D00]" aria-hidden />
+                <span>{t.person.name}</span>
+              </div>
+              <div className="mt-1 text-[#0E0E0E]/70">{t.person.role[currentLang]}</div>
+              <div className="mt-2 text-[#0E0E0E]">{t.person.education}</div>
+              <div className="text-[#0E0E0E]/60 tabular-nums">{t.person.years[currentLang]}</div>
+            </motion.div>
+
+            <ul className="mt-6 border-t border-hairline">
               {t.blocks.map((block, i) => {
                 const isActive = active === block.number;
                 return (

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Project, Language, content } from '../content';
+import { ConditionLog } from './ConditionLog';
 
 interface ProjectModalProps {
   project: Project | null;
@@ -9,16 +10,6 @@ interface ProjectModalProps {
   onPrev?: () => void;
   currentLang: Language;
 }
-
-const specLabelMap: Record<string, Record<Language, string>> = {
-  'Site': { en: 'SITE', de: 'STANDORT', es: 'EMPLAZAMIENTO', ca: 'EMPLAÇAMENT', ru: 'УЧАСТОК' },
-  'Typology': { en: 'TYPOLOGY', de: 'TYPOLOGIE', es: 'TIPOLOGÍA', ca: 'TIPOLOGIA', ru: 'ТИПОЛОГИЯ' },
-  'Built Area': { en: 'BUILT AREA', de: 'FLÄCHE', es: 'SUPERFICIE', ca: 'SUPERFÍCIE', ru: 'ПЛОЩАДЬ' },
-  'Scope': { en: 'SCOPE', de: 'LEISTUNGEN', es: 'ALCANCE', ca: 'ABAST', ru: 'ОБЪЕМ РАБОТ' },
-  'Certifications': { en: 'CERTIFICATIONS', de: 'ZERTIFIKATE', es: 'CERTIFICACIONES', ca: 'CERTIFICACIONS', ru: 'СЕРТИФИКАТЫ' },
-  'Status': { en: 'STATUS', de: 'STATUS', es: 'ESTADO', ca: 'ESTAT', ru: 'СТАТУС' },
-  'Soil & Foundation': { en: 'SOIL & FOUNDATION', de: 'BODEN & FUNDAMENT', es: 'SUELO Y CIMENTACIÓN', ca: 'SÒL I FONAMENTACIÓ', ru: 'ГРУНТ И ФУНДАМЕНТ' },
-};
 
 export const ProjectModal: React.FC<ProjectModalProps> = ({
   project,
@@ -120,96 +111,79 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
               <h2
                 id="modal-project-title"
-                className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold tracking-tight text-[#0E0E0E]"
+                className="text-3xl sm:text-4xl md:text-5xl font-mono font-medium tracking-[-0.04em] text-[#0E0E0E]"
               >
                 {project.title}
               </h2>
             </div>
 
-            {/* High-Resolution Architectural Photography (Full Color in Modal) */}
+            {/* Project image, full colour in the modal */}
             <div className="relative border border-hairline bg-[#0E0E0E]/5 overflow-hidden">
               <img
                 src={project.image}
-                alt={`${project.title} — Architectural photograph`}
+                alt={`${project.title}, design concept image`}
                 referrerPolicy="no-referrer"
                 className="w-full h-auto max-h-[540px] object-cover"
               />
               <div className="absolute bottom-2 left-2 px-2 py-1 bg-[#0E0E0E]/80 backdrop-blur-xs font-mono text-[10px] text-[#F5F5F2]">
-                LOC: {project.location} · {project.area}
+                {project.location}
               </div>
             </div>
 
-            {/* Architectural Narrative (Challenge / Solution / Collaboration) */}
+            {/* Condition log is the primary reading */}
+            <ConditionLog project={project} currentLang={currentLang} />
+
+            {/* Summary, condition, decision and project data */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pt-2">
               <div className="md:col-span-7 space-y-6">
                 <div>
                   <h3 className="font-mono text-xs uppercase text-[#0E0E0E]/40 mb-2">
                     {w.modalOverview[currentLang]}
                   </h3>
-                  <p className="text-base sm:text-lg text-[#0E0E0E] leading-relaxed font-sans">
+                  <p className="text-base sm:text-lg text-[#0E0E0E] leading-relaxed font-mono">
                     {project.summary[currentLang]}
                   </p>
                 </div>
 
-                <div className="space-y-4 pt-4 border-t border-hairline-subtle font-sans text-sm text-[#0E0E0E]/80 leading-relaxed">
+                <div className="space-y-4 pt-4 border-t border-hairline-subtle font-mono text-[13px] text-[#0E0E0E]/80 leading-relaxed">
                   <div>
-                    <h4 className="font-mono text-xs uppercase text-[#0E0E0E] font-semibold mb-1 flex items-center gap-1.5">
+                    <h4 className="text-xs uppercase text-[#0E0E0E] font-semibold mb-1 flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
-                      <span>{w.modalChallenge[currentLang]}</span>
+                      <span>{w.modalCondition[currentLang]}</span>
                     </h4>
-                    <p>{project.details[currentLang].challenge}</p>
+                    <p>{project.details[currentLang].condition}</p>
                   </div>
 
                   <div>
-                    <h4 className="font-mono text-xs uppercase text-[#0E0E0E] font-semibold mb-1 flex items-center gap-1.5">
+                    <h4 className="text-xs uppercase text-[#0E0E0E] font-semibold mb-1 flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 bg-[#0E0E0E]" />
-                      <span>{w.modalSolution[currentLang]}</span>
+                      <span>{w.modalDecision[currentLang]}</span>
                     </h4>
-                    <p>{project.details[currentLang].solution}</p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-mono text-xs uppercase text-[#0E0E0E] font-semibold mb-1 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 bg-[#0E0E0E]/40" />
-                      <span>{w.modalCollaboration[currentLang]}</span>
-                    </h4>
-                    <p className="font-mono text-xs text-[#0E0E0E]/70">
-                      {project.details[currentLang].collaboration}
-                    </p>
+                    <p>{project.details[currentLang].decision}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Technical Spec Sheet Column */}
+              {/* Project data: facts only */}
               <div className="md:col-span-5">
                 <div className="border border-hairline bg-[#F5F5F2] p-5 space-y-4">
                   <div className="font-mono text-xs font-bold uppercase text-[#0E0E0E] pb-2 border-b border-hairline flex items-center justify-between">
-                    <span>{w.modalTechSpec[currentLang]}</span>
-                    <span className="text-[#FF4D00]">LOD 400</span>
+                    <span>{w.modalData[currentLang]}</span>
+                    <span className="text-[#FF4D00]">{w.conceptTag[currentLang]}</span>
                   </div>
 
                   <div className="space-y-3 font-mono text-xs divide-y divide-hairline-subtle">
-                    {project.specSheet.map((spec, sIdx) => {
-                      const localizedLabel = specLabelMap[spec.label]?.[currentLang] || spec.label;
-                      return (
-                        <div key={sIdx} className="pt-2 flex flex-col gap-0.5">
-                          <span className="text-[10px] text-[#0E0E0E]/50 uppercase">
-                            {localizedLabel}
-                          </span>
-                          <span className="text-[#0E0E0E] font-medium leading-snug">
-                            {spec.value}
-                          </span>
-                        </div>
-                      );
-                    })}
-                    <div className="pt-2 flex flex-col gap-0.5">
-                      <span className="text-[10px] text-[#0E0E0E]/50 uppercase">
-                        {w.primaryPalette[currentLang]}
-                      </span>
-                      <span className="text-[#0E0E0E] font-medium leading-snug">
-                        {project.materials}
-                      </span>
-                    </div>
+                    {[
+                      { label: w.dataSite[currentLang], value: project.location },
+                      { label: w.dataYear[currentLang], value: project.year },
+                      { label: w.dataType[currentLang], value: project.category[currentLang] },
+                      { label: w.primaryPalette[currentLang], value: project.materials },
+                    ].map((row) => (
+                      <div key={row.label} className="pt-2 flex flex-col gap-0.5">
+                        <span className="text-[10px] text-[#0E0E0E]/50 uppercase">{row.label}</span>
+                        <span className="text-[#0E0E0E] font-medium leading-snug">{row.value}</span>
+                      </div>
+                    ))}
                   </div>
 
                   <div className="pt-4 border-t border-hairline">

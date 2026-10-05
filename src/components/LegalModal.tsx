@@ -54,15 +54,8 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, currentLa
             </button>
           </div>
 
-          <div className="font-sans text-sm text-[#0E0E0E]/80 leading-relaxed space-y-4">
+          <div className="font-mono text-sm text-[#0E0E0E]/80 leading-relaxed space-y-4">
             <p>{bodyText}</p>
-            {isImpressum && (
-              <div className="pt-2 font-mono text-xs text-[#0E0E0E]/60 space-y-1">
-                <div>COLLEGE: COAIB (Illes Balears)</div>
-                <div>TAX ID (CIF): ES-B07982411</div>
-                <div>OFFICE: Carrer de Sant Feliu 17, 07012 Palma de Mallorca</div>
-              </div>
-            )}
           </div>
 
           <div className="pt-4 border-t border-hairline flex justify-end">

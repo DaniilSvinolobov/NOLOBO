@@ -11,93 +11,7 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
   const f = content.footer;
   const meta = content.meta;
 
-  const footerLabels: Record<Language, {
-    studioTitle: string;
-    hubsTitle: string;
-    inquiriesTitle: string;
-    legalTitle: string;
-    coaibDesc: string;
-    accepting: string;
-    coordinates: string;
-    datum: string;
-    palmaHq: string;
-    zurichEng: string;
-    berlinMep: string;
-    barcelonaComp: string;
-  }> = {
-    en: {
-      studioTitle: 'STUDIO',
-      hubsTitle: 'COLLABORATION HUBS',
-      inquiriesTitle: 'INQUIRIES',
-      legalTitle: 'LEGAL REGISTRATION',
-      coaibDesc: 'COAIB Registered Architectural Consultancy. Mallorca, Spain.',
-      accepting: 'Accepting Commissions 2027',
-      coordinates: 'COORDINATES',
-      datum: 'DATUM',
-      palmaHq: 'Palma de Mallorca [HQ]',
-      zurichEng: 'Zürich [Engineering]',
-      berlinMep: 'Berlin [Physics & MEP]',
-      barcelonaComp: 'Barcelona [Compliance]',
-    },
-    de: {
-      studioTitle: 'STUDIO',
-      hubsTitle: 'PARTNERSTANDORTE',
-      inquiriesTitle: 'ANFRAGEN',
-      legalTitle: 'KAMMEREINTRAGUNG',
-      coaibDesc: 'Eingetragene Architekturgesellschaft (COAIB). Mallorca, Spanien.',
-      accepting: 'Aufnahme Projekte 2027',
-      coordinates: 'KOORDINATEN',
-      datum: 'BEZUGSPUNKT',
-      palmaHq: 'Palma de Mallorca [HQ]',
-      zurichEng: 'Zürich [Tragwerk & Statik]',
-      berlinMep: 'Berlin [Bauphysik & TGA]',
-      barcelonaComp: 'Barcelona [Bauordnung]',
-    },
-    es: {
-      studioTitle: 'ESTUDIO',
-      hubsTitle: 'SEDES DE COLABORACIÓN',
-      inquiriesTitle: 'CONTACTO',
-      legalTitle: 'REGISTRO PROFESIONAL',
-      coaibDesc: 'Consultoría de arquitectura colegiada en el COAIB. Mallorca, España.',
-      accepting: 'Encargos abiertos 2027',
-      coordinates: 'COORDENADAS',
-      datum: 'DATUM',
-      palmaHq: 'Palma de Mallorca [Sede]',
-      zurichEng: 'Zúrich [Estructuras]',
-      berlinMep: 'Berlín [Física constructiva]',
-      barcelonaComp: 'Barcelona [Normativa]',
-    },
-    ca: {
-      studioTitle: 'ESTUDI',
-      hubsTitle: 'XARXA DE COL·LABORACIÓ',
-      inquiriesTitle: 'CONTACTE',
-      legalTitle: 'REGISTRE PROFESSIONAL',
-      coaibDesc: "Consultoria d'arquitectura col·legiada al COAIB. Mallorca, Espanya.",
-      accepting: 'Encàrrecs oberts 2027',
-      coordinates: 'COORDENADES',
-      datum: 'DATUM',
-      palmaHq: 'Palma de Mallorca [Seu]',
-      zurichEng: 'Zúric [Estructures]',
-      berlinMep: 'Berlín [Física constructiva]',
-      barcelonaComp: 'Barcelona [Normativa]',
-    },
-    ru: {
-      studioTitle: 'СТУДИЯ',
-      hubsTitle: 'СЕТЬ ПАРТНЕРОВ',
-      inquiriesTitle: 'КОНТАКТЫ',
-      legalTitle: 'РЕГИСТРАЦИЯ',
-      coaibDesc: 'Лицензированное архитектурное бюро (COAIB). Майорка, Испания.',
-      accepting: 'Прием проектов на 2027',
-      coordinates: 'КООРДИНАТЫ',
-      datum: 'ДАТУМ',
-      palmaHq: 'Пальма-де-Майорка [Штаб-квартира]',
-      zurichEng: 'Цюрих [Конструкции]',
-      berlinMep: 'Берлин [Инженерия и физика]',
-      barcelonaComp: 'Барселона [Согласования]',
-    },
-  };
-
-  const fl = footerLabels[currentLang];
+  const fl = f.labels;
   const nav = content.nav;
 
   const scrollToTop = () => {
@@ -119,8 +33,8 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
           </div>
 
           <div className="font-mono text-xs text-[#0E0E0E]/70 space-y-1 md:text-right">
-            <div>{fl.coordinates}: {meta.coordinates}</div>
-            <div>{fl.datum}: WGS 84 · EPSG:4326 · ELEVATION: 14M</div>
+            <div>{fl.coordinates[currentLang]}: {meta.coordinates}</div>
+            <div>{fl.datum[currentLang]}: WGS 84 · EPSG:4326 · ELEVATION: 14M</div>
           </div>
         </div>
 
@@ -128,32 +42,32 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 font-mono text-xs">
           <div className="space-y-2">
             <span className="text-[10px] text-[#0E0E0E]/40 uppercase tracking-wider block">
-              {fl.studioTitle}
+              {fl.studioTitle[currentLang]}
             </span>
             <ul className="space-y-1.5 text-[#0E0E0E]/80">
               <li>
-                <a href="#approach" className="hover:text-[#FF4D00] transition-colors">
-                  01. {nav.approach[currentLang]}
-                </a>
-              </li>
-              <li>
-                <a href="#services" className="hover:text-[#FF4D00] transition-colors">
-                  02. {nav.services[currentLang]}
-                </a>
-              </li>
-              <li>
-                <a href="#materials" className="hover:text-[#FF4D00] transition-colors">
-                  03. {nav.materials[currentLang]}
-                </a>
-              </li>
-              <li>
                 <a href="#work" className="hover:text-[#FF4D00] transition-colors">
-                  04. {nav.work[currentLang]}
+                  01. {nav.work[currentLang]}
                 </a>
               </li>
               <li>
                 <a href="#studio" className="hover:text-[#FF4D00] transition-colors">
-                  05. {nav.studio[currentLang]}
+                  02. {nav.studio[currentLang]}
+                </a>
+              </li>
+              <li>
+                <a href="#approach" className="hover:text-[#FF4D00] transition-colors">
+                  03. {nav.approach[currentLang]}
+                </a>
+              </li>
+              <li>
+                <a href="#services" className="hover:text-[#FF4D00] transition-colors">
+                  04. {nav.services[currentLang]}
+                </a>
+              </li>
+              <li>
+                <a href="#materials" className="hover:text-[#FF4D00] transition-colors">
+                  05. {nav.materials[currentLang]}
                 </a>
               </li>
             </ul>
@@ -161,19 +75,17 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
 
           <div className="space-y-2">
             <span className="text-[10px] text-[#0E0E0E]/40 uppercase tracking-wider block">
-              {fl.hubsTitle}
+              {fl.hubsTitle[currentLang]}
             </span>
             <ul className="space-y-1.5 text-[#0E0E0E]/70">
-              <li>{fl.palmaHq}</li>
-              <li>{fl.zurichEng}</li>
-              <li>{fl.berlinMep}</li>
-              <li>{fl.barcelonaComp}</li>
+              <li>{fl.basedIn[currentLang]}</li>
+              <li>{fl.specialists[currentLang]}</li>
             </ul>
           </div>
 
           <div className="space-y-2">
             <span className="text-[10px] text-[#0E0E0E]/40 uppercase tracking-wider block">
-              {fl.inquiriesTitle}
+              {fl.inquiriesTitle[currentLang]}
             </span>
             <ul className="space-y-1.5 text-[#0E0E0E]/80">
               <li>
@@ -186,17 +98,17 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
                   {content.contact.phone}
                 </a>
               </li>
-              <li className="text-[#0E0E0E]/50">{fl.accepting}</li>
+              <li className="text-[#0E0E0E]/50">{fl.accepting[currentLang]}</li>
             </ul>
           </div>
 
           <div className="space-y-2 flex flex-col justify-between">
             <div>
               <span className="text-[10px] text-[#0E0E0E]/40 uppercase tracking-wider block">
-                {fl.legalTitle}
+                {fl.legalTitle[currentLang]}
               </span>
-              <p className="text-[#0E0E0E]/60 text-[11px] font-sans leading-relaxed">
-                {fl.coaibDesc}
+              <p className="text-[#0E0E0E]/60 text-[11px] font-mono leading-relaxed">
+                {fl.legalDesc[currentLang]}
               </p>
             </div>
 

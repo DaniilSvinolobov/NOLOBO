@@ -12,33 +12,10 @@ export const Services: React.FC<ServicesProps> = ({ currentLang }) => {
   const t = content.services;
   const smoothEase = [0.16, 1, 0.3, 1] as const;
 
-  const disciplinesBadge: Record<Language, string> = {
-    en: 'DISCIPLINES & CRAFT',
-    de: 'DISZIPLINEN & HANDWERK',
-    es: 'DISCIPLINAS Y OFICIO',
-    ca: 'DISCIPLINES I OFICI',
-    ru: 'НАПРАВЛЕНИЯ И РЕМЕСЛО',
-  };
-
   const servicesData = [
     {
       id: 'terrain',
       number: '01',
-      label: { en: 'TERRAIN', de: 'TOPOGRAFIE', es: 'TERRENO', ca: 'TERRENY', ru: 'РЕЛЬЕФ' },
-      scope: {
-        en: 'SLOPE INTEGRATION · STONE TERRACES',
-        de: 'HANGBEBELAGUNG · STEINTERRASSEN',
-        es: 'INTEGRACIÓN EN PENDIENTE · BANCALES',
-        ca: 'INTEGRACIÓ EN PENDENT · MARJADES',
-        ru: 'УКЛОН · КАМЕННЫЕ ТЕРРАСЫ',
-      },
-      code: {
-        en: 'LANDSCAPE EMBEDMENT',
-        de: 'LANDSCHAFTSEINBETTUNG',
-        es: 'INTEGRACIÓN EN EL PAISAJE',
-        ca: 'INTEGRACIÓ EN EL PAISATGE',
-        ru: 'ИНТЕГРАЦИЯ В ЛАНДШАФТ',
-      },
       renderDrawing: (isHovered: boolean) => (
         <svg viewBox="0 0 120 70" className="w-full h-24 stroke-current fill-none" strokeWidth="1">
           {/* Stepped terraced slope section line */}
@@ -54,29 +31,14 @@ export const Services: React.FC<ServicesProps> = ({ currentLang }) => {
           {/* Slope angle dimension arc & label */}
           <path d="M5,62 L115,14" strokeDasharray="2 3" className="opacity-30" />
           <text x="75" y="62" fill="currentColor" stroke="none" className="text-[7px] font-mono opacity-50">
-            SLOPE 32°
+            SLOPE
           </text>
         </svg>
       ),
     },
     {
-      id: 'architecture',
+      id: 'arch',
       number: '02',
-      label: { en: 'ARCHITECTURE', de: 'ARCHITEKTUR', es: 'ARQUITECTURA', ca: 'ARQUITECTURA', ru: 'АРХИТЕКТУРА' },
-      scope: {
-        en: 'MONOLITHIC VOLUMES · PASSIVE LIGHT',
-        de: 'MONOLITHISCHE BAUKÖRPER · PASSIVES LICHT',
-        es: 'VOLÚMENES MONOLÍTICOS · LUZ PASIVA',
-        ca: 'VOLUMS MONOLÍTICS · LLUM PASSIVA',
-        ru: 'МОНОЛИТНЫЕ ОБЪЕМЫ · ПАССИВНЫЙ СВЕТ',
-      },
-      code: {
-        en: 'RESIDENTIAL ARCHITECTURE',
-        de: 'WOHNARCHITEKTUR',
-        es: 'ARQUITECTURA RESIDENCIAL',
-        ca: 'ARQUITECTURA RESIDENCIAL',
-        ru: 'ЖИЛАЯ АРХИТЕКТУРА',
-      },
       renderDrawing: (isHovered: boolean) => (
         <svg viewBox="0 0 120 70" className="w-full h-24 stroke-current fill-none" strokeWidth="1">
           {/* Pavilion ground datum */}
@@ -98,21 +60,6 @@ export const Services: React.FC<ServicesProps> = ({ currentLang }) => {
     {
       id: 'interior',
       number: '03',
-      label: { en: 'INTERIOR', de: 'INNENAUSBAU', es: 'INTERIOR', ca: 'INTERIOR', ru: 'ИНТЕРЬЕР' },
-      scope: {
-        en: 'MARÈS & SANTANYÍ · BESPOKE TIMBER',
-        de: 'MARÈS & SANTANYÍ · MASSIVHOLZ NACH MASS',
-        es: 'MARÈS Y SANTANYÍ · CARPINTERÍA A MEDIDA',
-        ca: 'MARÈS I SANTANYÍ · FUSTERIA A MIDA',
-        ru: 'МАРЕС И САНТАНЬИ · ДЕРЕВО НА ЗАКАЗ',
-      },
-      code: {
-        en: 'TACTILE INTERIORS',
-        de: 'HAPTISCHE INNENRÄUME',
-        es: 'INTERIORES TÁCTILES',
-        ca: 'INTERIORS TÀCTILS',
-        ru: 'ТАКТИЛЬНЫЕ ИНТЕРЬЕРЫ',
-      },
       renderDrawing: (isHovered: boolean) => (
         <svg viewBox="0 0 120 70" className="w-full h-24 stroke-current fill-none" strokeWidth="1">
           {/* Wall datum */}
@@ -136,21 +83,6 @@ export const Services: React.FC<ServicesProps> = ({ currentLang }) => {
     {
       id: 'direction',
       number: '04',
-      label: { en: 'DIRECTION', de: 'BAULEITUNG', es: 'DIRECCIÓN', ca: 'DIRECCIÓ', ru: 'НАДЗОР' },
-      scope: {
-        en: 'LOCAL CRAFTSMEN · PRECISION · QUALITY',
-        de: 'LOKALE HANDWERKER · PRÄZISION · QUALITÄT',
-        es: 'ARTESANOS LOCALES · PRECISIÓN · CALIDAD',
-        ca: 'ARTESANS LOCALS · PRECISIÓ · QUALITAT',
-        ru: 'МЕСТНЫЕ МАСТЕРА · ТОЧНОСТЬ · КАЧЕСТВО',
-      },
-      code: {
-        en: 'SITE & CRAFT DIRECTION',
-        de: 'BAU- & HANDWERKSLEITUNG',
-        es: 'DIRECCIÓN DE OBRA Y OFICIO',
-        ca: "DIRECCIÓ D'OBRA I OFICI",
-        ru: 'АВТОРСКИЙ НАДЗОР',
-      },
       renderDrawing: (isHovered: boolean) => (
         <svg viewBox="0 0 120 70" className="w-full h-24 stroke-current fill-none" strokeWidth="1">
           {/* Orthogonal coordination grid */}
@@ -187,20 +119,18 @@ export const Services: React.FC<ServicesProps> = ({ currentLang }) => {
             <ScrambleHeadline
               as="h2"
               text={t.headline[currentLang]}
-              className="text-3xl sm:text-4xl font-sans font-bold tracking-tight text-[#0E0E0E]"
+              className="text-3xl sm:text-4xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E]"
             />
           </div>
 
-          <div className="font-mono text-xs text-[#0E0E0E]/60 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
-            <span>{disciplinesBadge[currentLang]}</span>
-          </div>
+          <p className="font-mono text-xs text-[#0E0E0E]/60 max-w-[44ch]">{t.intro[currentLang]}</p>
         </div>
 
         {/* Row of Schematic Line Drawings with One-Word Labels */}
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {servicesData.map((service, idx) => {
             const isHovered = activeItem === idx;
+            const item = t.items[idx];
 
             return (
               <motion.div
@@ -217,8 +147,12 @@ export const Services: React.FC<ServicesProps> = ({ currentLang }) => {
               >
                 {/* Top: Spec Code & Index */}
                 <div className="flex items-center justify-between font-mono text-xs text-[#0E0E0E]/50 pb-4 border-b border-hairline-subtle">
-                  <span>{service.number}</span>
-                  <span className="text-[10px] tracking-wider">{service.code[currentLang]}</span>
+                  <span>{item.number}</span>
+                  <span className="text-[10px] tracking-wider uppercase">
+                    {item.conditions
+                      .map((id) => content.conditions.find((c) => c.id === id)?.label[currentLang] ?? id)
+                      .join(' · ')}
+                  </span>
                 </div>
 
                 {/* Center: Schematic Line Drawing */}
@@ -229,18 +163,30 @@ export const Services: React.FC<ServicesProps> = ({ currentLang }) => {
                 {/* Bottom: One-Word Label & Scope Metadata */}
                 <div className="pt-4 border-t border-hairline-subtle space-y-1.5 font-mono">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-base sm:text-lg font-bold tracking-wider text-[#0E0E0E] uppercase">
-                      {service.label[currentLang]}
+                    <h3 className="text-base sm:text-lg font-medium tracking-[-0.02em] text-[#0E0E0E]">
+                      {item.title[currentLang]}
                     </h3>
                     <span className="text-xs text-[#FF4D00]">→</span>
                   </div>
-                  <div className="text-[10px] text-[#0E0E0E]/60 tracking-tight leading-relaxed">
-                    {service.scope[currentLang]}
-                  </div>
+                  <p className="text-[12px] text-[#0E0E0E] leading-snug pt-1">{item.summary[currentLang]}</p>
+                  <ul className="pt-2 space-y-1 text-[10px] text-[#0E0E0E]/60 leading-relaxed">
+                    {item.scope[currentLang].map((line) => (
+                      <li key={line} className="flex gap-2">
+                        <span className="w-1 h-1 mt-[5px] shrink-0 bg-[#0E0E0E]/30" />
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </motion.div>
             );
           })}
+        </div>
+
+        {/* Tools sit at the bottom of the hierarchy */}
+        <div className="mt-6 border border-hairline px-5 py-3 grid grid-cols-1 sm:grid-cols-[6rem_1fr] gap-x-4 gap-y-1 font-mono text-[11px] text-[#0E0E0E]/70">
+          <span className="text-[#0E0E0E]/40">{t.toolsLabel[currentLang]}</span>
+          <span>{t.toolsLine[currentLang]}</span>
         </div>
       </div>
     </section>

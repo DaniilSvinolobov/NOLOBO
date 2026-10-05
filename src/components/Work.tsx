@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { content, Language, Project } from '../content';
 import { ProjectModal } from './ProjectModal';
 import { ScrambleHeadline } from './ScrambleHeadline';
+import { DayRule } from './DayRule';
 
 interface WorkProps {
   currentLang: Language;
@@ -74,7 +75,7 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
             <ScrambleHeadline
               as="h2"
               text={t.headline[currentLang]}
-              className="text-3xl sm:text-4xl font-sans font-bold tracking-tight text-[#0E0E0E]"
+              className="text-3xl sm:text-4xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E]"
             />
           </div>
 
@@ -157,6 +158,8 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
                   <div className="absolute top-3 left-3 px-2 py-0.5 bg-[#F5F5F2]/95 backdrop-blur-xs border border-hairline font-mono text-[9px] text-[#0E0E0E] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
                     <span>REF. {project.number}</span>
+                    <span className="text-[#0E0E0E]/40">·</span>
+                    <span>{t.conceptTag[currentLang]}</span>
                   </div>
 
                   <div className="absolute bottom-3 right-3 px-2 py-0.5 bg-[#0E0E0E] text-[#F5F5F2] font-mono text-[9px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-150 hidden sm:block">
@@ -164,19 +167,32 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
                   </div>
                 </div>
 
-                {/* Minimalist Tile Metadata: ONLY Name, Year and Type */}
-                <div className="p-4 sm:p-5 flex items-baseline justify-between gap-4 font-mono">
-                  <div className="space-y-0.5">
-                    <h3 className="text-xl sm:text-2xl font-sans font-bold tracking-tight text-[#0E0E0E] group-hover:text-[#FF4D00] transition-colors">
-                      {project.title}
-                    </h3>
-                    <div className="text-[11px] text-[#0E0E0E]/60 uppercase">
-                      {project.category[currentLang]}
+                {/* Tile metadata: name, year, type, first condition log line */}
+                <div className="p-4 sm:p-5 space-y-4 font-mono">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <div className="space-y-0.5">
+                      <h3 className="text-xl sm:text-2xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E] group-hover:text-[#FF4D00] transition-colors">
+                        {project.title}
+                      </h3>
+                      <div className="text-[11px] text-[#0E0E0E]/60 uppercase">
+                        {project.category[currentLang]}
+                      </div>
+                    </div>
+
+                    <div className="text-right text-xs text-[#0E0E0E] font-semibold whitespace-nowrap">
+                      {project.year}
                     </div>
                   </div>
 
-                  <div className="text-right text-xs text-[#0E0E0E] font-semibold whitespace-nowrap">
-                    {project.year}
+                  {/* First line of the condition log, and the day it sits in */}
+                  <div className="space-y-2.5">
+                    <p className="text-[12px] text-[#0E0E0E]/80 flex gap-3">
+                      <span className="tabular-nums text-[#FF4D00] font-semibold">
+                        {project.conditionLog.entries[0].time}
+                      </span>
+                      <span>{project.conditionLog.entries[0].text[currentLang]}</span>
+                    </p>
+                    <DayRule times={project.conditionLog.entries.map((e) => e.time)} />
                   </div>
                 </div>
               </motion.article>
