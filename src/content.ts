@@ -98,6 +98,16 @@ interface ProjectSource {
   thesis: LocalizedStringSource;
   /** Two or three short sentences under the thesis. */
   position: LocalizedStringSource;
+  /** Short brief: what was asked for. A design concept, not a commission. */
+  brief: LocalizedStringSource;
+  /** Observed facts about the setting. */
+  siteConditions: LocalizedListSource;
+  /** What was decided, one short sentence each. */
+  decisions: LocalizedListSource;
+  /** Design intent only, e.g. "c. 180 m²". Not a measured or built figure. */
+  area: LocalizedStringSource;
+  /** Materials with what each one physically does. */
+  materialsDetail: { name: LocalizedStringSource; does: LocalizedStringSource }[];
   /** Condition → decision → consequence. Labels come from the project's own site. */
   reasoning: {
     label: LocalizedStringSource;
@@ -118,6 +128,8 @@ interface ServiceItemSource {
   id: string;
   number: string;
   title: LocalizedStringSource;
+  /** One big word for the keyword block. */
+  keyword: LocalizedStringSource;
   summary: LocalizedStringSource;
   scope: LocalizedListSource;
   /** Conditions this discipline governs. */
@@ -271,6 +283,20 @@ interface ContentSource {
     reasoningDecision: LocalizedStringSource;
     reasoningConsequence: LocalizedStringSource;
     sectionLabel: LocalizedStringSource;
+    indexLabel: LocalizedStringSource;
+    backToProjects: LocalizedStringSource;
+    statusLabel: LocalizedStringSource;
+    statusValue: LocalizedStringSource;
+    dataLocation: LocalizedStringSource;
+    areaLabel: LocalizedStringSource;
+    areaNote: LocalizedStringSource;
+    pageBrief: LocalizedStringSource;
+    pageConditions: LocalizedStringSource;
+    pageDecisions: LocalizedStringSource;
+    pageMaterials: LocalizedStringSource;
+    pageLog: LocalizedStringSource;
+    pageDrawings: LocalizedStringSource;
+    imageCaption: LocalizedStringSource;
     modalData: LocalizedStringSource;
     dataSite: LocalizedStringSource;
     dataYear: LocalizedStringSource;
@@ -300,6 +326,19 @@ interface ContentSource {
       title: LocalizedStringSource;
       text: LocalizedStringSource;
     }[];
+    team: {
+      label: LocalizedStringSource;
+      photoCredit: LocalizedStringSource;
+      portraitAlt: LocalizedStringSource;
+      portraitSrc: string;
+      figureAlt: LocalizedStringSource;
+      dragHint: LocalizedStringSource;
+      educationLabel: LocalizedStringSource;
+      experienceLabel: LocalizedStringSource;
+      /** Role lines beside the portrait. */
+      experience: LocalizedListSource;
+      specialists: { label: LocalizedStringSource }[];
+    };
     mapLabels: {
       studio: LocalizedStringSource;
     };
@@ -642,6 +681,7 @@ const source: ContentSource = {
         id: "terrain",
         number: "01",
         title: { en: "Landscape & Terrain" },
+        keyword: { en: "Terrain" },
         summary: { en: "Where water goes. Where shade falls. What the slope holds." },
         scope: {
           en: [
@@ -657,6 +697,7 @@ const source: ContentSource = {
         id: "arch",
         number: "02",
         title: { en: "Architecture" },
+        keyword: { en: "Architecture" },
         summary: { en: "Heat, light and air first. Structure follows." },
         scope: {
           en: [
@@ -672,6 +713,7 @@ const source: ContentSource = {
         id: "interior",
         number: "03",
         title: { en: "Interior Architecture" },
+        keyword: { en: "Interior" },
         summary: { en: "Texture, sound and light at arm's length." },
         scope: {
           en: [
@@ -687,6 +729,7 @@ const source: ContentSource = {
         id: "direction",
         number: "04",
         title: { en: "Site Direction" },
+        keyword: { en: "Direction" },
         summary: { en: "Builders, artisans, schedule, budget. Directed on site." },
         scope: {
           en: [
@@ -798,6 +841,20 @@ const source: ContentSource = {
     reasoningDecision: { en: "WHAT WE DID" },
     reasoningConsequence: { en: "WHAT IT DOES" },
     sectionLabel: { en: "SECTION · NOT TO SCALE" },
+    indexLabel: { en: "INDEX" },
+    backToProjects: { en: "← All projects" },
+    statusLabel: { en: "Status" },
+    statusValue: { en: "Design concept" },
+    dataLocation: { en: "Location" },
+    areaLabel: { en: "Area" },
+    areaNote: { en: "design intent" },
+    pageBrief: { en: "The brief" },
+    pageConditions: { en: "The site's conditions" },
+    pageDecisions: { en: "Key decisions" },
+    pageMaterials: { en: "Materials" },
+    pageLog: { en: "Condition log" },
+    pageDrawings: { en: "Drawings and images" },
+    imageCaption: { en: "Concept image" },
     modalData: { en: "PROJECT DATA" },
     dataSite: { en: "SITE" },
     dataYear: { en: "YEAR" },
@@ -822,6 +879,29 @@ const source: ContentSource = {
         position: {
           en: "38° slope. We don't fight it. We dig in, and the stone we dig out holds the hill back."
         },
+        brief: { en: "A house for a family on a steep terraced plot above the sea. It should be cool in summer, and invisible from the coast road." },
+        siteConditions: {
+          en: [
+            "The plot falls at 38°, in olive terraces held by old dry-stone walls.",
+            "The afternoon sun comes from the west, straight onto the slope.",
+            "Evening air rises from the sea along the valley.",
+            "The road above sees the whole hillside."
+          ]
+        },
+        decisions: {
+          en: [
+            "Dig the house into the slope instead of standing it on it.",
+            "Reuse the excavated stone as retaining walls and terrace edges.",
+            "Open a courtyard to the sea, and roof it only on the west.",
+            "Keep every roof level with the terrace above."
+          ]
+        },
+        area: { en: "c. 240 m²" },
+        materialsDetail: [
+          { name: { en: "Santanyí limestone" }, does: { en: "Dense stone evens out the day. It is cool to the touch until late afternoon." } },
+          { name: { en: "Pigmented concrete" }, does: { en: "Holds the cut of the slope. Tinted to the colour of the excavated stone." } },
+          { name: { en: "Teak" }, does: { en: "Warm to the hand and quiet underfoot. Greys with salt air instead of failing." } }
+        ],
         reasoning: [
           { label: { en: "Slope" }, condition: { en: "38°" }, decision: { en: "House enters the terrain" }, consequence: { en: "Roofs sit level with the olive terraces." } },
           { label: { en: "Sun" }, condition: { en: "Western, in the afternoon" }, decision: { en: "Deep shade" }, consequence: { en: "Terraces and courtyards stay shaded after midday." } },
@@ -844,6 +924,29 @@ const source: ContentSource = {
         position: {
           en: "A 17th-century attic, cut up by centuries of partitions. We removed them. The thick walls stay."
         },
+        brief: { en: "The top floor of a 17th-century house in the old town, divided into small rooms over centuries. One household, one open floor." },
+        siteConditions: {
+          en: [
+            "The walls are thick masonry, and the street below is narrow and loud.",
+            "Light comes from few windows, high up, and from one side.",
+            "The partitions are later additions and carry nothing.",
+            "Summer heat arrives through the roof first."
+          ]
+        },
+        decisions: {
+          en: [
+            "Remove every partition that does not hold the roof.",
+            "Keep the old walls as found, with their depth and their reveals.",
+            "Lay one continuous floor so the rooms read as one.",
+            "Leave the stone floor bare where it is already stone."
+          ]
+        },
+        area: { en: "c. 160 m²" },
+        materialsDetail: [
+          { name: { en: "Continuous microcement" }, does: { en: "One surface, no joints. It lets the light travel across the floor." } },
+          { name: { en: "White oak" }, does: { en: "Absorbs sound. It takes the echo out of a large open room." } },
+          { name: { en: "Santanyí stone" }, does: { en: "Stays cool underfoot in summer. Left bare, with no applied finish." } }
+        ],
         reasoning: [
           { label: { en: "Partitions" }, condition: { en: "Centuries of them" }, decision: { en: "Removed" }, consequence: { en: "Light and air cross the whole floor." } },
           { label: { en: "Walls" }, condition: { en: "17th-century, thick" }, decision: { en: "Kept as they are" }, consequence: { en: "Street heat and noise stay out." } },
@@ -864,6 +967,29 @@ const source: ContentSource = {
         position: {
           en: "Salt air, wind and low afternoon sun. Each one chose a material or a shape. The building stays off the edge."
         },
+        brief: { en: "A small pavilion at the edge of a cliff above the sea, for one person or two. It should stand salt air, wind and afternoon sun with little maintenance." },
+        siteConditions: {
+          en: [
+            "Salt air reaches the whole plot, all year.",
+            "The ground drops away on the sea side.",
+            "The sun is low and comes from the south-west in the afternoon.",
+            "Wind is constant, and stronger at the edge."
+          ]
+        },
+        decisions: {
+          en: [
+            "Pull the mass back from the edge and cantilever the roof beyond it.",
+            "Choose only materials that stand salt: lime, stainless steel, low-iron glass.",
+            "Set deep eaves on the south-west side.",
+            "Keep the plan small, so the building stays small against the cliff."
+          ]
+        },
+        area: { en: "c. 85 m²" },
+        materialsDetail: [
+          { name: { en: "Lime plaster" }, does: { en: "Breathes, and softens light on the inside. Repairs by hand with more lime." } },
+          { name: { en: "Marine-grade stainless steel" }, does: { en: "Does not rust in salt air. Carries the cantilever in thin sections." } },
+          { name: { en: "Low-iron glass" }, does: { en: "Clear, without the green edge. The view stays the colour it is." } }
+        ],
         reasoning: [
           { label: { en: "Salt" }, condition: { en: "Air at the cliff" }, decision: { en: "Lime, stainless steel, low-iron glass" }, consequence: { en: "Materials that stand salt air." } },
           { label: { en: "Edge" }, condition: { en: "The cliff drops away" }, decision: { en: "Cantilever" }, consequence: { en: "The building stays off the edge. Its mass stays small." } },
@@ -884,6 +1010,29 @@ const source: ContentSource = {
         position: {
           en: "A 19th-century finca with thick fieldstone walls. The new programme goes inside the old line, in blackened steel. The stone is not touched."
         },
+        brief: { en: "A 19th-century finca to be turned into a house with a gallery and a pool, without touching the original stone." },
+        siteConditions: {
+          en: [
+            "The fieldstone walls are thick, and the rooms inside are cool and dark.",
+            "The roof and floors are the weak part. The walls are sound.",
+            "The only open ground with sun is beside the south wall.",
+            "The new use needs more light and more services than the old rooms give."
+          ]
+        },
+        decisions: {
+          en: [
+            "Leave the fieldstone as it is, inside and outside.",
+            "Put the new programme inside the old line, in one thin steel insert.",
+            "Place the pool beside the old south wall.",
+            "Repair joints with lime mortar, never cement."
+          ]
+        },
+        area: { en: "c. 320 m²" },
+        materialsDetail: [
+          { name: { en: "Original fieldstone" }, does: { en: "Stores heat in the day and releases it at night. Keeps the rooms cool in summer." } },
+          { name: { en: "Blackened steel" }, does: { en: "Thin and dark, so it reads as new and does not compete with the stone." } },
+          { name: { en: "Lime mortar" }, does: { en: "Softer than the stone. Takes the movement, so the walls do not crack." } }
+        ],
         reasoning: [
           { label: { en: "Fieldstone" }, condition: { en: "19th-century walls" }, decision: { en: "Left untouched" }, consequence: { en: "The rooms stay as cool and dark as they were." } },
           { label: { en: "New use" }, condition: { en: "A gallery and a pool" }, decision: { en: "One thin steel addition" }, consequence: { en: "The new reads as new, inside the old line." } },
@@ -904,6 +1053,29 @@ const source: ContentSource = {
         position: {
           en: "Kitchen and bathroom are carved from single blocks of Santanyí limestone. Nothing is applied on top."
         },
+        brief: { en: "A kitchen and a bathroom in a small house, to feel like one material and not a set of finishes." },
+        siteConditions: {
+          en: [
+            "The rooms are small, with one window each.",
+            "Morning light comes low from the east.",
+            "Hands land in the same places every day: tap, edge, handle.",
+            "Santanyí limestone is quarried within a few kilometres."
+          ]
+        },
+        decisions: {
+          en: [
+            "Carve the kitchen and bathroom volumes from single blocks.",
+            "Put lime on the walls so the light stays soft.",
+            "Use raw brass only where the hand touches.",
+            "Draw each joint out, and remove it."
+          ]
+        },
+        area: { en: "c. 38 m²" },
+        materialsDetail: [
+          { name: { en: "Solid Santanyí stone" }, does: { en: "Dense and cool. Carved, not clad, so there is no joint and no layer." } },
+          { name: { en: "Raw brass" }, does: { en: "Darkens where it is touched. Marks the places the hand lands." } },
+          { name: { en: "Textured lime" }, does: { en: "Matte. It scatters low morning light instead of reflecting it." } }
+        ],
         reasoning: [
           { label: { en: "Room" }, condition: { en: "Small" }, decision: { en: "Volumes carved from solid stone" }, consequence: { en: "No joints. No applied finish." } },
           { label: { en: "Light" }, condition: { en: "Low, from the east, in the morning" }, decision: { en: "Lime on the walls" }, consequence: { en: "The light stays soft." } },
@@ -1026,6 +1198,27 @@ const source: ContentSource = {
       { number: "04", title: { en: "Experience" }, text: { en: "Architecture and landscape projects in Spain and Germany. Masterplanning and resilience work for Haiti." } },
       { number: "05", title: { en: "Specialists" }, text: { en: "Computational design, structure and local craft, assembled for each project. They calculate and build what we decide." } }
     ],
+    team: {
+      label: { en: "Who" },
+      photoCredit: { en: "Photo: Michelle Mantel" },
+      portraitAlt: { en: "Daniil Svinolobov, architect" },
+      portraitSrc: "/images/daniil-svinolobov.png",
+      figureAlt: { en: "Abstract wireframe figure" },
+      dragHint: { en: "Drag to turn" },
+      educationLabel: { en: "Education" },
+      experienceLabel: { en: "Experience" },
+      experience: {
+        en: [
+          "Architecture and landscape in Spain and Germany",
+          "Masterplans and resilience projects for Haiti"
+        ]
+      },
+      specialists: [
+        { label: { en: "Computational design · specialist network" } },
+        { label: { en: "Structure · specialist network" } },
+        { label: { en: "Local craft · artisans, Mallorca" } }
+      ]
+    },
     mapLabels: { studio: {"en": "Studio", "es": "Estudio", "ca": "Estudi", "de": "Studio", "ru": "Студия"} },
     map: {
       fig: {"en": "Fig. 04 · Studio network", "es": "Fig. 04 · Red del estudio", "ca": "Fig. 04 · Xarxa de l'estudi", "de": "Abb. 04 · Studionetzwerk", "ru": "Рис. 04 · Сеть студии"},

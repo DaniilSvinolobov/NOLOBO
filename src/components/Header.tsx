@@ -25,6 +25,9 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
     const target = document.querySelector(href);
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // On a project page the sections are not mounted: go back to the main page first.
+      window.location.hash = href;
     }
   };
 
@@ -44,22 +47,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
           NOLOBO
         </a>
 
-        {/* Zone 2: Minimal desktop nav links */}
-        <nav
-          className="hidden md:flex items-center gap-6 lg:gap-7 text-xs font-mono tracking-wider text-[#0E0E0E]/80"
-          aria-label={content.aria.mainNav[currentLang]}
-        >
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              onClick={(e) => handleNavClick(e, item.href)}
-              className="hover:text-[#FF4D00] transition-colors relative py-1"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        <div className="flex-1" />
 
         {/* Zone 3: Language switcher in mono + quick CTA */}
         <div className="flex items-center gap-3 sm:gap-4">

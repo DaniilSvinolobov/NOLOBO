@@ -16,9 +16,27 @@ import { LandscapeSchematics } from './components/LandscapeSchematics';
 import { Studio } from './components/Studio';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
+import { SectionNav } from './components/SectionNav';
+import { ProjectPage } from './components/ProjectPage';
+import { useProjectRoute } from './components/useHashRoute';
 
 export default function App() {
   const [currentLang, setCurrentLang] = useState<Language>('en');
+  const projectId = useProjectRoute();
+  const wasProject = React.useRef(false);
+
+  // Back from a project page: scroll to the section named in the hash (e.g. #work, #contact).
+  useEffect(() => {
+    if (projectId) {
+      wasProject.current = true;
+      return;
+    }
+    if (wasProject.current) {
+      wasProject.current = false;
+      const id = window.location.hash.slice(1) || 'work';
+      requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView());
+    }
+  }, [projectId]);
 
   // Initialize or synchronize language with browser or user preference if available
   useEffect(() => {
@@ -85,15 +103,23 @@ export default function App() {
         onLanguageChange={handleLanguageChange}
       />
 
-      {/* Main Content Sections */}
+      {!projectId && <SectionNav currentLang={currentLang} />}
+
+      {/* Main Content Sections, or one project page */}
       <main id="main-content" className="relative z-10">
-        <Hero currentLang={currentLang} />
-        <Work currentLang={currentLang} />
-        <Studio currentLang={currentLang} />
-        <Approach currentLang={currentLang} />
-        <Services currentLang={currentLang} />
-        <LandscapeSchematics currentLang={currentLang} />
-        <Contact currentLang={currentLang} />
+        {projectId ? (
+          <ProjectPage projectId={projectId} currentLang={currentLang} />
+        ) : (
+          <>
+            <Hero currentLang={currentLang} />
+            <Work currentLang={currentLang} />
+            <Studio currentLang={currentLang} />
+            <Approach currentLang={currentLang} />
+            <Services currentLang={currentLang} />
+            <LandscapeSchematics currentLang={currentLang} />
+            <Contact currentLang={currentLang} />
+          </>
+        )}
       </main>
 
       {/* Footer */}
