@@ -1,207 +1,86 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { content, Language, Project } from '../content';
-import { ProjectModal } from './ProjectModal';
-import { ScrambleHeadline } from './ScrambleHeadline';
+import { content, Language } from '../content';
+import { SectionHead } from './SectionHead';
+import { projectHref } from './useHashRoute';
 
 interface WorkProps {
   currentLang: Language;
 }
 
+/** Numbered text index. Hovering a row shows its image beside the list. */
 export const Work: React.FC<WorkProps> = ({ currentLang }) => {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [activeFilter, setActiveFilter] = useState<string>('all');
-  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  const [hovered, setHovered] = useState<string | null>(null);
   const t = content.work;
-  const smoothEase = [0.16, 1, 0.3, 1] as const;
-
   const projects = t.projects;
-
-  const filteredProjects =
-    activeFilter === 'all'
-      ? projects
-      : projects.filter(
-          (p) =>
-            p.category.en.toLowerCase().includes(activeFilter.toLowerCase()) ||
-            p.category.es.toLowerCase().includes(activeFilter.toLowerCase())
-        );
-
-  const handleNext = () => {
-    if (!selectedProject) return;
-    const currentIndex = projects.findIndex((p) => p.id === selectedProject.id);
-    const nextIndex = (currentIndex + 1) % projects.length;
-    setSelectedProject(projects[nextIndex]);
-  };
-
-  const handlePrev = () => {
-    if (!selectedProject) return;
-    const currentIndex = projects.findIndex((p) => p.id === selectedProject.id);
-    const prevIndex = (currentIndex - 1 + projects.length) % projects.length;
-    setSelectedProject(projects[prevIndex]);
-  };
-
-  // Asymmetric column spans emphasizing larger dominant images
-  const getColSpan = (index: number) => {
-    switch (index % 4) {
-      case 0:
-        return 'lg:col-span-7';
-      case 1:
-        return 'lg:col-span-5';
-      case 2:
-        return 'lg:col-span-5';
-      case 3:
-        return 'lg:col-span-7';
-      default:
-        return 'lg:col-span-6';
-    }
-  };
-
-  const handleImageLoad = (id: string) => {
-    setLoadedImages((prev) => ({ ...prev, [id]: true }));
-  };
+  const shown = hovered ?? projects[0].id;
 
   return (
-    <section id="work" className="relative py-14 sm:py-20 border-b border-hairline">
+    <section id="work" className="relative py-16 sm:py-28 border-b border-hairline">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header & Segmented Filters */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-8 border-b border-hairline">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3 text-xs font-mono text-[#0E0E0E]/60 uppercase tracking-widest">
-              <span className="text-[#FF4D00] font-bold">{t.sectionNumber}</span>
-              <span className="h-[1px] w-6 bg-[#0E0E0E]/20" />
-              <span>{t.kicker[currentLang]}</span>
-            </div>
-            <ScrambleHeadline
-              as="h2"
-              text={t.headline[currentLang]}
-              className="text-3xl sm:text-4xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E]"
-            />
-          </div>
-
-          {/* Segmented Filter Controls */}
-          <div className="flex items-center gap-1 p-1 bg-[#0E0E0E]/5 border border-hairline font-mono text-xs">
-            <button
-              onClick={() => setActiveFilter('all')}
-              className={`px-3 py-1.5 transition-colors uppercase whitespace-nowrap ${
-                activeFilter === 'all'
-                  ? 'bg-[#0E0E0E] text-[#F5F5F2] font-semibold'
-                  : 'text-[#0E0E0E]/70 hover:text-[#0E0E0E]'
-              }`}
-            >
-              {t.filterAll[currentLang]} ({projects.length})
-            </button>
-            <button
-              onClick={() => setActiveFilter('residential')}
-              className={`px-3 py-1.5 transition-colors uppercase whitespace-nowrap ${
-                activeFilter === 'residential'
-                  ? 'bg-[#0E0E0E] text-[#F5F5F2] font-semibold'
-                  : 'text-[#0E0E0E]/70 hover:text-[#0E0E0E]'
-              }`}
-            >
-              {t.filterResidential[currentLang]}
-            </button>
-            <button
-              onClick={() => setActiveFilter('interior')}
-              className={`px-3 py-1.5 transition-colors uppercase whitespace-nowrap ${
-                activeFilter === 'interior'
-                  ? 'bg-[#0E0E0E] text-[#F5F5F2] font-semibold'
-                  : 'text-[#0E0E0E]/70 hover:text-[#0E0E0E]'
-              }`}
-            >
-              {t.filterInterior[currentLang]}
-            </button>
-          </div>
-        </div>
-
-        {/* Selected Work Grid: Dominant Visuals, Only Name, Year & Type */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
-          {filteredProjects.map((project, idx) => {
-            const colSpan = getColSpan(idx);
-            const isLoaded = loadedImages[project.id];
-
-            return (
-              <motion.article
-                key={project.id}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.6, delay: idx * 0.08, ease: smoothEase }}
-                className={`${colSpan} group border border-hairline bg-[#F5F5F2] hover:border-[#0E0E0E] transition-colors`}
-                onClick={() => setSelectedProject(project)}
-                tabIndex={0}
-                role="button"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    setSelectedProject(project);
-                  }
-                }}
-                aria-label={`${content.aria.inspectSpec[currentLang]}: ${project.title}`}
-              >
-                {/* Dominant Image Container */}
-                <div className="glitch-image-wrap relative bg-[#0E0E0E]/10 overflow-hidden">
-                  <div className="w-full aspect-[16/10] sm:aspect-[16/9] overflow-hidden">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      loading="lazy"
-                      onLoad={() => handleImageLoad(project.id)}
-                      referrerPolicy="no-referrer"
-                      className={`w-full h-full object-cover filter grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-[1.02] transition-all duration-700 ease-out ${
-                        isLoaded ? 'image-pixelated-loaded' : 'image-pixelated-loading'
-                      }`}
-                    />
-
-                  </div>
-
-                  {/* Corner Survey Reference Tag */}
-                  <div className="absolute top-3 left-3 px-2 py-0.5 bg-[#F5F5F2]/95 backdrop-blur-xs border border-hairline font-mono text-[9px] text-[#0E0E0E] flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
-                    <span>REF. {project.number}</span>
-                    <span className="text-[#0E0E0E]/40">·</span>
-                    <span>{t.conceptTag[currentLang]}</span>
-                  </div>
-
-                  <div className="absolute bottom-3 right-3 px-2 py-0.5 bg-[#0E0E0E] text-[#F5F5F2] font-mono text-[9px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-150 hidden sm:block">
-                    [{content.aria.inspectSpec[currentLang]} ↗]
-                  </div>
-                </div>
-
-                {/* Tile metadata: name, year, type, thesis */}
-                <div className="p-4 sm:p-5 space-y-4 font-mono">
-                  <div className="flex items-baseline justify-between gap-4">
-                    <div className="space-y-0.5">
-                      <h3 className="text-xl sm:text-2xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E] group-hover:text-[#FF4D00] transition-colors">
-                        {project.title}
-                      </h3>
-                      <div className="text-[11px] text-[#0E0E0E]/60 uppercase">
-                        {project.category[currentLang]}
-                      </div>
-                    </div>
-
-                    <div className="text-right text-xs text-[#0E0E0E] font-semibold whitespace-nowrap">
-                      {project.year}
-                    </div>
-                  </div>
-
-                  {/* The project's position */}
-                  <p className="text-[12px] uppercase text-[#0E0E0E] flex items-start gap-2">
-                    <span aria-hidden className="mt-[5px] w-1.5 h-1.5 shrink-0 bg-[#FF4D00]" />
-                    <span>{project.thesis[currentLang]}</span>
-                  </p>
-                </div>
-              </motion.article>
-            );
-          })}
-        </div>
-
-        {/* Project Technical Spec Modal */}
-        <ProjectModal
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-          onNext={handleNext}
-          onPrev={handlePrev}
-          currentLang={currentLang}
+        <SectionHead
+          number={t.sectionNumber}
+          kicker={t.kicker[currentLang]}
+          headline={t.headline[currentLang]}
         />
+
+        <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-10 font-mono">
+          <ol className="lg:col-span-7 border-t border-hairline" onMouseLeave={() => setHovered(null)}>
+            {projects.map((p) => {
+              const place = p.location.split(',')[0];
+              return (
+                <li key={p.id} className="border-b border-hairline">
+                  <a
+                    href={projectHref(p.id)}
+                    onMouseEnter={() => setHovered(p.id)}
+                    onFocus={() => setHovered(p.id)}
+                    onBlur={() => setHovered(null)}
+                    aria-label={`${content.aria.inspectSpec[currentLang]}: ${p.title}`}
+                    className="group block py-5 sm:py-7 focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#FF4D00]"
+                  >
+                    <div className="grid grid-cols-[3rem_1fr_auto] sm:grid-cols-[4rem_1fr_auto] gap-x-3 items-baseline">
+                      <span className={`text-[11px] tabular-nums transition-colors duration-500 ${hovered === p.id ? 'text-[#FF4D00]' : 'text-[#0E0E0E]/40'}`}>
+                        {String(Number(p.number)).padStart(3, '0')}
+                      </span>
+                      <span className="text-[20px] sm:text-[28px] leading-tight tracking-[-0.03em] font-medium text-[#0E0E0E] transition-transform duration-700 group-hover:translate-x-2" style={{ transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)' }}>
+                        {p.title}
+                      </span>
+                      <span className="text-[11px] text-[#0E0E0E]/50 tabular-nums">{p.year}</span>
+                    </div>
+                    <div className="mt-1.5 pl-[3rem] sm:pl-[4rem] text-[11px] sm:text-[12px] text-[#0E0E0E]/60">
+                      {place} — {p.category[currentLang]}
+                    </div>
+                    <div className="mt-3 pl-[3rem] sm:pl-[4rem] lg:hidden">
+                      <img src={p.image} alt="" loading="lazy" referrerPolicy="no-referrer" className="w-full aspect-[16/9] object-cover grayscale" />
+                    </div>
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
+
+          {/* Image panel, desktop only */}
+          <div className="hidden lg:block lg:col-span-5">
+            <div className="sticky top-36 border border-hairline bg-[#0E0E0E]/5 aspect-[4/5] overflow-hidden" aria-hidden>
+              {projects.map((p) => (
+                <img
+                  key={p.id}
+                  src={p.image}
+                  alt=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  className="absolute inset-0 w-full h-full object-cover transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  style={{ opacity: shown === p.id ? 1 : 0, filter: hovered === p.id ? 'none' : 'grayscale(1)' }}
+                />
+              ))}
+              <div className="absolute top-3 left-3 px-2 py-0.5 bg-[#F5F5F2]/95 border border-hairline text-[10px] flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+                <span>{t.indexLabel[currentLang]}</span>
+                <span className="text-[#0E0E0E]/40">·</span>
+                <span>{t.conceptTag[currentLang]}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

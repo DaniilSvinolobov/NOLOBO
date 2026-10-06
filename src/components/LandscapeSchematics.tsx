@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'motion/react';
 import { content, Language, MaterialItem } from '../content';
-import { ScrambleHeadline } from './ScrambleHeadline';
+import { SectionHead } from './SectionHead';
 
 /** Material photo: always in colour, slight zoom on hover. */
 const MaterialTileImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
@@ -296,20 +296,13 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
     >
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-hairline">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3 text-xs font-mono text-[#0E0E0E]/60 uppercase tracking-widest">
-              <span className="text-[#FF4D00] font-bold">{titles.sectionNumber}</span>
-              <span className="h-[1px] w-6 bg-[#0E0E0E]/20" />
-              <span>{titles.kicker[currentLang]}</span>
-            </div>
-            <ScrambleHeadline
-              as="h2"
-              text={titles.headline[currentLang]}
-              className="text-3xl sm:text-4xl lg:text-5xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E]"
-            />
-          </div>
-
+        <SectionHead
+          number={titles.sectionNumber}
+          kicker={titles.kicker[currentLang]}
+          headline={titles.headline[currentLang]}
+          intro={titles.intro?.[currentLang]}
+        />
+        <div className="flex flex-col md:flex-row md:items-end justify-end gap-6 py-6 border-b border-hairline">
           {/* View Mode & Material Navigator Controls */}
           <div className="flex flex-wrap items-center gap-3">
             {/* View Switcher: 6-Tile Grid vs Site Schematics */}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { content, Language } from '../content';
-import { ScrambleHeadline } from './ScrambleHeadline';
+import { SectionHead } from './SectionHead';
 import { useColourOnView } from './useColourOnView';
 
 interface ContactProps {
@@ -153,25 +153,17 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
     <section id="contact" className="relative py-14 sm:py-20 border-b border-hairline bg-[#F5F5F2]">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-8 border-b border-hairline">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3 text-xs font-mono text-[#0E0E0E]/60 uppercase tracking-widest">
-              <span className="text-[#FF4D00] font-bold">{t.sectionNumber}</span>
-              <span className="h-[1px] w-6 bg-[#0E0E0E]/20" />
-              <span>{t.kicker[currentLang]}</span>
+        <SectionHead
+          number={t.sectionNumber}
+          kicker={t.kicker[currentLang]}
+          headline={t.headline[currentLang]}
+          aside={
+            <div className="font-mono text-xs text-[#0E0E0E]/60 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+              <span>{cl.intakeStatus}</span>
             </div>
-            <ScrambleHeadline
-              as="h2"
-              text={t.headline[currentLang]}
-              className="text-3xl sm:text-4xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E]"
-            />
-          </div>
-
-          <div className="font-mono text-xs text-[#0E0E0E]/60 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
-            <span>{cl.intakeStatus}</span>
-          </div>
-        </div>
+          }
+        />
 
         {/* Contact Layout: Left Direct Channels & Right Technical Brief */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">

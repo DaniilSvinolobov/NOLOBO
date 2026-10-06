@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import React from 'react';
 import { content, Language } from '../content';
-import { ScrambleHeadline } from './ScrambleHeadline';
+import { SectionHead } from './SectionHead';
+import { KeywordBlocks } from './KeywordBlocks';
 
 interface ApproachProps {
   currentLang: Language;
 }
 
 export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
-  const [activeStep, setActiveStep] = useState<number>(0);
   const t = content.approach;
-  const smoothEase = [0.16, 1, 0.3, 1] as const;
 
   // 5 schematic SVG line drawings; titles and lines come from content.approach.steps
   const stepsData = [
@@ -159,29 +157,28 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
   ];
 
   return (
-    <section id="approach" className="relative py-14 sm:py-20 border-b border-hairline bg-[#F5F5F2]">
+    <section id="approach" className="relative py-16 sm:py-28 border-b border-hairline bg-[#F5F5F2]">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-8 border-b border-hairline">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3 text-xs font-mono text-[#0E0E0E]/60 uppercase tracking-widest">
-              <span className="text-[#FF4D00] font-bold">{t.sectionNumber}</span>
-              <span className="h-[1px] w-6 bg-[#0E0E0E]/20" />
-              <span>{t.kicker[currentLang]}</span>
-            </div>
-            <ScrambleHeadline
-              as="h2"
-              text={t.headline[currentLang]}
-              className="text-3xl sm:text-4xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E]"
-            />
-          </div>
+        <SectionHead
+          number={t.sectionNumber}
+          kicker={t.kicker[currentLang]}
+          headline={t.headline[currentLang]}
+          intro={t.intro[currentLang]}
+        />
 
-          <p className="font-mono text-xs text-[#0E0E0E]/70 leading-relaxed max-w-[56ch]">{t.intro[currentLang]}</p>
+        <div className="mt-14 sm:mt-24">
+          <KeywordBlocks
+            blocks={stepsData.map((item, idx) => ({
+              number: item.step,
+              keyword: t.steps[idx].phase[currentLang],
+              lines: [t.steps[idx].title[currentLang], t.steps[idx].description[currentLang]],
+              extra: item.renderDrawing(false),
+            }))}
+          />
         </div>
 
-        {/* 5 steps: Observe, Decide, Draw, Calculate, Build */}
         {/* Order made visible: three steps are decided, one is calculated, one is built */}
-        <div className="mt-8 hidden lg:grid grid-cols-5 gap-4 font-mono text-[10px] tracking-wider text-[#0E0E0E]/50" aria-hidden>
+        <div className="mt-20 grid grid-cols-5 gap-4 font-mono text-[10px] tracking-wider text-[#0E0E0E]/50" aria-hidden>
           {[
             { span: 'col-span-3', label: t.phaseLabels.decided[currentLang], accent: true },
             { span: 'col-span-1', label: t.phaseLabels.calculated[currentLang], accent: false },
@@ -194,60 +191,8 @@ export const Approach: React.FC<ApproachProps> = ({ currentLang }) => {
           ))}
         </div>
 
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch">
-          {stepsData.map((item, idx) => {
-            const isActive = activeStep === idx;
-            return (
-              <motion.div
-                key={item.step}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.08, ease: smoothEase }}
-                onClick={() => setActiveStep(idx)}
-                className={`p-5 border bg-[#F5F5F2] hover:border-[#0E0E0E] transition-all flex flex-col h-[340px] sm:h-[360px] select-none ${
-                  isActive ? 'border-[#0E0E0E] bg-[#0E0E0E]/[0.02]' : 'border-hairline'
-                }`}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') setActiveStep(idx);
-                }}
-              >
-                {/* Top Row: Index & Indicator */}
-                <div className="h-5 flex items-center justify-between font-mono text-xs shrink-0">
-                  <span className={isActive ? 'text-[#FF4D00] font-bold' : 'text-[#0E0E0E]/40'}>
-                    {item.step}
-                  </span>
-                  {isActive && <span className="w-1.5 h-1.5 bg-[#FF4D00]" />}
-                </div>
-
-                {/* Elaborate Schematic Line Drawing: centered with equal space above and below */}
-                <div className="flex-1 flex items-center justify-center text-[#0E0E0E] group-hover:scale-105 transition-transform">
-                  <div className="w-16 h-14 flex items-center justify-center">
-                    {item.renderDrawing(isActive)}
-                  </div>
-                </div>
-
-                {/* Bottom Row: Exact same divider line, Title on same line, and Description */}
-                <div className="pt-3 border-t border-hairline shrink-0 space-y-1.5 font-mono">
-                  <div className="h-5 flex items-center text-base font-bold tracking-wider text-[#0E0E0E] uppercase">
-                    {t.steps[idx].phase[currentLang]}
-                  </div>
-                  <div className="text-[12px] text-[#0E0E0E] leading-snug min-h-[2.5rem] flex items-start">
-                    {t.steps[idx].title[currentLang]}
-                  </div>
-                  <div className="text-[11px] text-[#0E0E0E]/55 leading-snug">
-                    {t.steps[idx].description[currentLang]}
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
         {/* Commitments */}
-        <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[rgba(14,14,14,0.12)] border border-hairline font-mono text-[11px] text-[#0E0E0E]/70">
+        <ul className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[rgba(14,14,14,0.12)] border border-hairline font-mono text-[11px] text-[#0E0E0E]/70">
           {t.commitments.map((line) => (
             <li key={line.en} className="bg-[#F5F5F2] px-5 py-3 flex items-center gap-2">
               <span className="w-1 h-1 shrink-0 bg-[#0E0E0E]/40" />
