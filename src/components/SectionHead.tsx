@@ -22,7 +22,7 @@ export const SectionHead: React.FC<SectionHeadProps> = ({ number, kicker, headli
   return (
     <div ref={ref} className="font-mono pb-10 sm:pb-14 border-b border-hairline">
       <div className="flex items-center gap-3 text-xs text-[#0E0E0E]/60 uppercase tracking-widest">
-        <span className="text-[#FF4D00] font-bold">{number}</span>
+        <span className="text-accent font-bold">{number}</span>
         <span className="h-px w-6 bg-[#0E0E0E]/20" aria-hidden />
         <span>{kicker}</span>
       </div>

@@ -46,27 +46,27 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
             </span>
             <ul className="space-y-1.5 text-[#0E0E0E]/80">
               <li>
-                <a href="#work" className="hover:text-[#FF4D00] transition-colors">
+                <a href="#work" className="hover:text-accent transition-colors">
                   01. {nav.work[currentLang]}
                 </a>
               </li>
               <li>
-                <a href="#studio" className="hover:text-[#FF4D00] transition-colors">
+                <a href="#studio" className="hover:text-accent transition-colors">
                   02. {nav.studio[currentLang]}
                 </a>
               </li>
               <li>
-                <a href="#approach" className="hover:text-[#FF4D00] transition-colors">
+                <a href="#approach" className="hover:text-accent transition-colors">
                   03. {nav.approach[currentLang]}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#FF4D00] transition-colors">
+                <a href="#services" className="hover:text-accent transition-colors">
                   04. {nav.services[currentLang]}
                 </a>
               </li>
               <li>
-                <a href="#materials" className="hover:text-[#FF4D00] transition-colors">
+                <a href="#materials" className="hover:text-accent transition-colors">
                   05. {nav.materials[currentLang]}
                 </a>
               </li>
@@ -89,12 +89,12 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
             </span>
             <ul className="space-y-1.5 text-[#0E0E0E]/80">
               <li>
-                <a href={`mailto:${content.contact.email}`} className="hover:text-[#FF4D00] transition-colors">
+                <a href={`mailto:${content.contact.email}`} className="hover:text-accent transition-colors">
                   {content.contact.email}
                 </a>
               </li>
               <li>
-                <a href={`tel:${content.contact.phone.replace(/\s+/g, '')}`} className="hover:text-[#FF4D00] transition-colors">
+                <a href={`tel:${content.contact.phone.replace(/\s+/g, '')}`} className="hover:text-accent transition-colors">
                   {content.contact.phone}
                 </a>
               </li>
@@ -117,7 +117,7 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
               <button
                 type="button"
                 onClick={scrollToTop}
-                className="inline-flex items-center gap-2 py-1 text-xs font-mono text-[#0E0E0E] hover:text-[#FF4D00] transition-colors"
+                className="inline-flex items-center gap-2 py-1 text-xs font-mono text-[#0E0E0E] hover:text-accent transition-colors"
                 aria-label={content.aria.backToTop[currentLang]}
               >
                 <span>{f.backToTop[currentLang]}</span>

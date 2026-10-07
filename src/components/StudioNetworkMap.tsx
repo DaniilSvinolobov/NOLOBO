@@ -15,7 +15,7 @@ type Group = 'base' | 'contours' | 'habitat' | 'studio' | 'artisans' | 'builders
 const EASE = [0.16, 1, 0.3, 1] as const;
 const INK = '#0E0E0E';
 const PAPER = '#F5F5F2';
-const ACCENT = '#FF4D00';
+import { ACCENT } from '../theme';
 const FONT = "'JetBrains Mono', ui-monospace, monospace";
 
 /** Which map groups each text block on the left relates to. */
@@ -207,7 +207,7 @@ export const StudioNetworkMap: React.FC<Props> = ({ currentLang, hoveredBlock, s
         className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 border-b border-hairline text-[11px]"
       >
         <span className="flex items-center gap-2 text-[#0E0E0E]">
-          <span className="w-1.5 h-1.5 bg-[#FF4D00]" aria-hidden />
+          <span className="w-1.5 h-1.5 bg-accent" aria-hidden />
           {tr('fig')}
         </span>
         <div role="group" aria-label={tr('layerAria')} className="flex border border-hairline">
@@ -217,7 +217,7 @@ export const StudioNetworkMap: React.FC<Props> = ({ currentLang, hoveredBlock, s
               type="button"
               aria-pressed={layer === l}
               onClick={() => setLayer(l)}
-              className={`px-2.5 py-1 text-[10.5px] transition-colors duration-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#FF4D00] ${
+              className={`px-2.5 py-1 text-[10.5px] transition-colors duration-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent ${
                 layer === l ? 'bg-[#0E0E0E] text-[#F5F5F2]' : 'text-[#0E0E0E]/55 hover:text-[#0E0E0E]'
               }`}
             >
@@ -483,7 +483,7 @@ export const StudioNetworkMap: React.FC<Props> = ({ currentLang, hoveredBlock, s
         {...fadeIn('legend')}
         className="border-t border-hairline px-4 py-2.5 flex flex-wrap gap-x-5 gap-y-1.5 text-[10.5px] text-[#0E0E0E]/70"
       >
-        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#FF4D00]" />{content.studio.mapLabels.studio[currentLang]}</span>
+        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-accent" />{content.studio.mapLabels.studio[currentLang]}</span>
         <span className="flex items-center gap-1.5"><span className="w-5 h-px bg-[#0E0E0E]/70" />{tr('legendInPerson')}</span>
         <span className="flex items-center gap-1.5">
           <svg width="20" height="2" aria-hidden><line x1="0" y1="1" x2="20" y2="1" stroke={ACCENT} strokeDasharray="3 3" /></svg>

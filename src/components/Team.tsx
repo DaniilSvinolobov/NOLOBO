@@ -36,7 +36,7 @@ export const Team: React.FC<TeamProps> = ({ currentLang }) => {
 
         <div className="lg:col-span-7 lg:pt-6">
           <div className="flex items-center gap-2 text-[11px] text-[#0E0E0E]/50 uppercase tracking-widest">
-            <span className="w-1.5 h-1.5 bg-[#FF4D00]" aria-hidden />
+            <span className="w-1.5 h-1.5 bg-accent" aria-hidden />
             <span>{tm.label[L]}</span>
           </div>
           <h3 className="mt-5 text-[32px] sm:text-[48px] leading-[1.02] tracking-[-0.04em] font-medium text-[#0E0E0E]">

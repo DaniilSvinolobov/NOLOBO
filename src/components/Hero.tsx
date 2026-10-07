@@ -42,7 +42,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
         <div className="border border-hairline bg-[#F5F5F2]/80 p-3 sm:p-3.5 mb-6 sm:mb-10 flex flex-wrap items-center justify-between gap-y-2.5 font-mono text-[11px] text-[#0E0E0E]/70 divide-y sm:divide-y-0 sm:divide-x divide-hairline">
           {/* Node 01: Island conditions */}
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pr-0 sm:pr-4 tabular-nums">
-            <span className="text-[#FF4D00]">⊕</span>
+            <span className="text-accent">⊕</span>
             <span className="text-[#0E0E0E] font-medium">{conditions.place[currentLang]}</span>
             <span className="text-[#0E0E0E]/40">·</span>
             {sun && sun.altitude > 0 && (
@@ -77,7 +77,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
           {/* Node 02: Availability */}
           <div className="flex items-center gap-3 pt-2 sm:pt-0 sm:pl-4">
             <span className="inline-flex items-center gap-1.5 text-[#0E0E0E] font-medium">
-              <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+              <span className="w-1.5 h-1.5 bg-accent" />
               <span>{meta.availability[currentLang]}</span>
             </span>
           </div>
@@ -94,7 +94,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
           >
             {/* Sheet Sub-Header Tag */}
             <div className="flex items-center gap-3 text-xs font-mono text-[#0E0E0E]/70 uppercase tracking-widest">
-              <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+              <span className="w-1.5 h-1.5 bg-accent" />
               <span>{meta.tagline[currentLang]}</span>
             </div>
 
@@ -126,7 +126,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
                 transition={{ duration: 0.8, delay: 0.9 + t.conditionWords.length * 0.18 + 0.3, ease: smoothEase }}
                 className="mt-1 flex items-center gap-2 text-[#0E0E0E]"
               >
-                <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+                <span className="w-1.5 h-1.5 bg-accent" />
                 <span>{t.closing[currentLang]}</span>
               </motion.p>
             </div>
@@ -135,7 +135,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
             <div className="pt-1 flex flex-wrap items-center gap-3">
               <a
                 href="#work"
-                className="px-5 py-2.5 bg-[#0E0E0E] text-[#F5F5F2] font-mono text-xs tracking-wider uppercase hover:bg-[#FF4D00] transition-colors inline-flex items-center gap-2"
+                className="px-5 py-2.5 bg-[#0E0E0E] text-[#F5F5F2] font-mono text-xs tracking-wider uppercase hover:bg-accent transition-colors inline-flex items-center gap-2"
               >
                 <span>{t.ctaWork[currentLang]}</span>
                 <span>↓</span>
@@ -145,7 +145,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
                 href="#contact"
                 className="px-5 py-2.5 border border-hairline font-mono text-xs tracking-wider uppercase text-[#0E0E0E] hover:border-[#0E0E0E] hover:bg-[#0E0E0E]/5 transition-colors inline-flex items-center gap-2"
               >
-                <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+                <span className="w-1.5 h-1.5 bg-accent" />
                 <span>{t.ctaInquire[currentLang]}</span>
                 <span>→</span>
               </a>
@@ -162,7 +162,7 @@ export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
             {/* Top Technical Figure Header */}
             <div className="px-3.5 py-2 border-b border-hairline flex items-center justify-between text-[10px] font-mono text-[#0E0E0E]/70 bg-[#F5F5F2]">
               <div className="flex items-center gap-2">
-                <span className="text-[#FF4D00] font-bold">FIG. 00</span>
+                <span className="text-accent font-bold">FIG. 00</span>
                 <span className="font-semibold text-[#0E0E0E]">{t.model.header[currentLang]}</span>
               </div>
               <div className="text-[#0E0E0E]/50 font-mono text-[9px] hidden sm:block">

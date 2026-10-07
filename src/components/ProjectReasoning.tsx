@@ -9,7 +9,7 @@ interface ProjectReasoningProps {
 }
 
 const Arrow: React.FC = () => (
-  <span aria-hidden className="text-[#FF4D00] md:text-center select-none">
+  <span aria-hidden className="text-accent md:text-center select-none">
     <span className="hidden md:inline">→</span>
     <span className="md:hidden">↓</span>
   </span>
@@ -46,7 +46,7 @@ export const ProjectReasoning: React.FC<ProjectReasoningProps> = ({ project, cur
                 isActive ? 'bg-[#0E0E0E]/[0.03]' : ''
               }`}
             >
-              <span className={`text-[11px] tabular-nums font-semibold ${isActive ? 'text-[#FF4D00]' : 'text-[#0E0E0E]/40'}`}>
+              <span className={`text-[11px] tabular-nums font-semibold ${isActive ? 'text-accent' : 'text-[#0E0E0E]/40'}`}>
                 {String(i + 1).padStart(2, '0')}
               </span>
               <span>

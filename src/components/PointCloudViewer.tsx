@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { ACCENT, accentA } from '../theme';
 
 interface Point3D {
   x: number;
@@ -131,7 +132,7 @@ export const PointCloudViewer: React.FC = () => {
         const depthAlpha = Math.max(0.15, Math.min(1, (z2 + 200) / 400));
 
         if (pt.type === 'accent') {
-          ctx.fillStyle = '#FF4D00';
+          ctx.fillStyle = ACCENT;
           ctx.fillRect(scrX - 1.5, scrY - 1.5, 3, 3);
         } else if (pt.type === 'structure') {
           ctx.fillStyle = `rgba(14, 14, 14, ${0.85 * depthAlpha})`;
@@ -143,7 +144,7 @@ export const PointCloudViewer: React.FC = () => {
       });
 
       // Axis crosshairs in center
-      ctx.strokeStyle = 'rgba(255, 77, 0, 0.4)';
+      ctx.strokeStyle = accentA(0.4);
       ctx.lineWidth = 0.75;
       ctx.setLineDash([1, 3]);
       ctx.beginPath();
@@ -193,7 +194,7 @@ export const PointCloudViewer: React.FC = () => {
 
       {/* Top Header Tag */}
       <div className="absolute top-2 left-2 flex items-center gap-2 font-mono text-[9px] text-[#0E0E0E]/70 pointer-events-none">
-        <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+        <span className="w-1.5 h-1.5 bg-accent" />
         <span className="font-semibold text-[#0E0E0E]">POINT CLOUD FEDERATION</span>
         <span className="text-[#0E0E0E]/30">|</span>
         <span>PTS: 840 · LIDAR BIM</span>
@@ -205,7 +206,7 @@ export const PointCloudViewer: React.FC = () => {
 
       {/* Bottom Footer Annotation */}
       <div className="absolute bottom-2 left-2 font-mono text-[9px] text-[#0E0E0E]/50 pointer-events-none flex items-center gap-1.5">
-        <span className="text-[#FF4D00]">▲</span>
+        <span className="text-accent">▲</span>
         <span>FARO FOCUS 3D RESOLUTION</span>
       </div>
 

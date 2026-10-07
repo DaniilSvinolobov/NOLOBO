@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'motion/react';
 import { content, Language, MaterialItem } from '../content';
 import { SectionHead } from './SectionHead';
+import { ACCENT } from '../theme';
 
 /** Material photo: always in colour, slight zoom on hover. */
 const MaterialTileImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
@@ -108,8 +109,8 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
             transition={{ duration: 1.4, delay: 0.2 }}
             className="opacity-50"
           />
-          <line x1="85" y1="52" x2="85" y2="135" stroke="#FF4D00" strokeWidth="1.4" strokeDasharray="3 2" />
-          <line x1="140" y1="68" x2="140" y2="145" stroke="#FF4D00" strokeWidth="1.4" strokeDasharray="3 2" />
+          <line x1="85" y1="52" x2="85" y2="135" stroke={ACCENT} strokeWidth="1.4" strokeDasharray="3 2" />
+          <line x1="140" y1="68" x2="140" y2="145" stroke={ACCENT} strokeWidth="1.4" strokeDasharray="3 2" />
           <polygon points="65,48 160,48 160,38 65,38" className="opacity-80 stroke-[#0E0E0E]" />
           <text x="70" y="44" fill="currentColor" stroke="none" className="text-[8px] font-mono">
             TERRACE
@@ -133,7 +134,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
             initial={{ pathLength: 0 }}
             animate={inView ? { pathLength: 1 } : {}}
             transition={{ duration: 1.2, delay: 0.15 }}
-            className="stroke-[#FF4D00]"
+            className="stroke-accent"
             strokeWidth="1.2"
             strokeDasharray="2 3"
           />
@@ -160,10 +161,10 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
             initial={{ pathLength: 0 }}
             animate={inView ? { pathLength: 1 } : {}}
             transition={{ duration: 1.3 }}
-            className="stroke-[#FF4D00]"
+            className="stroke-accent"
             strokeWidth="1.4"
           />
-          <text x="25" y="20" fill="#FF4D00" stroke="none" className="text-[8px] font-mono">
+          <text x="25" y="20" fill={ACCENT} stroke="none" className="text-[8px] font-mono">
             SUMMER NOON 74°
           </text>
           <motion.path
@@ -197,11 +198,11 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
             initial={{ pathLength: 0 }}
             animate={inView ? { pathLength: 1 } : {}}
             transition={{ duration: 1.4 }}
-            className="stroke-[#FF4D00]"
+            className="stroke-accent"
             strokeWidth="1.4"
           />
-          <polygon points="135,40 131,48 139,48" fill="#FF4D00" stroke="none" />
-          <text x="145" y="50" fill="#FF4D00" stroke="none" className="text-[8px] font-mono">
+          <polygon points="135,40 131,48 139,48" fill={ACCENT} stroke="none" />
+          <text x="145" y="50" fill={ACCENT} stroke="none" className="text-[8px] font-mono">
             WARM AIR OUT
           </text>
           <text x="15" y="92" fill="currentColor" stroke="none" className="text-[8px] font-mono opacity-60">
@@ -226,7 +227,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
             initial={{ pathLength: 0 }}
             animate={inView ? { pathLength: 1 } : {}}
             transition={{ duration: 1.4 }}
-            className="stroke-[#FF4D00]"
+            className="stroke-accent"
             strokeWidth="1.2"
           />
           <rect x="150" y="75" width="10" height="35" className="opacity-70" />
@@ -234,7 +235,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
           <text x="35" y="24" fill="currentColor" stroke="none" className="text-[8px] font-mono opacity-50">
             CANOPY SHADE
           </text>
-          <text x="105" y="130" fill="#FF4D00" stroke="none" className="text-[8px] font-mono font-medium">
+          <text x="105" y="130" fill={ACCENT} stroke="none" className="text-[8px] font-mono font-medium">
             ROOTS
           </text>
         </svg>
@@ -269,11 +270,11 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
               initial={{ pathLength: 0 }}
               animate={inView ? { pathLength: 1 } : {}}
               transition={{ duration: 1.2, delay: 0.1 }}
-              className="stroke-[#FF4D00]"
+              className="stroke-accent"
               strokeWidth="1.4"
             />
           ))}
-          <text x="20" y="10" fill="#FF4D00" stroke="none" className="text-[8px] font-mono">
+          <text x="20" y="10" fill={ACCENT} stroke="none" className="text-[8px] font-mono">
             DIRECT SUN
           </text>
 
@@ -375,7 +376,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
                   : 'border-hairline bg-[#F5F5F2] text-[#0E0E0E]/70 hover:border-[#0E0E0E] hover:text-[#0E0E0E]'
               }`}
             >
-              <span className="text-[#FF4D00] text-[9px]">0{idx + 1}</span>
+              <span className="text-accent text-[9px]">0{idx + 1}</span>
               <span>{mat.name[currentLang]}</span>
             </button>
           ))}
@@ -400,7 +401,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
                 {/* Header Tag with Number and Origin / Distance */}
                 <div className="p-4 sm:p-5 border-b border-hairline font-mono text-xs flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-[#FF4D00] font-bold">0{idx + 1}</span>
+                    <span className="text-accent font-bold">0{idx + 1}</span>
                     <span className="font-semibold text-[#0E0E0E] tracking-tight">{mat.name[currentLang]}</span>
                   </div>
                   {/* Mono label with origin and distance to Mallorca site */}
@@ -422,11 +423,11 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
 
                 {/* Tile Footer Details */}
                 <div className="p-4 sm:p-5 border-t border-hairline space-y-2">
-                  <h3 className="font-mono text-lg sm:text-xl font-medium tracking-[-0.03em] text-[#0E0E0E] group-hover:text-[#FF4D00] transition-colors">
+                  <h3 className="font-mono text-lg sm:text-xl font-medium tracking-[-0.03em] text-[#0E0E0E] group-hover:text-accent transition-colors">
                     {mat.does[currentLang]}
                   </h3>
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="font-mono text-xs text-[#FF4D00] italic">
+                    <span className="font-mono text-xs text-accent italic">
                       {mat.localName}
                     </span>
                     <span className="text-[10px] font-mono text-[#0E0E0E]/50 uppercase">
@@ -453,7 +454,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
                 {/* Header code */}
                 <div className="flex items-center justify-between pb-3 border-b border-hairline font-mono text-xs">
                   <span className="font-semibold text-[#0E0E0E] flex items-center gap-1.5">
-                    <span className="text-[#FF4D00]">■</span>
+                    <span className="text-accent">■</span>
                     <span>{item.code}</span>
                   </span>
                   <span className="text-[10px] text-[#0E0E0E]/50">{item.scale}</span>
@@ -472,7 +473,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
                   <div className="space-y-0.5 text-[9px] text-[#0E0E0E]/60">
                     {item.specs.map((spec, sIdx) => (
                       <div key={sIdx} className="flex items-center gap-1.5">
-                        <span className="text-[#FF4D00] text-[8px]">+</span>
+                        <span className="text-accent text-[8px]">+</span>
                         <span>{spec}</span>
                       </div>
                     ))}
@@ -505,7 +506,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
             {/* Modal Header & Navigation Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-hairline font-mono text-xs">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-[#FF4D00]" />
+                <span className="w-2 h-2 bg-accent" />
                 <span className="font-bold text-[#0E0E0E] uppercase">{titles.dossierTitle[currentLang]}</span>
                 <span className="text-[#0E0E0E]/40">·</span>
                 {/* Distance Mono Label */}
@@ -540,7 +541,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
                 <button
                   type="button"
                   onClick={() => setSelectedMaterial(null)}
-                  className="ml-2 px-2 py-1 text-xs hover:text-[#FF4D00] font-bold"
+                  className="ml-2 px-2 py-1 text-xs hover:text-accent font-bold"
                   aria-label={content.aria.closeModal[currentLang]}
                 >
                   ✕
@@ -563,7 +564,7 @@ export const LandscapeSchematics: React.FC<LandscapeSchematicsProps> = ({ curren
             {/* Modal Body */}
             <div className="space-y-4">
               <div>
-                <span className="font-mono text-xs text-[#FF4D00] uppercase tracking-wider block">
+                <span className="font-mono text-xs text-accent uppercase tracking-wider block">
                   {selectedMaterial.localName} · {selectedMaterial.origin}
                 </span>
                 <h3 className="text-2xl sm:text-3xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E] mt-1">

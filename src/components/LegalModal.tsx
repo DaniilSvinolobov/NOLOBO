@@ -43,7 +43,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, currentLa
         >
           <div className="flex items-center justify-between pb-3 border-b border-hairline font-mono text-xs">
             <div className="flex items-center gap-2">
-              <span className="text-[#FF4D00]">■</span>
+              <span className="text-accent">■</span>
               <span className="font-bold uppercase">{title}</span>
             </div>
             <button
@@ -61,7 +61,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, currentLa
           <div className="pt-4 border-t border-hairline flex justify-end">
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-[#0E0E0E] text-[#F5F5F2] hover:bg-[#FF4D00] transition-colors font-mono text-xs uppercase"
+              className="px-4 py-2 bg-[#0E0E0E] text-[#F5F5F2] hover:bg-accent transition-colors font-mono text-xs uppercase"
             >
               {currentLang === 'de'
                 ? 'Verstanden & Schließen'

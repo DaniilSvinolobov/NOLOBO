@@ -38,7 +38,7 @@ React + Vite + Tailwind + motion. All copy lives in src/content.ts.
 
 ## Design rules
 - JetBrains Mono for headlines (including section headings), body, labels and buttons. Only the NOLOBO wordmark stays in Inter Tight
-- Colors: #F5F5F2 paper, #0E0E0E ink, #FF4D00 accent (sparingly)
+- Colors: #F5F5F2 paper, #0E0E0E ink, #E6007E accent, Neufert pink (sparingly; defined once as `--accent` in index.css and `ACCENT` in src/theme.ts, use only the token)
 - Hairline borders, grid-aligned layout, schematic and precise visuals
 - Motion: cubic-bezier(0.16, 1, 0.3, 1), 0.8–1.6s, sequenced not simultaneous, no bouncing or looping; respect prefers-reduced-motion
 - Copy tone: simple, direct, confident; no marketing words or poetic phrasing

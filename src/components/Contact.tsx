@@ -159,7 +159,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
           headline={t.headline[currentLang]}
           aside={
             <div className="font-mono text-xs text-[#0E0E0E]/60 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+              <span className="w-1.5 h-1.5 bg-accent" />
               <span>{cl.intakeStatus}</span>
             </div>
           }
@@ -175,12 +175,12 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
               </span>
               <a
                 href={`mailto:${t.email}`}
-                className="text-2xl sm:text-3xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E] hover:text-[#FF4D00] transition-colors break-all"
+                className="text-2xl sm:text-3xl font-mono font-medium tracking-[-0.03em] text-[#0E0E0E] hover:text-accent transition-colors break-all"
               >
                 {t.email}
               </a>
               <div className="pt-1 text-xs font-mono text-[#0E0E0E]/60 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+                <span className="w-1.5 h-1.5 bg-accent" />
                 <span>{cl.partnerResponse}</span>
               </div>
             </div>
@@ -192,7 +192,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
                 </span>
                 <a
                   href={`tel:${t.phone.replace(/\s+/g, '')}`}
-                  className="text-base font-semibold text-[#0E0E0E] hover:text-[#FF4D00] transition-colors"
+                  className="text-base font-semibold text-[#0E0E0E] hover:text-accent transition-colors"
                 >
                   {t.phone}
                 </a>
@@ -230,7 +230,7 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
             <div className="border border-hairline bg-[#F5F5F2] p-6 sm:p-7">
               <div className="flex items-center justify-between pb-4 mb-5 border-b border-hairline font-mono text-xs text-[#0E0E0E]">
                 <div className="flex items-center gap-2">
-                  <span className="text-[#FF4D00]">■</span>
+                  <span className="text-accent">■</span>
                   <span className="font-semibold uppercase">{cl.projectBrief}</span>
                 </div>
                 <span className="text-[#0E0E0E]/40 text-[10px]">{cl.commissionIntake}</span>
@@ -277,8 +277,8 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
               ) : (
                 <div className="space-y-4">
                   {errorMessage && (
-                    <div className="p-2.5 border border-[#FF4D00] bg-[#FF4D00]/5 font-mono text-xs text-[#0E0E0E] flex items-center gap-2">
-                      <span className="text-[#FF4D00] font-bold">!</span>
+                    <div className="p-2.5 border border-accent bg-accent/5 font-mono text-xs text-[#0E0E0E] flex items-center gap-2">
+                      <span className="text-accent font-bold">!</span>
                       <span>{errorMessage}</span>
                     </div>
                   )}
@@ -372,11 +372,11 @@ export const Contact: React.FC<ContactProps> = ({ currentLang }) => {
                       type="button"
                       onClick={handleSubmit}
                       disabled={isSubmitting}
-                      className="w-full py-2.5 bg-[#0E0E0E] text-[#F5F5F2] hover:bg-[#FF4D00] disabled:bg-[#0E0E0E]/50 transition-colors font-mono text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2"
+                      className="w-full py-2.5 bg-[#0E0E0E] text-[#F5F5F2] hover:bg-accent disabled:bg-[#0E0E0E]/50 transition-colors font-mono text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2"
                     >
                       {isSubmitting ? (
                         <>
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF4D00] animate-ping" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
                           <span>{f.submitting[currentLang]}</span>
                         </>
                       ) : (

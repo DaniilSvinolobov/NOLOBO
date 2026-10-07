@@ -1,7 +1,8 @@
 import React from 'react';
 
 export const INK = '#0E0E0E';
-export const ACCENT = '#FF4D00';
+export { ACCENT } from '../../theme';
+import { ACCENT } from '../../theme';
 export const PAPER = '#F5F5F2';
 export const MONO = 'JetBrains Mono, ui-monospace, monospace';
 
