@@ -15,7 +15,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 const Block: React.FC<{ n: string; title: string; children: React.ReactNode }> = ({ n, title, children }) => (
   <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 py-10 sm:py-14 border-t border-hairline">
     <div className="lg:col-span-4 flex items-baseline gap-3">
-      <span className="text-[11px] text-[#FF4D00] tabular-nums">{n}</span>
+      <span className="text-[11px] text-accent tabular-nums">{n}</span>
       <h2 className="text-[11px] sm:text-xs uppercase tracking-widest text-[#0E0E0E]/60">{title}</h2>
     </div>
     <div className="lg:col-span-8">{children}</div>
@@ -45,7 +45,7 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({ projectId, currentLang
   if (!project) {
     return (
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-24 font-mono text-sm">
-        <a href="#work" className="hover:text-[#FF4D00]">{w.backToProjects[currentLang]}</a>
+        <a href="#work" className="hover:text-accent">{w.backToProjects[currentLang]}</a>
       </div>
     );
   }
@@ -72,7 +72,7 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({ projectId, currentLang
       aria-labelledby="project-title"
     >
       <div className="flex items-center justify-between text-[11px] text-[#0E0E0E]/60">
-        <a href="#work" className="hover:text-[#FF4D00] transition-colors">{w.backToProjects[L]}</a>
+        <a href="#work" className="hover:text-accent transition-colors">{w.backToProjects[L]}</a>
         <span className="tabular-nums">{String(Number(project.number)).padStart(3, '0')} / {String(projects.length).padStart(3, '0')}</span>
       </div>
 
@@ -80,7 +80,7 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({ projectId, currentLang
         {project.title}
       </h1>
       <p className="mt-6 sm:mt-8 text-xl sm:text-3xl tracking-[-0.03em] text-[#0E0E0E] flex items-start gap-3 max-w-[28ch]">
-        <span aria-hidden className="mt-[0.5em] w-2 h-2 shrink-0 bg-[#FF4D00]" />
+        <span aria-hidden className="mt-[0.5em] w-2 h-2 shrink-0 bg-accent" />
         <span>{project.thesis[L]}</span>
       </p>
 
@@ -88,7 +88,7 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({ projectId, currentLang
         {meta.map((m) => (
           <div key={m.label} className="flex flex-col gap-1">
             <dt className="text-[10px] uppercase text-[#0E0E0E]/50">{m.label}</dt>
-            <dd className={`font-medium leading-snug ${m.accent ? 'text-[#FF4D00]' : 'text-[#0E0E0E]'}`}>{m.value}</dd>
+            <dd className={`font-medium leading-snug ${m.accent ? 'text-accent' : 'text-[#0E0E0E]'}`}>{m.value}</dd>
           </div>
         ))}
       </dl>
@@ -150,17 +150,17 @@ export const ProjectPage: React.FC<ProjectPageProps> = ({ projectId, currentLang
       </div>
 
       <nav className="grid grid-cols-2 border-t border-hairline text-xs" aria-label="Projects">
-        <a href={projectHref(prev.id)} className="py-8 pr-4 hover:text-[#FF4D00] transition-colors">
+        <a href={projectHref(prev.id)} className="py-8 pr-4 hover:text-accent transition-colors">
           <span className="block text-[10px] text-[#0E0E0E]/50">{w.prevProject[L]}</span>
           <span className="block mt-2 text-lg sm:text-2xl tracking-[-0.03em]">{prev.title}</span>
         </a>
-        <a href={projectHref(next.id)} className="py-8 pl-4 text-right border-l border-hairline hover:text-[#FF4D00] transition-colors">
+        <a href={projectHref(next.id)} className="py-8 pl-4 text-right border-l border-hairline hover:text-accent transition-colors">
           <span className="block text-[10px] text-[#0E0E0E]/50">{w.nextProject[L]}</span>
           <span className="block mt-2 text-lg sm:text-2xl tracking-[-0.03em]">{next.title}</span>
         </a>
       </nav>
 
-      <a href="#contact" className="mt-6 block py-3 bg-[#0E0E0E] text-[#F5F5F2] hover:bg-[#FF4D00] transition-colors text-xs uppercase tracking-wider text-center">
+      <a href="#contact" className="mt-6 block py-3 bg-[#0E0E0E] text-[#F5F5F2] hover:bg-accent transition-colors text-xs uppercase tracking-wider text-center">
         {w.inquireSimilar[L]}
       </a>
     </motion.article>

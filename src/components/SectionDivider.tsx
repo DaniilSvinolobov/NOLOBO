@@ -36,7 +36,7 @@ export const SectionDivider: React.FC<SectionDividerProps> = ({
         >
           {sectionNumber && (
             <span className="flex items-center gap-1.5">
-              <span className="text-[#FF4D00]">■</span>
+              <span className="text-accent">■</span>
               <span>SECTION {sectionNumber}</span>
             </span>
           )}

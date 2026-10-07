@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
         {/* Zone 1: Single text element wordmark */}
         <a
           href="#"
-          className="text-lg font-bold tracking-tight text-[#0E0E0E] hover:text-[#FF4D00] transition-colors font-sans whitespace-nowrap"
+          className="text-lg font-bold tracking-tight text-[#0E0E0E] hover:text-accent transition-colors font-sans whitespace-nowrap"
           aria-label={content.aria.homeLink[currentLang]}
         >
           NOLOBO
@@ -80,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
             onClick={(e) => handleNavClick(e, '#contact')}
             className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono border border-[#0E0E0E] hover:bg-[#0E0E0E] hover:text-[#F5F5F2] transition-colors whitespace-nowrap"
           >
-            <span className="w-1.5 h-1.5 bg-[#FF4D00] inline-block" />
+            <span className="w-1.5 h-1.5 bg-accent inline-block" />
             <span>2027</span>
           </a>
 
@@ -108,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
                 <a
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
-                  className="block py-1 text-sm font-mono font-medium text-[#0E0E0E] hover:text-[#FF4D00]"
+                  className="block py-1 text-sm font-mono font-medium text-[#0E0E0E] hover:text-accent"
                 >
                   {item.label}
                 </a>

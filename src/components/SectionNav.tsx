@@ -61,11 +61,11 @@ export const SectionNav: React.FC<SectionNavProps> = ({ currentLang }) => {
                 aria-current={on ? 'true' : undefined}
                 className={`relative inline-flex items-center gap-1.5 py-2.5 transition-colors duration-500 ${on ? 'text-[#0E0E0E]' : 'text-[#0E0E0E]/50 hover:text-[#0E0E0E]'}`}
               >
-                <span className={`tabular-nums ${on ? 'text-[#FF4D00]' : ''}`}>{String(i + 1).padStart(2, '0')}</span>
+                <span className={`tabular-nums ${on ? 'text-accent' : ''}`}>{String(i + 1).padStart(2, '0')}</span>
                 <span>{item.label}</span>
                 <span
                   aria-hidden
-                  className="absolute left-0 right-0 bottom-0 h-px bg-[#FF4D00] origin-left transition-transform duration-700"
+                  className="absolute left-0 right-0 bottom-0 h-px bg-accent origin-left transition-transform duration-700"
                   style={{ transform: `scaleX(${on ? 1 : 0})`, transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)' }}
                 />
               </a>

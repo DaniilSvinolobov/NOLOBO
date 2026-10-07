@@ -35,10 +35,10 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
                     onFocus={() => setHovered(p.id)}
                     onBlur={() => setHovered(null)}
                     aria-label={`${content.aria.inspectSpec[currentLang]}: ${p.title}`}
-                    className="group block py-5 sm:py-7 focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#FF4D00]"
+                    className="group block py-5 sm:py-7 focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent"
                   >
                     <div className="grid grid-cols-[3rem_1fr_auto] sm:grid-cols-[4rem_1fr_auto] gap-x-3 items-baseline">
-                      <span className={`text-[11px] tabular-nums transition-colors duration-500 ${hovered === p.id ? 'text-[#FF4D00]' : 'text-[#0E0E0E]/40'}`}>
+                      <span className={`text-[11px] tabular-nums transition-colors duration-500 ${hovered === p.id ? 'text-accent' : 'text-[#0E0E0E]/40'}`}>
                         {String(Number(p.number)).padStart(3, '0')}
                       </span>
                       <span className="text-[20px] sm:text-[28px] leading-tight tracking-[-0.03em] font-medium text-[#0E0E0E] transition-transform duration-700 group-hover:translate-x-2" style={{ transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)' }}>
@@ -73,7 +73,7 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
                 />
               ))}
               <div className="absolute top-3 left-3 px-2 py-0.5 bg-[#F5F5F2]/95 border border-hairline text-[10px] flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+                <span className="w-1.5 h-1.5 bg-accent" />
                 <span>{t.indexLabel[currentLang]}</span>
                 <span className="text-[#0E0E0E]/40">·</span>
                 <span>{t.conceptTag[currentLang]}</span>

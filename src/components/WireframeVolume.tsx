@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { ACCENT } from '../theme';
 
 interface Point3D {
   x: number;
@@ -217,7 +218,7 @@ export const WireframeVolume: React.FC = () => {
         ctx.lineTo(p2.x, p2.y);
 
         if (edge.type === 'accent') {
-          ctx.strokeStyle = '#FF4D00';
+          ctx.strokeStyle = ACCENT;
           ctx.lineWidth = 1.25;
           ctx.setLineDash([]);
         } else if (edge.type === 'dashed') {
@@ -240,7 +241,7 @@ export const WireframeVolume: React.FC = () => {
       // Draw key vertex crosshair nodes
       [0, 1, 2, 3, 10, 14, 17, 18].forEach((vIdx) => {
         const p = projected[vIdx];
-        ctx.fillStyle = vIdx === 18 ? '#FF4D00' : 'rgba(14, 14, 14, 0.6)';
+        ctx.fillStyle = vIdx === 18 ? ACCENT : 'rgba(14, 14, 14, 0.6)';
         const size = vIdx === 18 ? 3.5 : 2;
         ctx.fillRect(p.x - size / 2, p.y - size / 2, size, size);
       });
@@ -315,7 +316,7 @@ export const WireframeVolume: React.FC = () => {
 
       {/* Drafting Corner Spec Annotations */}
       <div className="absolute top-2 left-2 flex items-center gap-2 text-[10px] font-mono text-[#0E0E0E]/60 pointer-events-none">
-        <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+        <span className="w-1.5 h-1.5 bg-accent" />
         <span>AXONOMETRIC 4.3</span>
         <span className="text-[#0E0E0E]/30">|</span>
         <span>ROT: {(rotationAngle % (Math.PI * 2)).toFixed(2)} rad</span>
@@ -327,14 +328,14 @@ export const WireframeVolume: React.FC = () => {
       </div>
 
       <div className="absolute bottom-2 left-2 text-[10px] font-mono text-[#0E0E0E]/50 pointer-events-none flex items-center gap-2">
-        <span className="text-[#FF4D00]">■</span>
+        <span className="text-accent">■</span>
         <span>DRAG TO ROTATE AXIS</span>
       </div>
 
       {isHovered && (
         <button
           onClick={resetOrientation}
-          className="absolute bottom-2 right-2 px-2 py-0.5 text-[9px] font-mono border border-hairline bg-[#F5F5F2]/90 hover:border-[#FF4D00] hover:text-[#FF4D00] transition-colors"
+          className="absolute bottom-2 right-2 px-2 py-0.5 text-[9px] font-mono border border-hairline bg-[#F5F5F2]/90 hover:border-accent hover:text-accent transition-colors"
         >
           RESET VIEW [R]
         </button>

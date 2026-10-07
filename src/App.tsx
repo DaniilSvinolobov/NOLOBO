@@ -82,7 +82,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F2] text-[#0E0E0E] relative selection:bg-[#FF4D00] selection:text-white">
+    <div className="min-h-screen bg-[#F5F5F2] text-[#0E0E0E] relative selection:bg-accent selection:text-white">
       {/* Accessibility Skip Link */}
       <a
         href="#main-content"

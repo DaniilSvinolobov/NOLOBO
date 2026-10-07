@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { content, Language } from '../content';
+import { ACCENT, accentA } from '../theme';
 
 export type StageId = 0 | 1 | 2 | 3 | 4;
 
@@ -484,7 +485,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
 
         // Sun-path golden/orange arc
         ctx.beginPath();
-        ctx.strokeStyle = '#FF4D00';
+        ctx.strokeStyle = ACCENT;
         ctx.lineWidth = 1.2;
         ctx.setLineDash([3, 4]);
         for (let a = -0.85; a <= 0.85; a += 0.06) {
@@ -501,7 +502,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
 
         // Active sun disk
         ctx.beginPath();
-        ctx.fillStyle = '#FF4D00';
+        ctx.fillStyle = ACCENT;
         ctx.arc(sunPt.x, sunPt.y, 4, 0, Math.PI * 2);
         ctx.fill();
 
@@ -561,7 +562,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
 
         for (let h = 1; h <= 4; h++) {
           ctx.beginPath();
-          ctx.strokeStyle = h === 1 ? '#FF4D00' : 'rgba(255, 77, 0, 0.35)';
+          ctx.strokeStyle = h === 1 ? ACCENT : accentA(0.35);
           ctx.lineWidth = h === 1 ? 1.2 : 0.8;
           ctx.setLineDash(h === 1 ? [] : [2, 3]);
           ctx.ellipse(optCenter.x, optCenter.y, h * 24, h * 14, 0.15, 0, Math.PI * 2);
@@ -590,7 +591,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
             const c4 = project(wx - 24, pos.h, wz + 16);
 
             ctx.beginPath();
-            ctx.strokeStyle = isOptimal ? '#FF4D00' : 'rgba(14, 14, 14, 0.25)';
+            ctx.strokeStyle = isOptimal ? ACCENT : 'rgba(14, 14, 14, 0.25)';
             ctx.lineWidth = isOptimal ? 1.5 : 0.7;
             ctx.setLineDash(isOptimal ? [] : [2, 2]);
             ctx.moveTo(c1.x, c1.y);
@@ -603,7 +604,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
 
             if (isOptimal) {
               ctx.font = '8px "JetBrains Mono", monospace';
-              ctx.fillStyle = '#FF4D00';
+              ctx.fillStyle = ACCENT;
               ctx.fillText(modelContent.readouts.fit.chosenLabel[currentLang], c3.x + 6, c3.y + 2);
             }
           }
@@ -646,7 +647,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
 
         // Diagonal hatching for cut volume
         if (wGround > 0.05) {
-          ctx.strokeStyle = `rgba(255, 77, 0, ${wGround * 0.55})`;
+          ctx.strokeStyle = accentA(wGround * 0.55);
           ctx.lineWidth = 0.8;
           for (let step = 0; step <= 10; step++) {
             const frac = step / 10;
@@ -702,7 +703,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
 
         // Flow of excavated material to retaining wall
         if (wGround > 0.1) {
-          ctx.strokeStyle = '#FF4D00';
+          ctx.strokeStyle = ACCENT;
           ctx.lineWidth = 1.1;
           const flowDash = -(time * 0.03) % 12;
           ctx.setLineDash([3, 4]);
@@ -719,7 +720,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
           ctx.lineDashOffset = 0;
 
           ctx.font = '8px "JetBrains Mono", monospace';
-          ctx.fillStyle = '#FF4D00';
+          ctx.fillStyle = ACCENT;
           ctx.fillText(modelContent.readouts.ground.materialFlow[currentLang], flow2.x + 8, flow2.y);
         }
 
@@ -804,7 +805,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
 
         // Cantilever shadow accent line
         ctx.beginPath();
-        ctx.strokeStyle = '#FF4D00';
+        ctx.strokeStyle = ACCENT;
         ctx.lineWidth = 1.3;
         ctx.moveTo(r4.x, r4.y + 1);
         ctx.lineTo(r3.x, r3.y + 1);
@@ -821,14 +822,14 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
           modelContent.readouts.build.rings.forEach((ring, rIdx) => {
             const r = ringRadii[rIdx] || 60;
             ctx.beginPath();
-            ctx.strokeStyle = 'rgba(255, 77, 0, 0.4)';
+            ctx.strokeStyle = accentA(0.4);
             ctx.lineWidth = 0.8;
             ctx.setLineDash([2, 4]);
             ctx.ellipse(siteRef.x, siteRef.y, r, r * 0.48, 0.2, 0, Math.PI * 2);
             ctx.stroke();
 
             ctx.font = '7px "JetBrains Mono", monospace';
-            ctx.fillStyle = '#FF4D00';
+            ctx.fillStyle = ACCENT;
             ctx.fillText(`${ring.km} · ${ring.label[currentLang].toUpperCase()}`, siteRef.x + r * 0.85, siteRef.y - r * 0.2);
           });
           ctx.setLineDash([]);
@@ -882,12 +883,12 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
           const blink = (Math.sin(time * 0.006 + s.gx * 10) + 1) / 2;
 
           ctx.beginPath();
-          ctx.fillStyle = '#FF4D00';
+          ctx.fillStyle = ACCENT;
           ctx.arc(spPt.x, spPt.y, 2.5 + blink * 1.5, 0, Math.PI * 2);
           ctx.fill();
 
           ctx.beginPath();
-          ctx.strokeStyle = '#FF4D00';
+          ctx.strokeStyle = ACCENT;
           ctx.lineWidth = 0.6;
           ctx.moveTo(spPt.x, spPt.y);
           ctx.lineTo(spPt.x + 14, spPt.y - 8);
@@ -948,7 +949,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
         // Stage 02: Root Protection Zone (RPZ) circles around trees near footprint
         if (wFit > 0.1 && (idx === 6 || idx === 7 || idx === 21)) {
           ctx.beginPath();
-          ctx.strokeStyle = 'rgba(255, 77, 0, 0.7)';
+          ctx.strokeStyle = accentA(0.7);
           ctx.lineWidth = 0.9;
           ctx.setLineDash([1.5, 2]);
           ctx.ellipse(base.x, base.y, crownR * 1.5, crownR * 0.75, 0.1, 0, Math.PI * 2);
@@ -956,7 +957,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
           ctx.setLineDash([]);
 
           ctx.font = '6.5px "JetBrains Mono", monospace';
-          ctx.fillStyle = '#FF4D00';
+          ctx.fillStyle = ACCENT;
           ctx.fillText('RPZ BUFFER', base.x - 14, base.y + 9);
         }
 
@@ -984,7 +985,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
 
           // Thin leader line from canopy crown to badge
           ctx.beginPath();
-          ctx.strokeStyle = showAllTagsInScan ? 'rgba(255, 77, 0, 0.6)' : 'rgba(14, 14, 14, 0.35)';
+          ctx.strokeStyle = showAllTagsInScan ? accentA(0.6) : 'rgba(14, 14, 14, 0.35)';
           ctx.lineWidth = 0.6;
           ctx.moveTo(trunkTop.x + crownR * 0.7, trunkTop.y - crownR * 0.3);
           ctx.lineTo(leaderEndX - 3, leaderEndY);
@@ -993,13 +994,13 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
 
           // Small leader anchor dot
           ctx.beginPath();
-          ctx.fillStyle = showAllTagsInScan ? '#FF4D00' : 'rgba(14, 14, 14, 0.6)';
+          ctx.fillStyle = showAllTagsInScan ? ACCENT : 'rgba(14, 14, 14, 0.6)';
           ctx.arc(trunkTop.x + crownR * 0.7, trunkTop.y - crownR * 0.3, 1.2, 0, Math.PI * 2);
           ctx.fill();
 
           // Tree tag label
           ctx.font = '7px "JetBrains Mono", monospace';
-          ctx.fillStyle = showAllTagsInScan ? '#FF4D00' : 'rgba(14, 14, 14, 0.75)';
+          ctx.fillStyle = showAllTagsInScan ? ACCENT : 'rgba(14, 14, 14, 0.75)';
 
           let tagText = tree.id;
           if (wFit > 0.25) {
@@ -1101,7 +1102,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
                 {isActive && (
                   <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#0E0E0E]/15">
                     <div
-                      className="h-full bg-[#FF4D00] transition-all duration-100 ease-linear"
+                      className="h-full bg-accent transition-all duration-100 ease-linear"
                       style={{ width: `${Math.round(stageProgress * 100)}%` }}
                     />
                   </div>
@@ -1138,9 +1139,9 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
                 activeStage === 4 ? '' : 'pointer-events-none'
               }`}
             >
-              <div className="flex items-center justify-between gap-4 text-[#FF4D00] font-bold pb-1 border-b border-hairline">
+              <div className="flex items-center justify-between gap-4 text-accent font-bold pb-1 border-b border-hairline">
                 <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-[#FF4D00]" />
+                  <span className="w-1.5 h-1.5 bg-accent" />
                   <span>{panel.title[currentLang]}</span>
                 </span>
                 {activeStage === 4 && (
@@ -1203,12 +1204,12 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
             onClick={() => setIsOrbiting((o) => !o)}
             className={`px-1.5 py-0.5 border transition-colors flex items-center gap-1 ${
               isOrbiting
-                ? 'border-[#FF4D00] text-[#FF4D00]'
+                ? 'border-accent text-accent'
                 : 'border-hairline text-[#0E0E0E]/60 hover:border-[#0E0E0E]'
             }`}
             title="Toggle 360° Camera Orbit"
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${isOrbiting ? 'bg-[#FF4D00] animate-pulse' : 'bg-[#0E0E0E]/40'}`} />
+            <span className={`w-1.5 h-1.5 rounded-full ${isOrbiting ? 'bg-accent animate-pulse' : 'bg-[#0E0E0E]/40'}`} />
             <span>{isOrbiting ? modelContent.controls.orbit[currentLang] : modelContent.controls.paused[currentLang]}</span>
           </button>
         </div>
@@ -1216,7 +1217,7 @@ export const TerrainWireframe: React.FC<TerrainWireframeProps> = ({ currentLang 
 
       {/* 3. BOTTOM BAR: Stage number, stage name, one-line caption. Nothing else. */}
       <div className="px-4 py-2.5 border-t border-hairline bg-[#F5F5F2] flex items-center gap-2.5 font-mono text-xs text-[#0E0E0E]">
-        <span className="text-[#FF4D00] font-bold">{curStageConfig.stageNum}</span>
+        <span className="text-accent font-bold">{curStageConfig.stageNum}</span>
         <span className="font-bold tracking-wider">{curStageConfig.stageName}</span>
         <span className="text-[#0E0E0E]/30">·</span>
         <span className="text-[#0E0E0E]/80 text-[11px] sm:text-xs truncate">

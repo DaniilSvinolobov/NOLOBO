@@ -84,13 +84,13 @@ export const CrosshairCursor: React.FC = () => {
           {/* Central reticle dot */}
           <div
             className={`transition-all duration-200 ${
-              isInteractive ? 'w-1 h-1 bg-[#FF4D00]' : 'w-1 h-1 bg-[#0E0E0E]'
+              isInteractive ? 'w-1 h-1 bg-accent' : 'w-1 h-1 bg-[#0E0E0E]'
             }`}
           />
 
           {/* Precision Bracket Frame [ ] appearing over links, buttons and images */}
           {isInteractive && (
-            <div className="absolute inset-0 flex items-center justify-between text-[#FF4D00] font-mono text-sm leading-none font-bold select-none px-0.5 animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute inset-0 flex items-center justify-between text-accent font-mono text-sm leading-none font-bold select-none px-0.5 animate-in fade-in zoom-in-95 duration-150">
               <span className="transform -translate-x-1">[</span>
               <span className="transform translate-x-1">]</span>
             </div>
@@ -104,7 +104,7 @@ export const CrosshairCursor: React.FC = () => {
             <span className="text-[#0E0E0E] font-medium">{formattedY}</span>
           </span>
           {isInteractive && (
-            <span className="text-[#FF4D00] font-semibold uppercase text-[8px] pl-1 border-l border-hairline">
+            <span className="text-accent font-semibold uppercase text-[8px] pl-1 border-l border-hairline">
               {targetType === 'img' ? 'IMG.SPEC' : targetType === 'link' ? 'GO.TO' : 'ACT'}
             </span>
           )}
