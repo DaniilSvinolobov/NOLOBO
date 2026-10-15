@@ -181,11 +181,11 @@ interface ContentSource {
   };
   hero: {
     headline: LocalizedStringSource;
-    shadowDay: LocalizedStringSource;
-    shadowNight: LocalizedStringSource;
+    subline: LocalizedStringSource;
+    strips: { number: string; label: LocalizedStringSource; line: LocalizedStringSource; image: string }[];
+    localNote: LocalizedStringSource;
     conceptNote: LocalizedStringSource;
     ctaWork: LocalizedStringSource;
-    ctaInquire: LocalizedStringSource;
     model: {
       header: LocalizedStringSource;
       locationCode: string;
@@ -522,12 +522,31 @@ const source: ContentSource = {
     }
   },
   hero: {
-    headline: { en: "We design\nconditions.\nForm is a\nconsequence." },
-    shadowDay: { en: "The shadow is Palma, now." },
-    shadowNight: { en: "Palma, night. The wall is dark." },
+    headline: { en: "Three in the afternoon,\nin August." },
+    subline: { en: "Shade, a cool wall, water you can hear. We design that first." },
+    strips: [
+      {
+        number: "01",
+        label: { en: "Shade" },
+        line: { en: "Carob and olive canopy. The ground under it stays cool and the air moves." },
+        image: dryStoneImg
+      },
+      {
+        number: "02",
+        label: { en: "Cool" },
+        line: { en: "A thick lime wall. Cool to the hand, soft on the glare." },
+        image: limeImg
+      },
+      {
+        number: "03",
+        label: { en: "Water" },
+        line: { en: "Rainwater, held on site. You hear it before you see it." },
+        image: ""
+      }
+    ],
+    localNote: { en: "Island material where it does a job. Reuse before we quarry." },
     conceptNote: { en: "Design concepts for real places. Nothing here is built." },
     ctaWork: { en: "Design concepts" },
-    ctaInquire: { en: "Start a conversation" },
     model: {
       header: { en: "The place, before the drawing." },
       locationCode: "DEIÀ TRANSECT · 39°45'N 2°39'E",

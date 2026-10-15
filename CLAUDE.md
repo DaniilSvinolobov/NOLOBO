@@ -10,10 +10,19 @@ Hierarchy, never reversed: **PLACE → CONDITIONS → ARCHITECTURE → TOOLS.**
 
 - Technology is capability, never identity. Computation calculates, compares, verifies and coordinates. It does not decide what matters. Not anti-technology: the studio understands tools well enough not to mistake them for the author.
 - Anchors: WE DESIGN CONDITIONS. FORM IS A CONSEQUENCE. TASTE IS TRAINED. THE COMPUTER DOESN'T HAVE TASTE. MATERIAL IS NOT A FINISH.
-- Materials are described by what they physically do (stone stores heat, lime softens light, wood changes sound), not as a finish or a heritage mood.
+- Materials are described by what they physically do (lime stays cool to the hand, a canopy keeps the ground cool, a thick wall holds the night's coolness, wood changes sound), not as a finish or a heritage mood.
+- Mallorca is hot in summer. Comfort leads: shade, cool, moving air, water. Never describe heat as a quality of the place or of a material; describe the relief from it.
+- Local with a limit. Island material where it does a job, reuse before we quarry. Never present everything as local; the island cannot be built from itself.
 - Mallorca is not the aesthetic. It is the set of conditions the architecture must understand: sun angle, summer heat, sea air, topography, stone, vegetation, water scarcity, shade, seasonality, construction culture.
 - Visual idea: the interface looks technical, the content is human. The site is an instrument that measures life (light, temperature, shade, sound, wind, time, movement, occupation).
 - The shared condition vocabulary lives in `content.conditions` (`ConditionId`). Reuse it for material tags and service tags, not for project pages.
+
+## Principles
+- **We listen first.** Rooted on the island, with first-hand knowledge of its quarries, kilns, builders and artisans.
+- **We start with what exists.** Optimise, repair and add value before building new.
+- **Local where it earns its place.**
+- **Landscape leads.** Shade, water and planting come before the building.
+- **Atmosphere by cause.** We create feelings by designing what causes them; the copy names the cause (shade at three in the afternoon), not the feeling.
 
 ## Copy principles
 - Concrete over abstract.
