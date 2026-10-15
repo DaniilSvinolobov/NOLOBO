@@ -1,35 +1,24 @@
 import React, { useState } from 'react';
 import { content, Language, ENABLED_LANGUAGES } from '../content';
+import { Page, pageHref } from './useHashRoute';
 
 interface HeaderProps {
   currentLang: Language;
   onLanguageChange: (lang: Language) => void;
+  page: Page;
 }
 
-export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange }) => {
+export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, page }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const t = content.nav;
 
-  const navItems = [
-    { label: t.work[currentLang], href: '#work' },
-    { label: t.studio[currentLang], href: '#studio' },
-    { label: t.approach[currentLang], href: '#approach' },
-    { label: t.services[currentLang], href: '#services' },
-    { label: t.materials[currentLang], href: '#materials' },
-    { label: t.contact[currentLang], href: '#contact' },
+  const navItems: { label: string; page: Page }[] = [
+    { label: t.work[currentLang], page: 'home' },
+    { label: t.studio[currentLang], page: 'studio' },
+    { label: t.services[currentLang], page: 'services' },
+    { label: t.research[currentLang], page: 'research' },
+    { label: t.contact[currentLang], page: 'contact' },
   ];
-
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    setMobileMenuOpen(false);
-    const target = document.querySelector(href);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      // On a project page the sections are not mounted: go back to the main page first.
-      window.location.hash = href;
-    }
-  };
 
   const languages: Language[] = (['en', 'es', 'ca', 'de', 'ru'] as Language[]).filter((lang) =>
     ENABLED_LANGUAGES.includes(lang)
@@ -47,7 +36,30 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
           NOLOBO
         </a>
 
-        <div className="flex-1" />
+        <nav aria-label={content.aria.mainNav[currentLang]} className="hidden md:flex flex-1 justify-center">
+          <ul className="flex items-center gap-8 font-mono text-xs tracking-wider">
+            {navItems.map((item) => {
+              const on = page === item.page;
+              return (
+                <li key={item.page}>
+                  <a
+                    href={pageHref(item.page)}
+                    aria-current={on ? 'page' : undefined}
+                    className={`relative inline-block py-2 transition-colors duration-500 ${on ? 'text-[#0E0E0E]' : 'text-[#0E0E0E]/50 hover:text-[#0E0E0E]'}`}
+                  >
+                    {item.label}
+                    <span
+                      aria-hidden
+                      className="absolute left-0 right-0 bottom-0 h-px bg-accent origin-left transition-transform duration-700"
+                      style={{ transform: `scaleX(${on ? 1 : 0})`, transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)' }}
+                    />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+        <div className="flex-1 md:hidden" />
 
         {/* Zone 3: Language switcher in mono + quick CTA */}
         <div className="flex items-center gap-3 sm:gap-4">
@@ -76,8 +88,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
           )}
 
           <a
-            href="#contact"
-            onClick={(e) => handleNavClick(e, '#contact')}
+            href={pageHref('contact')}
             className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono border border-[#0E0E0E] hover:bg-[#0E0E0E] hover:text-[#F5F5F2] transition-colors whitespace-nowrap"
           >
             <span className="w-1.5 h-1.5 bg-accent inline-block" />
@@ -104,11 +115,12 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange })
         <div className="md:hidden border-b border-hairline bg-[#F5F5F2] px-6 py-5 space-y-4 font-mono text-xs">
           <div className="space-y-3">
             {navItems.map((item) => (
-              <div key={item.href}>
+              <div key={item.page}>
                 <a
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
-                  className="block py-1 text-sm font-mono font-medium text-[#0E0E0E] hover:text-accent"
+                  href={pageHref(item.page)}
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-current={page === item.page ? 'page' : undefined}
+                  className={`block py-1 text-sm font-mono font-medium hover:text-accent ${page === item.page ? 'text-accent' : 'text-[#0E0E0E]'}`}
                 >
                   {item.label}
                 </a>

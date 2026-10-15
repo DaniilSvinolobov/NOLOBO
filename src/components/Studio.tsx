@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { content, Language } from '../content';
-import { StudioNetworkMap } from './StudioNetworkMap';
 import { SectionHead } from './SectionHead';
 import { KeywordBlocks } from './KeywordBlocks';
 import { Team } from './Team';
@@ -11,29 +10,6 @@ interface StudioProps {
 
 export const Studio: React.FC<StudioProps> = ({ currentLang }) => {
   const t = content.studio;
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const [started, setStarted] = useState(false);
-  const [reduced, setReduced] = useState(false);
-
-  /* The map starts its own timeline when it is in view. */
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReduced(mq.matches);
-    if (mq.matches) { setStarted(true); return; }
-    const el = mapRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setStarted(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.2 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
 
   return (
     <section
@@ -62,10 +38,6 @@ export const Studio: React.FC<StudioProps> = ({ currentLang }) => {
               lines: [b.text[currentLang]],
             }))}
           />
-        </div>
-
-        <div ref={mapRef} className="mt-20 sm:mt-32">
-          <StudioNetworkMap currentLang={currentLang} hoveredBlock={null} started={started} reduced={reduced} />
         </div>
       </div>
     </section>

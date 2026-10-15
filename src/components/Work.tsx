@@ -21,6 +21,7 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
           number={t.sectionNumber}
           kicker={t.kicker[currentLang]}
           headline={t.headline[currentLang]}
+          intro={t.intro[currentLang]}
         />
 
         <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-10 font-mono">

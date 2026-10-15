@@ -1,180 +1,228 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { content, Language } from '../content';
-import { TerrainWireframe } from './TerrainWireframe';
-import { ScrambleHeadline } from './ScrambleHeadline';
-import { formatSunset, sunPosition, poleShadow } from './sunset';
+import { sunPosition } from './sunset';
 
 interface HeroProps {
   currentLang: Language;
 }
 
-export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
-  const [sunset, setSunset] = useState<string | null>(null);
-  const [sun, setSun] = useState<{ altitude: number; azimuth: number; shadow: number | null } | null>(null);
-  const reduced = useReducedMotion();
+const EASE = [0.16, 1, 0.3, 1] as const;
+const INTRO_MS = 1600;
+const SKEW = 9; // horizontal lean of the shadow edge, in % of width over the full height
+const INK = '#0E0E0E';
+const PAPER = '#F5F5F2';
+
+const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+
+/** Where the shadow stands: how much of the wall it covers, and which side it falls on. */
+function shadowAt(date: Date, latitude: number, longitude: number) {
+  const { altitude, azimuth } = sunPosition(date, latitude, longitude);
+  const covered = altitude <= 3 ? 1 : Math.min(1, Math.max(0.06, 1 / Math.tan((altitude * Math.PI) / 180) / 5));
+  return { altitude, azimuth, covered, fromRight: azimuth < 180 };
+}
+
+/** Polygon (in %) of the shaded part of the wall. `covered` is 0..1 of the width. */
+function shadePolygon(covered: number, fromRight: boolean) {
+  if (covered >= 0.999) return { clip: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)', x1: 0, x2: 0, line: false };
+  const edge = fromRight ? (1 - covered) * 100 : covered * 100;
+  const top = edge + SKEW / 2;
+  const bottom = edge - SKEW / 2;
+  const clip = fromRight
+    ? `polygon(${top}% 0, 100% 0, 100% 100%, ${bottom}% 100%)`
+    : `polygon(0 0, ${top}% 0, ${bottom}% 100%, 0 100%)`;
+  return { clip, x1: top, x2: bottom, line: true };
+}
+
+interface LayerProps {
+  currentLang: Language;
+  inverted: boolean;
+  night: boolean;
+  sun: { altitude: number; azimuth: number } | null;
+  reduced: boolean | null;
+}
+
+/** One reading of the hero. Drawn twice: ink on paper in the light, paper on ink in the shade. */
+const HeroLayer: React.FC<LayerProps> = ({ currentLang, inverted, night, sun, reduced }) => {
   const t = content.hero;
   const meta = content.meta;
+  const lines = t.headline[currentLang].split('\n');
+  const mute = inverted ? 'text-[#F5F5F2]/60' : 'text-[#0E0E0E]/60';
+  const tab = inverted ? -1 : undefined;
 
-  const conditions = meta.conditions;
+  return (
+    <div className="absolute inset-0 font-mono">
+      <div className="h-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col justify-between">
+        <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tabular-nums ${mute}`}>
+          <span className="inline-flex items-center gap-2 uppercase tracking-widest">
+            <span className="w-1.5 h-1.5 bg-accent" />
+            <span>{meta.tagline[currentLang]}</span>
+          </span>
+        </div>
 
-  // Today's sunset in Palma, recalculated every 10 minutes so it rolls over at midnight
+        <h1 className="text-[clamp(38px,12vw,148px)] leading-[0.98] tracking-[-0.05em] font-medium">
+          {lines.map((line, i) => (
+            <span key={i} className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
+              <motion.span
+                className="block"
+                initial={reduced ? false : { y: '110%' }}
+                animate={{ y: '0%' }}
+                transition={{ duration: 1.3, delay: 0.5 + i * 0.14, ease: EASE }}
+              >
+                {line}
+              </motion.span>
+            </span>
+          ))}
+        </h1>
+
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="space-y-2 text-[11px] sm:text-xs leading-relaxed">
+            <p className={`tabular-nums ${mute}`}>
+              {night ? t.shadowNight[currentLang] : t.shadowDay[currentLang]}
+              {sun && sun.altitude > 0 && (
+                <>
+                  {' '}
+                  {meta.conditions.sunLabel[currentLang]} {Math.round(sun.altitude)}° / {Math.round(sun.azimuth)}°
+                </>
+              )}
+            </p>
+            <p>{t.conceptNote[currentLang]}</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href="#work"
+              tabIndex={tab}
+              className={`px-5 py-2.5 font-mono text-xs tracking-wider uppercase inline-flex items-center gap-2 transition-colors ${
+                inverted ? 'bg-[#F5F5F2] text-[#0E0E0E] hover:bg-accent hover:text-white' : 'bg-[#0E0E0E] text-[#F5F5F2] hover:bg-accent'
+              }`}
+            >
+              <span>{t.ctaWork[currentLang]}</span>
+              <span>↓</span>
+            </a>
+            <a
+              href="#contact"
+              tabIndex={tab}
+              className={`px-5 py-2.5 border font-mono text-xs tracking-wider uppercase inline-flex items-center gap-2 transition-colors ${
+                inverted ? 'border-[#F5F5F2]/30 hover:border-[#F5F5F2]' : 'border-hairline hover:border-[#0E0E0E]'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 bg-accent" />
+              <span>{t.ctaInquire[currentLang]}</span>
+              <span>→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Full-screen wall at the real sun angle of Palma. The shadow covers more of it the lower the sun,
+ * falls away from the sun, and turns the page to ink at night. The cursor nudges the edge.
+ */
+export const Hero: React.FC<HeroProps> = ({ currentLang }) => {
+  const reduced = useReducedMotion();
+  const meta = content.meta;
+  const [sun, setSun] = useState<{ altitude: number; azimuth: number } | null>(null);
+
+  const shadeRef = useRef<HTMLDivElement | null>(null);
+  const x1Ref = useRef<SVGLineElement | null>(null);
+  const state = useRef({ target: 1, fromRight: true, shown: 1, mouse: 0, mouseShown: 0, start: 0, raf: 0 });
+
+  const paint = useCallback((covered: number) => {
+    const s = state.current;
+    const poly = shadePolygon(Math.min(1, Math.max(0, covered)), s.fromRight);
+    if (shadeRef.current) shadeRef.current.style.clipPath = poly.clip;
+    const line = x1Ref.current;
+    if (line) {
+      line.setAttribute('x1', String(poly.x1));
+      line.setAttribute('x2', String(poly.x2));
+      line.style.opacity = poly.line ? '1' : '0';
+    }
+  }, []);
+
+  const frame = useCallback(
+    (now: number) => {
+      const s = state.current;
+      if (!s.start) s.start = now;
+      const intro = reduced ? 1 : easeOutExpo((now - s.start) / INTRO_MS);
+      s.mouseShown += (s.mouse - s.mouseShown) * 0.06;
+      const nudge = reduced ? 0 : s.mouseShown * 0.05 * (s.fromRight ? -1 : 1);
+      const goal = Math.min(1, Math.max(0.02, s.target + nudge));
+      const covered = 1 + (goal - 1) * intro;
+      s.shown = covered;
+      paint(covered);
+      const settled = intro >= 1 && Math.abs(s.mouse - s.mouseShown) < 0.001;
+      s.raf = settled ? 0 : requestAnimationFrame(frame);
+    },
+    [paint, reduced]
+  );
+
+  const kick = useCallback(() => {
+    const s = state.current;
+    if (!s.raf) s.raf = requestAnimationFrame(frame);
+  }, [frame]);
+
+  // The sun is read once a minute; the wall follows it.
   useEffect(() => {
     const update = () => {
-      const now = new Date();
-      setSunset(formatSunset(now, conditions.latitude, conditions.longitude, meta.timezone));
-      const pos = sunPosition(now, conditions.latitude, conditions.longitude);
-      setSun({ ...pos, shadow: poleShadow(pos.altitude) });
+      const p = shadowAt(new Date(), meta.conditions.latitude, meta.conditions.longitude);
+      state.current.target = p.covered;
+      state.current.fromRight = p.fromRight;
+      setSun({ altitude: p.altitude, azimuth: p.azimuth });
+      kick();
     };
     update();
     const interval = setInterval(update, 60 * 1000);
-    return () => clearInterval(interval);
-  }, [conditions.latitude, conditions.longitude, meta.timezone]);
+    return () => {
+      clearInterval(interval);
+      cancelAnimationFrame(state.current.raf);
+      state.current.raf = 0;
+    };
+  }, [meta.conditions.latitude, meta.conditions.longitude, kick]);
 
-  const smoothEase = [0.16, 1, 0.3, 1] as const;
+  const onMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (reduced || e.pointerType !== 'mouse') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    state.current.mouse = ((e.clientX - r.left) / r.width) * 2 - 1;
+    kick();
+  };
+
+  const night = !sun || sun.altitude <= 3;
+  const initial = shadePolygon(1, true);
 
   return (
     <section
-      className="relative border-b border-hairline overflow-hidden pt-5 pb-10 sm:py-14"
+      onPointerMove={onMove}
+      className="relative overflow-hidden border-b border-hairline"
+      style={{ minHeight: 'max(720px, calc(100svh - 3.5rem))', background: PAPER, color: INK }}
     >
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Technical Corner & Metadata Bar */}
-        <div className="border border-hairline bg-[#F5F5F2]/80 p-3 sm:p-3.5 mb-6 sm:mb-10 flex flex-wrap items-center justify-between gap-y-2.5 font-mono text-[11px] text-[#0E0E0E]/70 divide-y sm:divide-y-0 sm:divide-x divide-hairline">
-          {/* Node 01: Island conditions */}
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pr-0 sm:pr-4 tabular-nums">
-            <span className="text-accent">⊕</span>
-            <span className="text-[#0E0E0E] font-medium">{conditions.place[currentLang]}</span>
-            <span className="text-[#0E0E0E]/40">·</span>
-            {sun && sun.altitude > 0 && (
-              <>
-                <span>
-                  {conditions.sunLabel[currentLang]}{' '}
-                  <span className="text-[#0E0E0E]">
-                    {Math.round(sun.altitude)}° / {Math.round(sun.azimuth)}°
-                  </span>
-                </span>
-                {sun.shadow !== null && (
-                  <>
-                    <span className="text-[#0E0E0E]/40">·</span>
-                    <span>
-                      {conditions.poleLabel[currentLang]}{' '}
-                      <span className="text-[#0E0E0E]">{sun.shadow.toFixed(1)} m</span>
-                    </span>
-                  </>
-                )}
-              </>
-            )}
-            {sunset && (
-              <>
-                {sun && sun.altitude > 0 && <span className="text-[#0E0E0E]/40">·</span>}
-                <span>
-                  {conditions.sunsetLabel[currentLang]} <span className="text-[#0E0E0E]">{sunset}</span>
-                </span>
-              </>
-            )}
-          </div>
+      <HeroLayer currentLang={currentLang} inverted={false} night={night} sun={sun} reduced={reduced} />
 
-          {/* Node 02: Availability */}
-          <div className="flex items-center gap-3 pt-2 sm:pt-0 sm:pl-4">
-            <span className="inline-flex items-center gap-1.5 text-[#0E0E0E] font-medium">
-              <span className="w-1.5 h-1.5 bg-accent" />
-              <span>{meta.availability[currentLang]}</span>
-            </span>
-          </div>
-        </div>
-
-        {/* Hero Main Grid: Text on Left (5 cols) & Interactive 3D Terrain on Right (7 cols) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-          {/* Left Column: Typographic Focus */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: smoothEase }}
-            className="lg:col-span-5 space-y-6"
-          >
-            {/* Sheet Sub-Header Tag */}
-            <div className="flex items-center gap-3 text-xs font-mono text-[#0E0E0E]/70 uppercase tracking-widest">
-              <span className="w-1.5 h-1.5 bg-accent" />
-              <span>{meta.tagline[currentLang]}</span>
-            </div>
-
-            {/* JetBrains Mono Headline with Fast Character Scramble (~600ms) - 3 lines on desktop */}
-            <ScrambleHeadline
-              as="h1"
-              text={t.headline[currentLang]}
-              scrambleDuration={600}
-              className="text-[32px] sm:text-[40px] md:text-[46px] lg:text-[52px] font-mono font-medium tracking-[-0.04em] leading-[1.05] text-[#0E0E0E] whitespace-pre-line"
-            />
-
-            {/* Conditions resolve one by one, then the closing line */}
-            <div className="font-mono text-xs sm:text-[13px] md:text-sm text-[#0E0E0E]/80 leading-relaxed">
-              <p className="flex flex-wrap gap-x-2">
-                {t.conditionWords.map((word, i) => (
-                  <motion.span
-                    key={word.en}
-                    initial={reduced ? false : { opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.9 + i * 0.18, ease: smoothEase }}
-                  >
-                    {word[currentLang]}
-                  </motion.span>
-                ))}
-              </p>
-              <motion.p
-                initial={reduced ? false : { opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.9 + t.conditionWords.length * 0.18 + 0.3, ease: smoothEase }}
-                className="mt-1 flex items-center gap-2 text-[#0E0E0E]"
-              >
-                <span className="w-1.5 h-1.5 bg-accent" />
-                <span>{t.closing[currentLang]}</span>
-              </motion.p>
-            </div>
-
-            {/* Precision CTA Actions */}
-            <div className="pt-1 flex flex-wrap items-center gap-3">
-              <a
-                href="#work"
-                className="px-5 py-2.5 bg-[#0E0E0E] text-[#F5F5F2] font-mono text-xs tracking-wider uppercase hover:bg-accent transition-colors inline-flex items-center gap-2"
-              >
-                <span>{t.ctaWork[currentLang]}</span>
-                <span>↓</span>
-              </a>
-
-              <a
-                href="#contact"
-                className="px-5 py-2.5 border border-hairline font-mono text-xs tracking-wider uppercase text-[#0E0E0E] hover:border-[#0E0E0E] hover:bg-[#0E0E0E]/5 transition-colors inline-flex items-center gap-2"
-              >
-                <span className="w-1.5 h-1.5 bg-accent" />
-                <span>{t.ctaInquire[currentLang]}</span>
-                <span>→</span>
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Right Column: 3D Terrain Wireframe with Technical Analysis & 5-Stage Construction Process */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: smoothEase }}
-            className="lg:col-span-7 relative border border-hairline bg-[#F5F5F2]"
-          >
-            {/* Top Technical Figure Header */}
-            <div className="px-3.5 py-2 border-b border-hairline flex items-center justify-between text-[10px] font-mono text-[#0E0E0E]/70 bg-[#F5F5F2]">
-              <div className="flex items-center gap-2">
-                <span className="text-accent font-bold">FIG. 00</span>
-                <span className="font-semibold text-[#0E0E0E]">{t.model.header[currentLang]}</span>
-              </div>
-              <div className="text-[#0E0E0E]/50 font-mono text-[9px] hidden sm:block">
-                {t.model.locationCode}
-              </div>
-            </div>
-
-            {/* Interactive 3D Terrain Wireframe Canvas with 5 Stages */}
-            <TerrainWireframe currentLang={currentLang} />
-          </motion.div>
-        </div>
+      <div
+        ref={shadeRef}
+        aria-hidden
+        className="absolute inset-0"
+        style={{ background: INK, color: PAPER, clipPath: initial.clip }}
+      >
+        <HeroLayer currentLang={currentLang} inverted night={night} sun={sun} reduced={reduced} />
       </div>
+
+      <svg aria-hidden className="absolute inset-0 w-full h-full pointer-events-none text-accent" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <line
+          ref={x1Ref}
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="100"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          vectorEffect="non-scaling-stroke"
+          style={{ opacity: 0 }}
+        />
+      </svg>
     </section>
   );
 };

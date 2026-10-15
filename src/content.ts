@@ -157,11 +157,10 @@ interface ContentSource {
     description: LocalizedStringSource;
   };
   nav: {
-    approach: LocalizedStringSource;
-    services: LocalizedStringSource;
     work: LocalizedStringSource;
-    materials: LocalizedStringSource;
     studio: LocalizedStringSource;
+    services: LocalizedStringSource;
+    research: LocalizedStringSource;
     contact: LocalizedStringSource;
   };
   aria: {
@@ -182,8 +181,9 @@ interface ContentSource {
   };
   hero: {
     headline: LocalizedStringSource;
-    conditionWords: LocalizedStringSource[];
-    closing: LocalizedStringSource;
+    shadowDay: LocalizedStringSource;
+    shadowNight: LocalizedStringSource;
+    conceptNote: LocalizedStringSource;
     ctaWork: LocalizedStringSource;
     ctaInquire: LocalizedStringSource;
     model: {
@@ -273,6 +273,7 @@ interface ContentSource {
     sectionNumber: string;
     kicker: LocalizedStringSource;
     headline: LocalizedStringSource;
+    intro: LocalizedStringSource;
     filterAll: LocalizedStringSource;
     filterResidential: LocalizedStringSource;
     filterInterior: LocalizedStringSource;
@@ -307,6 +308,14 @@ interface ContentSource {
     prevProject: LocalizedStringSource;
     nextProject: LocalizedStringSource;
     projects: ProjectSource[];
+  };
+  research: {
+    sectionNumber: string;
+    kicker: LocalizedStringSource;
+    headline: LocalizedStringSource;
+    intro: LocalizedStringSource;
+    studyLabel: LocalizedStringSource;
+    studyNote: LocalizedStringSource;
   };
   materials: MaterialItemSource[];
   conditions: { id: ConditionId; label: LocalizedStringSource }[];
@@ -478,11 +487,10 @@ const source: ContentSource = {
     }
   },
   nav: {
-    approach: { en: "Method", de: "Ansatz", es: "Método", ca: "Mètode", ru: "Подход" },
-    services: { en: "Services", de: "Leistungen", es: "Servicios", ca: "Serveis", ru: "Услуги" },
-    work: { en: "Projects", de: "Projekte", es: "Obras", ca: "Projectes", ru: "Проекты" },
-    materials: { en: "Materials", de: "Materialien", es: "Materiales", ca: "Materials", ru: "Материалы" },
+    work: { en: "Concepts", de: "Projekte", es: "Obras", ca: "Projectes", ru: "Проекты" },
     studio: { en: "Studio", de: "Studio", es: "Estudio", ca: "Estudi", ru: "Студия" },
+    services: { en: "Services", de: "Leistungen", es: "Servicios", ca: "Serveis", ru: "Услуги" },
+    research: { en: "Research" },
     contact: { en: "Contact", de: "Kontakt", es: "Contacto", ca: "Contacte", ru: "Контакты" }
   },
   aria: {
@@ -514,17 +522,11 @@ const source: ContentSource = {
     }
   },
   hero: {
-    headline: { en: "We design\nconditions." },
-    conditionWords: [
-      { en: "Light." },
-      { en: "Air." },
-      { en: "Shade." },
-      { en: "Heat." },
-      { en: "Weight." },
-      { en: "Silence." }
-    ],
-    closing: { en: "Architecture comes after." },
-    ctaWork: { en: "Projects" },
+    headline: { en: "We design\nconditions.\nForm is a\nconsequence." },
+    shadowDay: { en: "The shadow is Palma, now." },
+    shadowNight: { en: "Palma, night. The wall is dark." },
+    conceptNote: { en: "Design concepts for real places. Nothing here is built." },
+    ctaWork: { en: "Design concepts" },
     ctaInquire: { en: "Start a conversation" },
     model: {
       header: { en: "The place, before the drawing." },
@@ -668,7 +670,7 @@ const source: ContentSource = {
     ]
   },
   services: {
-    sectionNumber: "04",
+    sectionNumber: "03",
     kicker: { en: "Services" },
     headline: { en: "What we take on." },
     intro: { en: "Four ways in. Each starts with the place." },
@@ -744,7 +746,7 @@ const source: ContentSource = {
     ]
   },
   materialsSection: {
-    sectionNumber: "05",
+    sectionNumber: "04.1",
     kicker: {
       en: "Materials",
       de: "Lokale Materialien",
@@ -829,8 +831,9 @@ const source: ContentSource = {
   },
   work: {
     sectionNumber: "01",
-    kicker: { en: "Projects" },
-    headline: { en: "Read by the hour." },
+    kicker: { en: "Design concepts" },
+    headline: { en: "Concepts for real places." },
+    intro: { en: "Not built. Each starts from a real site and shows its reasoning: condition, decision, consequence." },
     filterAll: { en: "All" },
     filterResidential: { en: "Architecture" },
     filterInterior: { en: "Interior" },
@@ -842,7 +845,7 @@ const source: ContentSource = {
     reasoningConsequence: { en: "WHAT IT DOES" },
     sectionLabel: { en: "SECTION · NOT TO SCALE" },
     indexLabel: { en: "INDEX" },
-    backToProjects: { en: "← All projects" },
+    backToProjects: { en: "← All concepts" },
     statusLabel: { en: "Status" },
     statusValue: { en: "Design concept" },
     dataLocation: { en: "Location" },
@@ -1084,6 +1087,16 @@ const source: ContentSource = {
       }
     ]
   },
+  research: {
+    sectionNumber: "04",
+    kicker: { en: "Research" },
+    headline: { en: "What we look at\nbefore we draw." },
+    intro: {
+      en: "Studies of the conditions we design with: ground, sun, stone, water. Computation calculates and compares. It doesn't decide what matters."
+    },
+    studyLabel: { en: "Study 01 · Terrain" },
+    studyNote: { en: "Illustrative study of a Deià transect. Design intent, not survey data." }
+  },
   materials: [
     {
       id: "mares",
@@ -1255,7 +1268,7 @@ const source: ContentSource = {
     }
   },
   contact: {
-    sectionNumber: "06",
+    sectionNumber: "05",
     kicker: {
       en: "Contact",
       de: "Kontakt",
