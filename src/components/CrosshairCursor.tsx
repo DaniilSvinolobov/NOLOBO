@@ -60,7 +60,7 @@ export const CrosshairCursor: React.FC = () => {
       }}
       aria-hidden="true"
     >
-      {/* Pink reticle, with a bracket frame [ ] over links, buttons and images */}
+      {/* Precision Drafting Reticle + Bracket Frame [ ] */}
       <div className="relative flex items-center justify-center">
         {/* Reticle Crosshair */}
         <div
@@ -69,11 +69,15 @@ export const CrosshairCursor: React.FC = () => {
           }`}
         >
           {/* Hairlines */}
-          <div className="absolute w-full h-[1px] bg-accent opacity-70" />
-          <div className="absolute h-full w-[1px] bg-accent opacity-70" />
+          <div className="absolute w-full h-[1px] bg-[#0E0E0E]/40" />
+          <div className="absolute h-full w-[1px] bg-[#0E0E0E]/40" />
 
           {/* Central reticle dot */}
-          <div className="w-1 h-1 bg-accent" />
+          <div
+            className={`transition-all duration-200 ${
+              isInteractive ? 'w-1 h-1 bg-accent' : 'w-1 h-1 bg-[#0E0E0E]'
+            }`}
+          />
 
           {/* Precision Bracket Frame [ ] appearing over links, buttons and images */}
           {isInteractive && (

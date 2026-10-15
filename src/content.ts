@@ -185,8 +185,6 @@ interface ContentSource {
     headline: LocalizedStringSource;
     subline: LocalizedStringSource;
     ctaWork: LocalizedStringSource;
-    legendExists: LocalizedStringSource;
-    legendAdded: LocalizedStringSource;
     model: {
       header: LocalizedStringSource;
       locationCode: string;
@@ -528,8 +526,6 @@ const source: ContentSource = {
     headline: { en: "Architecture is\na conversation\nabout the future." },
     subline: { en: "With the place, the professionals and the users. It starts by listening." },
     ctaWork: { en: "Design concepts" },
-    legendExists: { en: "What exists" },
-    legendAdded: { en: "What we add" },
     model: {
       header: { en: "The place, before the drawing." },
       locationCode: "DEIÀ TRANSECT · 39°45'N 2°39'E",
