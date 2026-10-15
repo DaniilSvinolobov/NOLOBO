@@ -51,7 +51,7 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
                       {place} — {p.category[currentLang]}
                     </div>
                     <div className="mt-3 pl-[3rem] sm:pl-[4rem] lg:hidden">
-                      <img src={p.image} alt="" loading="lazy" referrerPolicy="no-referrer" className="w-full aspect-[16/9] object-cover grayscale" />
+                      <img src={p.image} alt="" loading="lazy" referrerPolicy="no-referrer" className="w-full aspect-[16/9] object-cover" />
                     </div>
                   </a>
                 </li>
@@ -70,7 +70,7 @@ export const Work: React.FC<WorkProps> = ({ currentLang }) => {
                   loading="lazy"
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-                  style={{ opacity: shown === p.id ? 1 : 0, filter: hovered === p.id ? 'none' : 'grayscale(1)' }}
+                  style={{ opacity: shown === p.id ? 1 : 0 }}
                 />
               ))}
               <div className="absolute top-3 left-3 px-2 py-0.5 bg-[#F5F5F2]/95 border border-hairline text-[10px] flex items-center gap-1.5">

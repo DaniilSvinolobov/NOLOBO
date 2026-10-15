@@ -134,6 +134,8 @@ interface ServiceItemSource {
   scope: LocalizedListSource;
   /** Conditions this discipline governs. */
   conditions: ConditionId[];
+  /** Image for the service row. */
+  image: string;
 }
 
 interface ContentSource {
@@ -182,9 +184,6 @@ interface ContentSource {
   hero: {
     headline: LocalizedStringSource;
     subline: LocalizedStringSource;
-    strips: { number: string; label: LocalizedStringSource; line: LocalizedStringSource; image: string }[];
-    localNote: LocalizedStringSource;
-    conceptNote: LocalizedStringSource;
     ctaWork: LocalizedStringSource;
     model: {
       header: LocalizedStringSource;
@@ -330,6 +329,8 @@ interface ContentSource {
       education: string;
       years: LocalizedStringSource;
     };
+    practicesLabel: LocalizedStringSource;
+    practices: LocalizedStringSource[];
     blocks: {
       number: string;
       title: LocalizedStringSource;
@@ -522,30 +523,8 @@ const source: ContentSource = {
     }
   },
   hero: {
-    headline: { en: "Three in the afternoon,\nin August." },
-    subline: { en: "Shade, a cool wall, water you can hear. We design that first." },
-    strips: [
-      {
-        number: "01",
-        label: { en: "Shade" },
-        line: { en: "Carob and olive canopy. The ground under it stays cool and the air moves." },
-        image: dryStoneImg
-      },
-      {
-        number: "02",
-        label: { en: "Cool" },
-        line: { en: "A thick lime wall. Cool to the hand, soft on the glare." },
-        image: limeImg
-      },
-      {
-        number: "03",
-        label: { en: "Water" },
-        line: { en: "Rainwater, held on site. You hear it before you see it." },
-        image: ""
-      }
-    ],
-    localNote: { en: "Island material where it does a job. Reuse before we quarry." },
-    conceptNote: { en: "Design concepts for real places. Nothing here is built." },
+    headline: { en: "Architecture is\na conversation\nabout the future." },
+    subline: { en: "With the place, the professionals and the users. It starts by listening." },
     ctaWork: { en: "Design concepts" },
     model: {
       header: { en: "The place, before the drawing." },
@@ -712,7 +691,8 @@ const source: ContentSource = {
             "Sun and shade zoning"
           ]
         },
-        conditions: ["water", "shade", "weight"]
+        conditions: ["water", "shade", "weight"],
+        image: dryStoneImg
       },
       {
         id: "arch",
@@ -728,7 +708,8 @@ const source: ContentSource = {
             "Natural ventilation"
           ]
         },
-        conditions: ["heat", "light", "air"]
+        conditions: ["heat", "light", "air"],
+        image: cliffImg
       },
       {
         id: "interior",
@@ -744,7 +725,8 @@ const source: ContentSource = {
             "Acoustics"
           ]
         },
-        conditions: ["light", "sound"]
+        conditions: ["light", "sound"],
+        image: santanyiImg
       },
       {
         id: "direction",
@@ -760,7 +742,8 @@ const source: ContentSource = {
             "Final occupancy licence"
           ]
         },
-        conditions: ["time"]
+        conditions: ["time"],
+        image: fincaImg
       }
     ]
   },
@@ -1220,11 +1203,19 @@ const source: ContentSource = {
     person: {
       name: "Daniil Svinolobov",
       role: { en: "Architect. Leads every project." },
-      education: "ETSAM, Madrid · UPV/EHU, Basque Country",
-      years: { en: "2014–2020 Bachelor · 2021–22 Master" }
+      education: "ETSAM Madrid · TU Darmstadt · ETSA San Sebastián (UPV/EHU)",
+      years: { en: "2014–2020 Bachelor · 2020–22 Master" }
     },
+    practicesLabel: { en: "How we work" },
+    practices: [
+      { en: "We understand the site and its conditions." },
+      { en: "We listen." },
+      { en: "We gather knowledge from professionals, builders and craftspeople." },
+      { en: "We respect the landscape with a strong reuse principle: keep what stands, repair it, then add." },
+      { en: "We build it to last." }
+    ],
     blocks: [
-      { number: "01", title: { en: "Mallorca" }, text: { en: "Based in Palma. We know the quarries, kilns, builders and artisans in person." } },
+      { number: "01", title: { en: "Mallorca" }, text: { en: "The studio is being built in Palma, from 2027. We start with the island's builders, quarries and craftspeople." } },
       { number: "02", title: { en: "Remote-first" }, text: { en: "Specialists work remotely. We meet in person where it matters: with you, on site, with builders." } },
       { number: "03", title: { en: "Focused" }, text: { en: "A limited number of projects per year. Every project gets the architect's full attention." } },
       { number: "04", title: { en: "Experience" }, text: { en: "Architecture and landscape projects in Spain and Germany. Masterplanning and resilience work for Haiti." } },
@@ -1241,8 +1232,9 @@ const source: ContentSource = {
       experienceLabel: { en: "Experience" },
       experience: {
         en: [
-          "Architecture and landscape in Spain and Germany",
-          "Masterplans and resilience projects for Haiti"
+          "Dondon, Haiti: urban planning study of the commune and town, with WE architects. COAVN Award 2025",
+          "Berlin: public landscape projects with A24 Landschaft and Weidinger Landschaftsarchitekten. Playgrounds, plazas, school grounds, a neighbourhood park",
+          "High Atlas, Morocco: rainwater management and a prototype hammam and laundry, with Fundación Acción Geoda"
         ]
       },
       specialists: [
@@ -1478,7 +1470,7 @@ const source: ContentSource = {
       accepting: { en: "Accepting commissions 2027" },
       coordinates: { en: "COORDINATES" },
       datum: { en: "DATUM" },
-      basedIn: { en: "Palma de Mallorca" },
+      basedIn: { en: "Palma de Mallorca, from 2027" },
       specialists: { en: "Specialists assembled per project" }
     },
     impressumContent: {
