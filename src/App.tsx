@@ -9,34 +9,27 @@ import { BackgroundGrid } from './components/BackgroundGrid';
 import { CrosshairCursor } from './components/CrosshairCursor';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
-import { Approach } from './components/Approach';
 import { Services } from './components/Services';
 import { Work } from './components/Work';
-import { LandscapeSchematics } from './components/LandscapeSchematics';
+import { Research } from './components/Research';
 import { Studio } from './components/Studio';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
-import { SectionNav } from './components/SectionNav';
 import { ProjectPage } from './components/ProjectPage';
-import { useProjectRoute } from './components/useHashRoute';
+import { useRoute } from './components/useHashRoute';
 
 export default function App() {
   const [currentLang, setCurrentLang] = useState<Language>('en');
-  const projectId = useProjectRoute();
-  const wasProject = React.useRef(false);
+  const { page, projectId } = useRoute();
 
-  // Back from a project page: scroll to the section named in the hash (e.g. #work, #contact).
+  // New page: start at the top. Back from a project via #work: land on the list.
   useEffect(() => {
-    if (projectId) {
-      wasProject.current = true;
-      return;
-    }
-    if (wasProject.current) {
-      wasProject.current = false;
-      const id = window.location.hash.slice(1) || 'work';
-      requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView());
-    }
-  }, [projectId]);
+    const target = page === 'home' && !projectId && window.location.hash === '#work' ? 'work' : null;
+    requestAnimationFrame(() => {
+      if (target) document.getElementById(target)?.scrollIntoView();
+      else window.scrollTo(0, 0);
+    });
+  }, [page, projectId]);
 
   // Initialize or synchronize language with browser or user preference if available
   useEffect(() => {
@@ -100,10 +93,9 @@ export default function App() {
       {/* Sticky 3-Zone Header */}
       <Header
         currentLang={currentLang}
+        page={projectId ? 'home' : page}
         onLanguageChange={handleLanguageChange}
       />
-
-      {!projectId && <SectionNav currentLang={currentLang} />}
 
       {/* Main Content Sections, or one project page */}
       <main id="main-content" className="relative z-10">
@@ -111,13 +103,16 @@ export default function App() {
           <ProjectPage projectId={projectId} currentLang={currentLang} />
         ) : (
           <>
-            <Hero currentLang={currentLang} />
-            <Work currentLang={currentLang} />
-            <Studio currentLang={currentLang} />
-            <Approach currentLang={currentLang} />
-            <Services currentLang={currentLang} />
-            <LandscapeSchematics currentLang={currentLang} />
-            <Contact currentLang={currentLang} />
+            {page === 'home' && (
+              <>
+                <Hero currentLang={currentLang} />
+                <Work currentLang={currentLang} />
+              </>
+            )}
+            {page === 'studio' && <Studio currentLang={currentLang} />}
+            {page === 'services' && <Services currentLang={currentLang} />}
+            {page === 'research' && <Research currentLang={currentLang} />}
+            {page === 'contact' && <Contact currentLang={currentLang} />}
           </>
         )}
       </main>

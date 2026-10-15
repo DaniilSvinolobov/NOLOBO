@@ -5,7 +5,6 @@ export const CrosshairCursor: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const [isPointerDevice, setIsPointerDevice] = useState(false);
   const [isInteractive, setIsInteractive] = useState(false);
-  const [targetType, setTargetType] = useState<'link' | 'btn' | 'img' | null>(null);
 
   useEffect(() => {
     // Only enable on precise pointing devices (mouse) and if user doesn't prefer reduced motion
@@ -27,13 +26,8 @@ export const CrosshairCursor: React.FC = () => {
         const interactiveParent = target.closest('a, button, input, select, textarea, [role="button"], img, .interactive-target');
         if (interactiveParent) {
           setIsInteractive(true);
-          const tagName = interactiveParent.tagName.toLowerCase();
-          if (tagName === 'a') setTargetType('link');
-          else if (tagName === 'img' || interactiveParent.classList.contains('glitch-image-wrap')) setTargetType('img');
-          else setTargetType('btn');
         } else {
           setIsInteractive(false);
-          setTargetType(null);
         }
       }
     };
@@ -55,9 +49,6 @@ export const CrosshairCursor: React.FC = () => {
   if (!isPointerDevice || !visible || !coords) {
     return null;
   }
-
-  const formattedX = String(Math.round(coords.x)).padStart(4, '0');
-  const formattedY = String(Math.round(coords.y)).padStart(4, '0');
 
   return (
     <div
@@ -94,19 +85,6 @@ export const CrosshairCursor: React.FC = () => {
               <span className="transform -translate-x-1">[</span>
               <span className="transform translate-x-1">]</span>
             </div>
-          )}
-        </div>
-
-        {/* Live Coordinates & Interactive Target Readout */}
-        <div className="absolute left-7 top-4 bg-[#F5F5F2]/95 backdrop-blur-xs px-1.5 py-0.5 border border-hairline font-mono text-[9px] text-[#0E0E0E]/80 whitespace-nowrap tabular-nums flex items-center gap-1.5 shadow-xs">
-          <span>
-            X:<span className="text-[#0E0E0E] font-medium">{formattedX}</span> Y:
-            <span className="text-[#0E0E0E] font-medium">{formattedY}</span>
-          </span>
-          {isInteractive && (
-            <span className="text-accent font-semibold uppercase text-[8px] pl-1 border-l border-hairline">
-              {targetType === 'img' ? 'IMG.SPEC' : targetType === 'link' ? 'GO.TO' : 'ACT'}
-            </span>
           )}
         </div>
       </div>

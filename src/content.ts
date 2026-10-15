@@ -134,6 +134,8 @@ interface ServiceItemSource {
   scope: LocalizedListSource;
   /** Conditions this discipline governs. */
   conditions: ConditionId[];
+  /** Image for the service row. */
+  image: string;
 }
 
 interface ContentSource {
@@ -157,11 +159,10 @@ interface ContentSource {
     description: LocalizedStringSource;
   };
   nav: {
-    approach: LocalizedStringSource;
-    services: LocalizedStringSource;
     work: LocalizedStringSource;
-    materials: LocalizedStringSource;
     studio: LocalizedStringSource;
+    services: LocalizedStringSource;
+    research: LocalizedStringSource;
     contact: LocalizedStringSource;
   };
   aria: {
@@ -182,10 +183,8 @@ interface ContentSource {
   };
   hero: {
     headline: LocalizedStringSource;
-    conditionWords: LocalizedStringSource[];
-    closing: LocalizedStringSource;
+    subline: LocalizedStringSource;
     ctaWork: LocalizedStringSource;
-    ctaInquire: LocalizedStringSource;
     model: {
       header: LocalizedStringSource;
       locationCode: string;
@@ -273,6 +272,7 @@ interface ContentSource {
     sectionNumber: string;
     kicker: LocalizedStringSource;
     headline: LocalizedStringSource;
+    intro: LocalizedStringSource;
     filterAll: LocalizedStringSource;
     filterResidential: LocalizedStringSource;
     filterInterior: LocalizedStringSource;
@@ -308,6 +308,14 @@ interface ContentSource {
     nextProject: LocalizedStringSource;
     projects: ProjectSource[];
   };
+  research: {
+    sectionNumber: string;
+    kicker: LocalizedStringSource;
+    headline: LocalizedStringSource;
+    intro: LocalizedStringSource;
+    studyLabel: LocalizedStringSource;
+    studyNote: LocalizedStringSource;
+  };
   materials: MaterialItemSource[];
   conditions: { id: ConditionId; label: LocalizedStringSource }[];
   studio: {
@@ -321,6 +329,8 @@ interface ContentSource {
       education: string;
       years: LocalizedStringSource;
     };
+    practicesLabel: LocalizedStringSource;
+    practices: LocalizedStringSource[];
     blocks: {
       number: string;
       title: LocalizedStringSource;
@@ -478,11 +488,10 @@ const source: ContentSource = {
     }
   },
   nav: {
-    approach: { en: "Method", de: "Ansatz", es: "Método", ca: "Mètode", ru: "Подход" },
-    services: { en: "Services", de: "Leistungen", es: "Servicios", ca: "Serveis", ru: "Услуги" },
-    work: { en: "Projects", de: "Projekte", es: "Obras", ca: "Projectes", ru: "Проекты" },
-    materials: { en: "Materials", de: "Materialien", es: "Materiales", ca: "Materials", ru: "Материалы" },
+    work: { en: "Concepts", de: "Projekte", es: "Obras", ca: "Projectes", ru: "Проекты" },
     studio: { en: "Studio", de: "Studio", es: "Estudio", ca: "Estudi", ru: "Студия" },
+    services: { en: "Services", de: "Leistungen", es: "Servicios", ca: "Serveis", ru: "Услуги" },
+    research: { en: "Research" },
     contact: { en: "Contact", de: "Kontakt", es: "Contacto", ca: "Contacte", ru: "Контакты" }
   },
   aria: {
@@ -514,18 +523,9 @@ const source: ContentSource = {
     }
   },
   hero: {
-    headline: { en: "We design\nconditions." },
-    conditionWords: [
-      { en: "Light." },
-      { en: "Air." },
-      { en: "Shade." },
-      { en: "Heat." },
-      { en: "Weight." },
-      { en: "Silence." }
-    ],
-    closing: { en: "Architecture comes after." },
-    ctaWork: { en: "Projects" },
-    ctaInquire: { en: "Start a conversation" },
+    headline: { en: "Architecture is\na conversation\nabout the future." },
+    subline: { en: "With the place, the professionals and the users. It starts by listening." },
+    ctaWork: { en: "Design concepts" },
     model: {
       header: { en: "The place, before the drawing." },
       locationCode: "DEIÀ TRANSECT · 39°45'N 2°39'E",
@@ -668,7 +668,7 @@ const source: ContentSource = {
     ]
   },
   services: {
-    sectionNumber: "04",
+    sectionNumber: "03",
     kicker: { en: "Services" },
     headline: { en: "What we take on." },
     intro: { en: "Four ways in. Each starts with the place." },
@@ -691,7 +691,8 @@ const source: ContentSource = {
             "Sun and shade zoning"
           ]
         },
-        conditions: ["water", "shade", "weight"]
+        conditions: ["water", "shade", "weight"],
+        image: dryStoneImg
       },
       {
         id: "arch",
@@ -707,7 +708,8 @@ const source: ContentSource = {
             "Natural ventilation"
           ]
         },
-        conditions: ["heat", "light", "air"]
+        conditions: ["heat", "light", "air"],
+        image: cliffImg
       },
       {
         id: "interior",
@@ -723,7 +725,8 @@ const source: ContentSource = {
             "Acoustics"
           ]
         },
-        conditions: ["light", "sound"]
+        conditions: ["light", "sound"],
+        image: santanyiImg
       },
       {
         id: "direction",
@@ -739,12 +742,13 @@ const source: ContentSource = {
             "Final occupancy licence"
           ]
         },
-        conditions: ["time"]
+        conditions: ["time"],
+        image: fincaImg
       }
     ]
   },
   materialsSection: {
-    sectionNumber: "05",
+    sectionNumber: "04.1",
     kicker: {
       en: "Materials",
       de: "Lokale Materialien",
@@ -829,8 +833,9 @@ const source: ContentSource = {
   },
   work: {
     sectionNumber: "01",
-    kicker: { en: "Projects" },
-    headline: { en: "Read by the hour." },
+    kicker: { en: "Design concepts" },
+    headline: { en: "Concepts for real places." },
+    intro: { en: "Not built. Each starts from a real site and shows its reasoning: condition, decision, consequence." },
     filterAll: { en: "All" },
     filterResidential: { en: "Architecture" },
     filterInterior: { en: "Interior" },
@@ -842,7 +847,7 @@ const source: ContentSource = {
     reasoningConsequence: { en: "WHAT IT DOES" },
     sectionLabel: { en: "SECTION · NOT TO SCALE" },
     indexLabel: { en: "INDEX" },
-    backToProjects: { en: "← All projects" },
+    backToProjects: { en: "← All concepts" },
     statusLabel: { en: "Status" },
     statusValue: { en: "Design concept" },
     dataLocation: { en: "Location" },
@@ -1084,6 +1089,16 @@ const source: ContentSource = {
       }
     ]
   },
+  research: {
+    sectionNumber: "04",
+    kicker: { en: "Research" },
+    headline: { en: "What we look at\nbefore we draw." },
+    intro: {
+      en: "Studies of the conditions we design with: ground, sun, stone, water. Computation calculates and compares. It doesn't decide what matters."
+    },
+    studyLabel: { en: "Study 01 · Terrain" },
+    studyNote: { en: "Illustrative study of a Deià transect. Design intent, not survey data." }
+  },
   materials: [
     {
       id: "mares",
@@ -1188,11 +1203,19 @@ const source: ContentSource = {
     person: {
       name: "Daniil Svinolobov",
       role: { en: "Architect. Leads every project." },
-      education: "ETSAM, Madrid · UPV/EHU, Basque Country",
-      years: { en: "2014–2020 Bachelor · 2021–22 Master" }
+      education: "ETSAM Madrid · TU Darmstadt · ETSA San Sebastián (UPV/EHU)",
+      years: { en: "2014–2020 Bachelor · 2020–22 Master" }
     },
+    practicesLabel: { en: "How we work" },
+    practices: [
+      { en: "We understand the site and its conditions." },
+      { en: "We listen." },
+      { en: "We gather knowledge from professionals, builders and craftspeople." },
+      { en: "We respect the landscape with a strong reuse principle: keep what stands, repair it, then add." },
+      { en: "We build it to last." }
+    ],
     blocks: [
-      { number: "01", title: { en: "Mallorca" }, text: { en: "Based in Palma. We know the quarries, kilns, builders and artisans in person." } },
+      { number: "01", title: { en: "Mallorca" }, text: { en: "The studio is being built in Palma, from 2027. We start with the island's builders, quarries and craftspeople." } },
       { number: "02", title: { en: "Remote-first" }, text: { en: "Specialists work remotely. We meet in person where it matters: with you, on site, with builders." } },
       { number: "03", title: { en: "Focused" }, text: { en: "A limited number of projects per year. Every project gets the architect's full attention." } },
       { number: "04", title: { en: "Experience" }, text: { en: "Architecture and landscape projects in Spain and Germany. Masterplanning and resilience work for Haiti." } },
@@ -1209,8 +1232,9 @@ const source: ContentSource = {
       experienceLabel: { en: "Experience" },
       experience: {
         en: [
-          "Architecture and landscape in Spain and Germany",
-          "Masterplans and resilience projects for Haiti"
+          "Dondon, Haiti: urban planning study of the commune and town, with WE architects. COAVN Award 2025",
+          "Berlin: public landscape projects with A24 Landschaft and Weidinger Landschaftsarchitekten. Playgrounds, plazas, school grounds, a neighbourhood park",
+          "High Atlas, Morocco: rainwater management and a prototype hammam and laundry, with Fundación Acción Geoda"
         ]
       },
       specialists: [
@@ -1255,7 +1279,7 @@ const source: ContentSource = {
     }
   },
   contact: {
-    sectionNumber: "06",
+    sectionNumber: "05",
     kicker: {
       en: "Contact",
       de: "Kontakt",
@@ -1446,7 +1470,7 @@ const source: ContentSource = {
       accepting: { en: "Accepting commissions 2027" },
       coordinates: { en: "COORDINATES" },
       datum: { en: "DATUM" },
-      basedIn: { en: "Palma de Mallorca" },
+      basedIn: { en: "Palma de Mallorca, from 2027" },
       specialists: { en: "Specialists assembled per project" }
     },
     impressumContent: {

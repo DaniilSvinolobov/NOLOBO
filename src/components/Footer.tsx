@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { pageHref } from './useHashRoute';
 import { content, Language } from '../content';
 import { LegalModal } from './LegalModal';
 
@@ -45,31 +46,18 @@ export const Footer: React.FC<FooterProps> = ({ currentLang }) => {
               {fl.studioTitle[currentLang]}
             </span>
             <ul className="space-y-1.5 text-[#0E0E0E]/80">
-              <li>
-                <a href="#work" className="hover:text-accent transition-colors">
-                  01. {nav.work[currentLang]}
-                </a>
-              </li>
-              <li>
-                <a href="#studio" className="hover:text-accent transition-colors">
-                  02. {nav.studio[currentLang]}
-                </a>
-              </li>
-              <li>
-                <a href="#approach" className="hover:text-accent transition-colors">
-                  03. {nav.approach[currentLang]}
-                </a>
-              </li>
-              <li>
-                <a href="#services" className="hover:text-accent transition-colors">
-                  04. {nav.services[currentLang]}
-                </a>
-              </li>
-              <li>
-                <a href="#materials" className="hover:text-accent transition-colors">
-                  05. {nav.materials[currentLang]}
-                </a>
-              </li>
+              {([
+                ['home', nav.work],
+                ['studio', nav.studio],
+                ['services', nav.services],
+                ['research', nav.research],
+              ] as const).map(([pg, label], i) => (
+                <li key={pg}>
+                  <a href={pageHref(pg)} className="hover:text-accent transition-colors">
+                    {String(i + 1).padStart(2, '0')}. {label[currentLang]}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 

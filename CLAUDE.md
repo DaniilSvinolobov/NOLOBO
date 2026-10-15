@@ -1,5 +1,5 @@
 # NOLOBO — studio website
-Architecture, urbanism and landscape studio based in Mallorca, led by architect Daniil Svinolobov (ETSAM Madrid, UPV/EHU Basque Country; projects in Spain and Germany, masterplanning and resilience work for Haiti). Solo-led and remote-first: specialists for computational design, structure and local knowledge are assembled per project. Never present NOLOBO as a large office.
+Architecture, urbanism and landscape studio based in Mallorca, led by architect Daniil Svinolobov (ETSAM Madrid, UPV/EHU Basque Country; projects in Spain and Germany, masterplanning and resilience work for Haiti). Solo-led and remote-first: specialists for computational design, structure and local knowledge are assembled per project. Never present NOLOBO as a large office. Daniil is relocating from Berlin to Mallorca and building the studio there (opening 2027): never claim a Palma office, or in-person presence on the island, as already true.
 
 ## Concept
 **We design conditions. Form is a consequence.** The studio's value is judgment, taste, observation and experience: understanding a place and deciding what should happen there before drawing the object.
@@ -10,10 +10,21 @@ Hierarchy, never reversed: **PLACE → CONDITIONS → ARCHITECTURE → TOOLS.**
 
 - Technology is capability, never identity. Computation calculates, compares, verifies and coordinates. It does not decide what matters. Not anti-technology: the studio understands tools well enough not to mistake them for the author.
 - Anchors: WE DESIGN CONDITIONS. FORM IS A CONSEQUENCE. TASTE IS TRAINED. THE COMPUTER DOESN'T HAVE TASTE. MATERIAL IS NOT A FINISH.
-- Materials are described by what they physically do (stone stores heat, lime softens light, wood changes sound), not as a finish or a heritage mood.
+- Materials are described by what they physically do (lime stays cool to the hand, a canopy keeps the ground cool, a thick wall holds the night's coolness, wood changes sound), not as a finish or a heritage mood.
+- Mallorca is hot in summer. Comfort leads: shade, cool, moving air, water. Never describe heat as a quality of the place or of a material; describe the relief from it.
+- Local with a limit. Island material where it does a job, reuse before we quarry. Never present everything as local; the island cannot be built from itself.
 - Mallorca is not the aesthetic. It is the set of conditions the architecture must understand: sun angle, summer heat, sea air, topography, stone, vegetation, water scarcity, shade, seasonality, construction culture.
 - Visual idea: the interface looks technical, the content is human. The site is an instrument that measures life (light, temperature, shade, sound, wind, time, movement, occupation).
 - The shared condition vocabulary lives in `content.conditions` (`ConditionId`). Reuse it for material tags and service tags, not for project pages.
+
+## Principles
+- **Architecture is social.** A conversation about the future with the place, the professionals and the users. It pushes against the fast, the instant, the data-and-subscription world: attention, contact with the elements, listening and collectivity are the work. Never preachy, never anti-technology. State it through practices, not slogans.
+- **We listen first.** Rooted on the island, with first-hand knowledge of its quarries, kilns, builders and artisans.
+- **We start with what exists.** Optimise, repair and add value before building new.
+- **Local where it earns its place.**
+- **Landscape leads.** Shade, water and planting come before the building.
+- **How we work:** we understand the site and its conditions; we listen; we gather knowledge from professionals, builders and craftspeople; we respect the landscape with a strong reuse principle (keep what stands, repair it, then add); we build it to last.
+- **Atmosphere by cause.** We create feelings by designing what causes them; the copy names the cause (shade at three in the afternoon), not the feeling.
 
 ## Copy principles
 - Concrete over abstract.
@@ -32,6 +43,10 @@ Hierarchy, never reversed: **PLACE → CONDITIONS → ARCHITECTURE → TOOLS.**
 - If a sentence could appear unchanged on 100 architecture studio websites, rewrite it.
 - Do not invent measurements or performance claims. Project pages are design concepts; their reasoning is illustrative. Anything presented as fact about a real project needs a source from Daniil.
 - Project pages show reasoning, not measurement: a thesis, then condition → decision → consequence. The row labels come from that project's own site. No timestamps, sensor-style readouts or shared category lists unless a project genuinely needs them.
+
+## Placeholders to replace before launch
+- Contact address (Carrer de Sant Feliu 17, Palma) and the +34 971 phone number are placeholders.
+- Shade/water imagery and the concept images are stand-ins until real photos exist.
 
 ## Stack
 React + Vite + Tailwind + motion. All copy lives in src/content.ts.

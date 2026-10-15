@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { content, Language } from '../content';
-import { StudioNetworkMap } from './StudioNetworkMap';
 import { SectionHead } from './SectionHead';
 import { KeywordBlocks } from './KeywordBlocks';
 import { Team } from './Team';
@@ -11,29 +10,6 @@ interface StudioProps {
 
 export const Studio: React.FC<StudioProps> = ({ currentLang }) => {
   const t = content.studio;
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const [started, setStarted] = useState(false);
-  const [reduced, setReduced] = useState(false);
-
-  /* The map starts its own timeline when it is in view. */
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReduced(mq.matches);
-    if (mq.matches) { setStarted(true); return; }
-    const el = mapRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setStarted(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.2 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
 
   return (
     <section
@@ -55,6 +31,18 @@ export const Studio: React.FC<StudioProps> = ({ currentLang }) => {
         </div>
 
         <div className="mt-20 sm:mt-32">
+          <div className="text-[11px] uppercase tracking-widest text-[#0E0E0E]/60">{t.practicesLabel[currentLang]}</div>
+          <ol className="mt-6 border-t border-hairline">
+            {t.practices.map((line, i) => (
+              <li key={line.en} className="grid grid-cols-[3rem_1fr] sm:grid-cols-[4rem_1fr] gap-x-3 py-4 sm:py-5 border-b border-hairline">
+                <span className="text-[11px] tabular-nums text-[#0E0E0E]/40 pt-1">{String(i + 1).padStart(2, '0')}</span>
+                <span className="text-[16px] sm:text-[22px] leading-[1.35] tracking-[-0.02em] text-[#0E0E0E] max-w-[42ch]">{line[currentLang]}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="mt-20 sm:mt-32">
           <KeywordBlocks
             blocks={t.blocks.map((b) => ({
               number: b.number,
@@ -62,10 +50,6 @@ export const Studio: React.FC<StudioProps> = ({ currentLang }) => {
               lines: [b.text[currentLang]],
             }))}
           />
-        </div>
-
-        <div ref={mapRef} className="mt-20 sm:mt-32">
-          <StudioNetworkMap currentLang={currentLang} hoveredBlock={null} started={started} reduced={reduced} />
         </div>
       </div>
     </section>
